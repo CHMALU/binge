@@ -35,3 +35,20 @@ npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000).
+
+### 5. Run tests
+
+To run all tests:
+
+```bash
+npm test
+```
+
+To run tests in watch mode (for TDD):
+
+```bash
+npm run test:watch
+```
+
+---
+
