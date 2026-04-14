@@ -13,29 +13,29 @@ export default async function Home() {
     <main className="min-h-screen bg-zinc-950 text-white">
       <header className="px-6 py-6 border-b border-zinc-800">
         <h1 className="text-2xl font-bold tracking-tight">Binge</h1>
-        <p className="text-zinc-400 text-sm mt-1">Odkryj co warto obejrzeć</p>
+        <p className="text-zinc-400 text-sm mt-1">Discover what to watch next</p>
       </header>
 
       <div className="px-6 py-8 flex flex-col gap-12">
-        <Section title="Popularne filmy">
+        <Section title="Popular Movies">
           {popularMovies.slice(0, 10).map((movie) => (
             <MovieCard key={movie.id} movie={movie} />
           ))}
         </Section>
 
-        <Section title="Nowe w kinach">
+        <Section title="Now in Cinemas">
           {nowPlaying.slice(0, 10).map((movie) => (
             <MovieCard key={movie.id} movie={movie} />
           ))}
         </Section>
 
-        <Section title="Popularne seriale">
+        <Section title="Popular Series">
           {popularSeries.slice(0, 10).map((movie) => (
             <MovieCard key={movie.id} movie={movie} />
           ))}
         </Section>
 
-        <Section title="Aktualnie w TV">
+        <Section title="Currently on TV">
           {onAir.slice(0, 10).map((movie) => (
             <MovieCard key={movie.id} movie={movie} />
           ))}

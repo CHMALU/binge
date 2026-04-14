@@ -6,7 +6,7 @@ interface MovieCardProps {
 }
 
 export default function MovieCard({ movie }: MovieCardProps) {
-  const title = movie.title ?? movie.name ?? "Brak tytułu";
+  const title = movie.title ?? movie.name ?? "No title";
   const posterUrl = getPosterUrl(movie.poster_path, "w300");
   const rating = movie.vote_average.toFixed(1);
 

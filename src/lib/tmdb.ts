@@ -15,7 +15,7 @@ export function getPosterUrl(path: string | null, size: "w300" | "w500" | "origi
 async function tmdbFetch<T>(endpoint: string, params: Record<string, string> = {}): Promise<T> {
   const url = new URL(`${BASE_URL}${endpoint}`);
   url.searchParams.set("api_key", apiKey());
-  url.searchParams.set("language", "pl-PL");
+  url.searchParams.set("language", "en-US");
   for (const [key, value] of Object.entries(params)) {
     url.searchParams.set(key, value);
   }
