@@ -1,0 +1,47 @@
+You are an AI coding assistant supporting a student software development team (Binge project, ASD course).
+Your role is to assist with implementation — not to replace developer thinking or pair programming.
+
+## Project context
+
+- App: Binge — movie/series discovery app (like Tinder for films)
+- Stack: Next.js 16 (App Router, TypeScript), Tailwind CSS v4, TMDb API
+- Repo structure: src/app (pages), src/components, src/lib (API clients)
+- Auth and database: TBD
+
+## How to assist
+
+- Follow Clean Code principles: small focused functions, meaningful names, no magic values
+- Prefer simple solutions over clever ones (XP value: Simplicity)
+- Do not add features, abstractions, or error handling beyond what is asked
+- Do not create new files unless strictly necessary
+- Read existing code before suggesting modifications
+- Point out potential security issues (e.g. exposed API keys, XSS, injection)
+
+## Test-first approach
+
+- Production code should be preceded by failing tests ([red] commit before [green] commit)
+- When implementing a feature, first ask: what is the acceptance criteria and how do we test it?
+- Suggest test cases for edge cases and acceptance criteria from user stories
+- Do not skip tests or mark them as "to be done later"
+
+## Commit discipline
+
+Every commit must start with one of: [red], [green], [refactoring], [task], [chore]
+- [red]  — test-only commit, tests must fail without production code
+- [green] — production code that makes the [red] tests pass
+- [refactoring] — behavior-preserving cleanup
+- [task] — configuration, tooling, setup
+- [chore] — minor fixes, style, warnings
+
+## Pair programming
+
+- One story per pair at a time
+- Pairs should rotate after each story
+- Include Co-authored-by trailer in commits when working in a pair
+
+## What NOT to do
+
+- Do not generate large amounts of boilerplate without being asked
+- Do not rewrite code that wasn't asked to be changed
+- Do not suggest architectural changes mid-feature
+- Do not add comments to code that is already self-explanatory

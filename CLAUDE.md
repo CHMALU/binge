@@ -28,6 +28,36 @@ Movie/series discovery app — like Tinder for films. Data sourced from the **TM
 | 10 | View watchlist (title, cover, rating) | 3 |
 | 11 | Mark titles as watched (moves from watchlist to watched) | 3 |
 
+## Git Workflow
+
+### Branches
+- Every user story gets its own branch, named: `feature/us<N>-<short-description>` (e.g. `feature/us2-detail-page`)
+- Branch off `main`, open a PR on GitLab when done
+- **Do not delete branches after merge** (required for course evaluation)
+
+### Commit prefixes (mandatory)
+| Prefix | When to use |
+|--------|-------------|
+| `[red]` | Test-only commit — tests must fail without production code |
+| `[green]` | Production code that makes the red tests pass |
+| `[refactoring]` | Behavior-preserving cleanup |
+| `[task]` | Config, tooling, setup (e.g. next.config, env, packages) |
+| `[chore]` | Minor fixes — style issues, warnings |
+
+### Pair credits
+Add a trailer to each commit message listing the pair initials:
+```
+[green][AB,CD] Implement movie detail page
+```
+
+### Order within a PR
+`[red]` → `[green]` → `[refactoring]` (optional)
+Use `git rebase -i` to reorder commits if needed before opening a PR.
+
+### Merging
+- Merge via PR on GitLab — never push directly to `main`
+- Do **not** squash merge — preserve individual commits
+
 ## Key Notes
 
 - Guest users can browse and swipe — no account required for core discovery
