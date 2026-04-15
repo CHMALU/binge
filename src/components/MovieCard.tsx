@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { getPosterUrl, type Movie } from "@/lib/tmdb";
 
 interface MovieCardProps {
@@ -9,9 +10,10 @@ export default function MovieCard({ movie }: MovieCardProps) {
   const title = movie.title ?? movie.name ?? "No title";
   const posterUrl = getPosterUrl(movie.poster_path, "w300");
   const rating = movie.vote_average.toFixed(1);
+  const href = movie.media_type === "tv" ? `/tv/${movie.id}` : `/movie/${movie.id}`;
 
   return (
-    <div className="flex flex-col rounded-xl overflow-hidden bg-zinc-900 shadow-md hover:scale-[1.02] transition-transform duration-200">
+    <Link href={href} className="flex flex-col rounded-xl overflow-hidden bg-zinc-900 shadow-md hover:scale-[1.02] transition-transform duration-200">
       <div className="relative aspect-[2/3] w-full bg-zinc-800">
         {posterUrl ? (
           <Image
@@ -23,7 +25,7 @@ export default function MovieCard({ movie }: MovieCardProps) {
           />
         ) : (
           <div className="flex h-full items-center justify-center text-zinc-500 text-sm">
-            Brak plakatu
+            No poster
           </div>
         )}
       </div>
@@ -34,6 +36,6 @@ export default function MovieCard({ movie }: MovieCardProps) {
           <span>{rating}</span>
         </div>
       </div>
-    </div>
+    </Link>
   );
 }
