@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { IoArrowBack } from "react-icons/io5";
 import { getPosterUrl, type MovieDetailData } from "@/lib/tmdb";
 
 interface MovieDetailProps {
@@ -27,6 +28,17 @@ export default function MovieDetail({ detail }: MovieDetailProps) {
 
   return (
     <div className="min-h-screen bg-zinc-950 text-white">
+      {/* Back link — fixed top-left, always above everything */}
+      <div className="fixed top-4 left-4 z-50">
+        <Link
+          href="/"
+          className="flex items-center justify-center w-10 h-10 rounded-full bg-zinc-800/80 backdrop-blur-sm text-white hover:bg-zinc-700 transition-colors"
+        >
+          <IoArrowBack size={20} aria-hidden="true" />
+          <span className="sr-only">Back</span>
+        </Link>
+      </div>
+
       {/* Backdrop */}
       {backdropUrl && (
         <div className="relative h-72 md:h-96 w-full">
@@ -42,12 +54,6 @@ export default function MovieDetail({ detail }: MovieDetailProps) {
         </div>
       )}
 
-      {/* Back link */}
-      <div className={`px-6 py-4 ${backdropUrl ? "-mt-12 relative" : ""}`}>
-        <Link href="/" className="text-sm text-zinc-400 hover:text-white transition-colors">
-          ← Back
-        </Link>
-      </div>
 
       <div className="px-6 pb-16 flex flex-col md:flex-row gap-8 max-w-5xl mx-auto">
         {/* Poster */}
