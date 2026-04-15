@@ -37,6 +37,26 @@ export interface Movie {
   overview: string;
 }
 
+export interface Genre {
+  id: number;
+  name: string;
+}
+
+export interface MovieDetailData {
+  id: number;
+  title?: string;
+  name?: string;
+  overview: string;
+  runtime?: number;
+  episode_run_time?: number[];
+  genres: Genre[];
+  vote_average: number;
+  release_date?: string;
+  first_air_date?: string;
+  poster_path: string | null;
+  media_type?: "movie" | "tv";
+}
+
 interface TMDbListResponse {
   results: Movie[];
   total_pages: number;
@@ -50,7 +70,7 @@ export async function getPopularMovies(): Promise<Movie[]> {
 
 export async function getPopularSeries(): Promise<Movie[]> {
   const data = await tmdbFetch<TMDbListResponse>("/tv/popular");
-  return data.results;
+  return data.results.map((m) => ({ ...m, media_type: "tv" as const }));
 }
 
 export async function getNowPlaying(): Promise<Movie[]> {
@@ -60,5 +80,13 @@ export async function getNowPlaying(): Promise<Movie[]> {
 
 export async function getOnAir(): Promise<Movie[]> {
   const data = await tmdbFetch<TMDbListResponse>("/tv/on_the_air");
-  return data.results;
+  return data.results.map((m) => ({ ...m, media_type: "tv" as const }));
+}
+
+export async function getMovieDetails(id: number): Promise<MovieDetailData> {
+  return tmdbFetch<MovieDetailData>(`/movie/${id}`);
+}
+
+export async function getTvDetails(id: number): Promise<MovieDetailData> {
+  return tmdbFetch<MovieDetailData>(`/tv/${id}`);
 }
