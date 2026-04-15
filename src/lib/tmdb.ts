@@ -2,7 +2,7 @@ const BASE_URL = "https://api.themoviedb.org/3";
 const IMAGE_BASE_URL = "https://image.tmdb.org/t/p";
 
 function apiKey() {
-  const key = process.env.TMDB_API_KEY;
+  const key = process.env.NEXT_PUBLIC_TMDB_API_KEY;
   if (!key) throw new Error("TMDB_API_KEY is not set");
   return key;
 }
@@ -30,7 +30,7 @@ export interface Movie {
   title?: string;
   name?: string;
   poster_path: string | null;
-  vote_average: number;
+  vote_average: number | null;
   release_date?: string;
   first_air_date?: string;
   media_type?: "movie" | "tv";
@@ -89,4 +89,16 @@ export async function getMovieDetails(id: number): Promise<MovieDetailData> {
 
 export async function getTvDetails(id: number): Promise<MovieDetailData> {
   return tmdbFetch<MovieDetailData>(`/tv/${id}`);
+}
+
+export async function searchMovies(query: string): Promise<Movie[]> {
+  if (!query.trim()) return [];
+
+  const data = await tmdbFetch<TMDbListResponse>(
+    `/search/multi?query=${encodeURIComponent(query)}&include_adult=false`
+  );
+
+  return (data.results ?? []).filter(
+    (item) => item.media_type === "movie" || item.media_type === "tv"
+  );
 }
