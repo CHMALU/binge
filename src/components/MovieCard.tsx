@@ -9,7 +9,7 @@ interface MovieCardProps {
 export default function MovieCard({ movie }: MovieCardProps) {
   const title = movie.title ?? movie.name ?? "No title";
   const posterUrl = getPosterUrl(movie.poster_path, "w300");
-  const rating = movie.vote_average.toFixed(1);
+  const rating = movie.vote_average?.toFixed(1) ?? "N/A";
   const href = movie.media_type === "tv" ? `/tv/${movie.id}` : `/movie/${movie.id}`;
 
   return (

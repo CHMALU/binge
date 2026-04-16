@@ -23,7 +23,7 @@ describe('getMovieDetails', () => {
   };
 
   beforeEach(() => {
-    process.env.TMDB_API_KEY = 'test-key';
+    process.env.NEXT_PUBLIC_TMDB_API_KEY = 'test-key';
     global.fetch = jest.fn().mockResolvedValue({
       ok: true,
       json: async () => mockResponse,
@@ -60,7 +60,7 @@ describe('getTvDetails', () => {
   };
 
   beforeEach(() => {
-    process.env.TMDB_API_KEY = 'test-key';
+    process.env.NEXT_PUBLIC_TMDB_API_KEY = 'test-key';
     global.fetch = jest.fn().mockResolvedValue({
       ok: true,
       json: async () => mockResponse,
