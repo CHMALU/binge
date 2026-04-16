@@ -102,3 +102,22 @@ export async function searchMovies(query: string): Promise<Movie[]> {
     (item) => item.media_type === "movie" || item.media_type === "tv"
   );
 }
+
+export interface GenreListResponse {
+  genres: Genre[];
+}
+
+export async function getGenres(type: "movie" | "tv" = "movie"): Promise<Genre[]> {
+  const data = await tmdbFetch<GenreListResponse>(`/genre/${type}/list`);
+  return data.genres;
+}
+
+export async function discoverMovies(params: Record<string, string>): Promise<Movie[]> {
+  const data = await tmdbFetch<TMDbListResponse>("/discover/movie", params);
+  return data.results;
+}
+
+export async function discoverSeries(params: Record<string, string>): Promise<Movie[]> {
+  const data = await tmdbFetch<TMDbListResponse>("/discover/tv", params);
+  return data.results.map((m) => ({ ...m, media_type: "tv" as const }));
+}

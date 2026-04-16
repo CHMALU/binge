@@ -1,6 +1,7 @@
 import MovieCard from "@/components/MovieCard";
 import { getPopularMovies, getPopularSeries, getNowPlaying, getOnAir } from "@/lib/tmdb";
 import SearchBar from "@/components/SearchBar";
+import FilterBar from "@/components/FilterBar";
 
 export default async function Home() {
   const [popularMovies, popularSeries, nowPlaying, onAir] = await Promise.all([
@@ -12,12 +13,15 @@ export default async function Home() {
 
   return (
     <main className="min-h-screen bg-zinc-950 text-white">
-      <header className="px-6 py-6 border-b border-zinc-800 flex items-center justify-between">
-        <div>
+      <header className="px-6 py-6 border-b border-zinc-800 flex items-center justify-between gap-4">
+        <div className="shrink-0">
           <h1 className="text-2xl font-bold tracking-tight">Binge</h1>
           <p className="text-zinc-400 text-sm mt-1">Discover what to watch next</p>
         </div>
-        <SearchBar />
+        <div className="flex items-center gap-3">
+          <SearchBar />
+          <FilterBar />
+        </div>
       </header>
 
       <div className="px-6 py-8 flex flex-col gap-12">
