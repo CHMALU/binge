@@ -73,7 +73,7 @@ export default function FilterBar() {
             value={selectedGenre ?? ""}
             onChange={(e) => setSelectedGenre(e.target.value || null)}
           >
-            <option value="">All Genres</option>
+            <option value="" data-testid="genre">All Genres</option>
             {genres.map((g) => (
               <option key={g.id} value={String(g.id)}>{g.name}</option>
             ))}
@@ -87,7 +87,7 @@ export default function FilterBar() {
             value={selectedYear ?? ""}
             onChange={(e) => setSelectedYear(e.target.value || null)}
           >
-            <option value="">All Years</option>
+            <option value="Year">All Years</option>
             {YEARS.map((y) => (
               <option key={y} value={y}>{y}</option>
             ))}
@@ -97,7 +97,7 @@ export default function FilterBar() {
         {/* Reset */}
         {(mediaType || selectedGenre || selectedYear) && (
           <button
-            className="px-3 py-1.5 rounded-lg text-sm bg-zinc-700 text-zinc-400 hover:bg-zinc-600"
+            className="px-3 py-1.5 rounded-lg text-sm bg-zinc-700 text-zinc-400 hover:bg-zinc-600" data-testid="reset"
             onClick={() => { setMediaType(null); setSelectedGenre(null); setSelectedYear(null); setIsOpen(false); }}
           >
             ✕ Reset
