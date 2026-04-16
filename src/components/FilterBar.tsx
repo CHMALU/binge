@@ -67,7 +67,7 @@ export default function FilterBar() {
         </button>
 
         {/* Genre Dropdown */}
-        {genres.length > 0 && (
+        {genres.length > 0 && mediaType && (
           <select
             className="bg-zinc-800 text-zinc-300 text-sm rounded-lg px-3 py-1.5 outline-none"
             value={selectedGenre ?? ""}
