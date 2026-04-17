@@ -46,14 +46,32 @@ export interface MovieDetailData {
   id: number;
   title?: string;
   name?: string;
+  original_title?: string;
+  original_name?: string;
   overview: string;
+  tagline?: string;
   runtime?: number;
   episode_run_time?: number[];
   genres: Genre[];
   vote_average: number;
+  vote_count?: number;
   release_date?: string;
   first_air_date?: string;
+  last_air_date?: string;
   poster_path: string | null;
+  backdrop_path?: string | null;
+  status?: string;
+  homepage?: string;
+  imdb_id?: string;
+  budget?: number;
+  revenue?: number;
+  number_of_seasons?: number;
+  number_of_episodes?: number;
+  spoken_languages?: { english_name: string }[];
+  production_companies?: { id: number; name: string; logo_path: string | null }[];
+  networks?: { id: number; name: string }[];
+  created_by?: { id: number; name: string }[];
+  last_episode_to_air?: { runtime?: number };
   media_type?: "movie" | "tv";
 }
 
