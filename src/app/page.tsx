@@ -2,6 +2,8 @@ import MovieCard from "@/components/MovieCard";
 import { getPopularMovies, getPopularSeries, getNowPlaying, getOnAir } from "@/lib/tmdb";
 import SearchBar from "@/components/SearchBar";
 import FilterBar from "@/components/FilterBar";
+import Link from "next/link";
+import SwipeRouter from "./swipe/page";
 
 export default async function Home() {
   const [popularMovies, popularSeries, nowPlaying, onAir] = await Promise.all([
@@ -11,6 +13,7 @@ export default async function Home() {
     getOnAir(),
   ]);
 
+
   return (
     <main className="min-h-screen bg-zinc-950 text-white">
       <header className="px-6 py-6 border-b border-zinc-800 flex items-center justify-between gap-4">
@@ -19,6 +22,9 @@ export default async function Home() {
           <p className="text-zinc-400 text-sm mt-1">Discover what to watch next</p>
         </div>
         <div className="flex items-center gap-3">
+          <Link href={"/swipe"}>
+            🔥 Swipe Mode
+          </Link>
           <SearchBar />
           <FilterBar />
         </div>
