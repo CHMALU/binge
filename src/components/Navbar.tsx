@@ -34,10 +34,10 @@ export default function Navbar() {
         </Link>
 
         <div className="hidden lg:flex items-center gap-1">
-          {["Discover", "Movies", "Series"].map((label) => (
+          {[{label: "Discover", link: "./swipe"}, {label: "Movies", link: "/"}, {label: "Series", link: "/"}].map(({label, link}) => (
             <Link
               key={label}
-              href="/"
+              href={link}
               className="px-4 py-2 rounded-lg text-sm font-medium transition-all duration-150"
               style={{ color: "var(--text-muted)" }}
               onMouseEnter={(e) => {
