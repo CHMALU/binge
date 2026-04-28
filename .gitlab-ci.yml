@@ -1,0 +1,48 @@
+image: node.20
+
+stages:
+    - build
+    - static_analysis
+    - test
+    - deploy
+
+workflow:
+    rules:
+        - if: '$CI_COMMIT_BRANCH == "main"'
+
+cache:
+    paths:
+        - modules/
+
+before_script:
+    - npm ci
+    - echo "[INFO] Starting pipeline..."
+
+build:
+    stage:
+        build
+    script:
+        - echo "[INFO] Start building project..."
+        - npm run build || echo "[ERROR] Project build failed!"
+
+static_analysis:
+    stage:
+        static_analysis
+    script:
+        - npm run lint
+    allow_failure: true
+
+test:
+    stage:
+        test
+    script:
+        - npm test -- --coverage
+    coverage: '/All files.*\s+(\d+.\d+)%/'
+
+deploy:
+    stage:
+        deploy
+    script:
+        - echo "[MOCK] This is a mock deployment!"
+
+
