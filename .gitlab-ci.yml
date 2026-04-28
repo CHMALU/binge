@@ -13,7 +13,7 @@ workflow:
 
 cache:
     paths:
-        - modules/
+        - node_modules/
 
 before_script:
     - npm ci
