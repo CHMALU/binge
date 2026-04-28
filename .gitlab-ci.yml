@@ -24,7 +24,7 @@ build:
         build
     script:
         - echo "[INFO] Start building project..."
-        - npm run build || echo "[ERROR] Project build failed!"
+        - npm run build
 
 static_analysis:
     stage:
