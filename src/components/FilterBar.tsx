@@ -7,6 +7,40 @@ import MovieCard from "@/components/MovieCard";
 
 const YEARS = Array.from({ length: 30 }, (_, i) => String(new Date().getFullYear() - i));
 
+function chipStyle(active: boolean): React.CSSProperties {
+  return {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: 8,
+    padding: "10px 16px",
+    borderRadius: 999,
+    background: active ? "var(--gold)" : "var(--bg-card)",
+    border: `1px solid ${active ? "var(--gold)" : "var(--border)"}`,
+    color: active ? "#000" : "var(--text-muted)",
+    fontWeight: active ? 600 : 500,
+    fontSize: 13,
+    cursor: "pointer",
+    transition: "all 0.15s",
+    whiteSpace: "nowrap",
+  };
+}
+
+function selectStyle(): React.CSSProperties {
+  return {
+    padding: "10px 14px",
+    borderRadius: 999,
+    background: "var(--bg-card)",
+    border: "1px solid var(--border)",
+    color: "var(--text-muted)",
+    fontSize: 13,
+    fontWeight: 500,
+    cursor: "pointer",
+    outline: "none",
+    appearance: "none" as const,
+    WebkitAppearance: "none" as const,
+  };
+}
+
 export default function FilterBar() {
   const [mediaType, setMediaType] = useState<"movie" | "tv" | null>(null);
   const [genres, setGenres] = useState<Genre[]>([]);
@@ -16,14 +50,12 @@ export default function FilterBar() {
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // Genres laden wenn mediaType sich ändert
   useEffect(() => {
     if (!mediaType) return;
     getGenres(mediaType).then(setGenres);
     setSelectedGenre(null);
   }, [mediaType]);
 
-  // Suche ausführen wenn Filter sich ändern
   useEffect(() => {
     if (!mediaType) {
       setResults([]);
@@ -47,77 +79,79 @@ export default function FilterBar() {
     });
   }, [mediaType, selectedGenre, selectedYear]);
 
-  const btnClass = (active: boolean) =>
-    `px-3 py-1.5 rounded-lg text-sm transition-colors ${
-      active
-        ? "bg-white text-zinc-900 font-semibold"
-        : "bg-zinc-800 text-zinc-300 hover:bg-zinc-700"
-    }`;
+  const hasFilter = mediaType !== null || selectedGenre !== null || selectedYear !== null;
 
   return (
-    <div className="relative flex flex-col items-end gap-2">
-      {/* Filter Buttons */}
-      <div className="flex items-center gap-2 flex-wrap justify-end">
-        {/* Movie / Series Toggle */}
-        <button className={btnClass(mediaType === "movie")} onClick={() => setMediaType(mediaType === "movie" ? null : "movie")}>
-          🎬 Movies
-        </button>
-        <button className={btnClass(mediaType === "tv")} onClick={() => setMediaType(mediaType === "tv" ? null : "tv")}>
-          📺 Series
-        </button>
-
-        {/* Genre Dropdown */}
-        {genres.length > 0 && mediaType && (
-          <select
-            className="bg-zinc-800 text-zinc-300 text-sm rounded-lg px-3 py-1.5 outline-none"
-            value={selectedGenre ?? ""}
-            onChange={(e) => setSelectedGenre(e.target.value || null)}
-          >
-            <option value="" data-testid="genre">All Genres</option>
-            {genres.map((g) => (
-              <option key={g.id} value={String(g.id)}>{g.name}</option>
-            ))}
-          </select>
-        )}
-
-        {/* Year Dropdown */}
-        {mediaType && (
-          <select
-            className="bg-zinc-800 text-zinc-300 text-sm rounded-lg px-3 py-1.5 outline-none"
-            value={selectedYear ?? ""}
-            onChange={(e) => setSelectedYear(e.target.value || null)}
-          >
-            <option value="Year">All Years</option>
-            {YEARS.map((y) => (
-              <option key={y} value={y}>{y}</option>
-            ))}
-          </select>
-        )}
-
-        {/* Reset */}
-        {(mediaType || selectedGenre || selectedYear) && (
-          <button
-            className="px-3 py-1.5 rounded-lg text-sm bg-zinc-700 text-zinc-400 hover:bg-zinc-600" data-testid="reset"
-            onClick={() => { setMediaType(null); setSelectedGenre(null); setSelectedYear(null); setIsOpen(false); }}
-          >
-            ✕ Reset
+    <div className="relative border-b" style={{ borderColor: "var(--border)" }}>
+      <div className="max-w-[1440px] mx-auto px-6 xl:px-12 py-4">
+        <div className="flex gap-2.5 flex-wrap items-center">
+          <button style={chipStyle(!mediaType)} onClick={() => { setMediaType(null); setSelectedGenre(null); setSelectedYear(null); setIsOpen(false); }}>
+            All
           </button>
-        )}
+          <button style={chipStyle(mediaType === "movie")} onClick={() => setMediaType(mediaType === "movie" ? null : "movie")}>
+            🎬 Movies
+          </button>
+          <button style={chipStyle(mediaType === "tv")} onClick={() => setMediaType(mediaType === "tv" ? null : "tv")}>
+            📺 Series
+          </button>
+
+          {genres.length > 0 && mediaType && (
+            <>
+              <span className="w-px h-5 self-center" style={{ background: "var(--border)" }} />
+              <select
+                data-testid="genre"
+                style={selectStyle()}
+                value={selectedGenre ?? ""}
+                onChange={(e) => setSelectedGenre(e.target.value || null)}
+              >
+                <option value="">All Genres</option>
+                {genres.map((g) => (
+                  <option key={g.id} value={String(g.id)}>{g.name}</option>
+                ))}
+              </select>
+            </>
+          )}
+
+          {mediaType && (
+            <select
+              style={selectStyle()}
+              value={selectedYear ?? ""}
+              onChange={(e) => setSelectedYear(e.target.value || null)}
+            >
+              <option value="">All Years</option>
+              {YEARS.map((y) => (
+                <option key={y} value={y}>{y}</option>
+              ))}
+            </select>
+          )}
+
+          {hasFilter && (
+            <button
+              data-testid="reset"
+              style={chipStyle(false)}
+              onClick={() => { setMediaType(null); setSelectedGenre(null); setSelectedYear(null); setIsOpen(false); }}
+            >
+              ✕ Reset
+            </button>
+          )}
+        </div>
       </div>
 
-      {/* Ergebnisse */}
       {isOpen && (
-        <div className="absolute top-12 right-0 w-[600px] bg-zinc-900 border border-zinc-700 rounded-xl shadow-xl z-50 p-4">
+        <div
+          className="absolute left-6 right-6 xl:left-12 xl:right-12 z-40 rounded-xl shadow-xl p-4"
+          style={{ top: "calc(100% + 8px)", background: "var(--bg-elev)", border: "1px solid var(--border)" }}
+        >
           {loading ? (
-            <p className="text-zinc-400 text-sm text-center py-4">Loading...</p>
+            <p className="text-sm text-center py-4" style={{ color: "var(--text-muted)" }}>Loading...</p>
           ) : results.length > 0 ? (
-            <div className="grid grid-cols-5 gap-3">
+            <div className="binge-rail">
               {results.map((movie) => (
                 <MovieCard key={movie.id} movie={movie} />
               ))}
             </div>
           ) : (
-            <p className="text-zinc-400 text-sm text-center py-4">No results found.</p>
+            <p className="text-sm text-center py-4" style={{ color: "var(--text-muted)" }}>No results found.</p>
           )}
         </div>
       )}
