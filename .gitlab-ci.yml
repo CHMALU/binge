@@ -24,7 +24,9 @@ build:
         build
     script:
         - echo "[INFO] Start building project..."
-        - echo "[TEST] API key is set... ${NEXT_PUBLIC_TMDB_API_KEY:+yes}"
+        - if [-z "$NEXT_PUBLIC_TMDB_API_KEY"];
+            then echo "[TEST] API key is set...";
+            else echo "[TEST] API key is not set..."
         - npm run build
 
 static_analysis:
