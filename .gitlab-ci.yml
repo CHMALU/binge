@@ -41,8 +41,9 @@ test:
     coverage: '/All files.*\s+(\d+.\d+)%/'
 
 deploy:
-    stage: deploy
+    stage:
+        deploy
     script:
-        - echo '[MOCK] This is a mock deployment!'
+        - echo "[MOCK] This is a mock deployment!"
 
 
