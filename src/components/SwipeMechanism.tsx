@@ -1,11 +1,8 @@
-import { motion, PanInfo, useMotionValue, useTransform } from "framer-motion";
-import { act, useState } from "react";
+import { motion, PanInfo, useMotionValue, useTransform, useAnimation } from "framer-motion";
+import { use, useEffect, useState } from "react";
 import NextImage from "next/image";
-import Link from "next/link";
 import { getPosterUrl, type Movie } from "@/lib/tmdb"
-import MovieCard from "@/components/MovieCard"
-import { div } from "framer-motion/client";
-
+import { forwardRef, useImperativeHandle } from "react";
 
 type SwipeResult = {
   action: SwipeAction;
@@ -24,18 +21,20 @@ type Props = {
   swipeThreshold?: number;
   velocityThreshold?: number;
   onExit?: () => void;
+  TopCard?: boolean;
 };
 
 
-export default function SwipeCard({
+const SwipeCard = forwardRef(function SwipeCard({
   movie,
   onSwipe,
   onLeftSwipe,
   onRightSwipe,
   swipeThreshold = 120,
   velocityThreshold = 0.5,
-  onExit
-}: Props) {
+  onExit,
+  TopCard
+}: Props, ref) {
   const title = movie.title ?? movie.name ?? "No title";
   const posterUrl = getPosterUrl(movie.poster_path, "w500");
   const rating = movie.vote_average?.toFixed(1);
@@ -48,6 +47,9 @@ export default function SwipeCard({
 
   const [flipped, setFlipped] = useState(false);
   const [isExiting, setExiting] = useState(false);
+  const [hasSwiped, setHasSwiped] = useState(false);
+
+  const controls = useAnimation();
 
   const handleDragEnd = (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo): void => {
     if (isExiting) return;
@@ -67,11 +69,35 @@ export default function SwipeCard({
     }
   };
 
-  const handleSwipe = (action: SwipeAction, offset: number, velocity: number): void => {
+  useImperativeHandle(ref, () => ({
+    swipeLeft: () => handleSwipe("left", -1, 1),
+    swipeRight: () => handleSwipe("right", 1, 1)
+  }));
+
+  const handleSwipe = async (action: SwipeAction, offset: number, velocity: number) => {
+    if (isExiting) return;
     setExiting(true);
 
-    const exitX = action === "right" ? 1000 : -1000;
-    x.set(exitX);
+    //const exitX = action === "right" ? 1 : -1;
+    //x.set(exitX);
+    const exitX = offset;
+
+    if (offset == 1 || offset == -1) {
+      await controls.start({
+        x: exitX > 0 ? exitX + 1500 : exitX - 1500,
+        rotate: exitX * 20,
+        opacity: 0,
+        transition: { duration: 0.6 }
+      });
+    } else {
+      await controls.start({
+        
+        x: exitX > 0 ? exitX + 1000 : exitX - 1000,
+        rotate: exitX * 20,
+        opacity: 0,
+        transition: { duration: 0.4 }
+      });
+    }
 
     const SwipeResult: SwipeResult = {
       action,
@@ -90,8 +116,14 @@ export default function SwipeCard({
 
     setTimeout(() => {
       onExit?.();
-    }, 300);
+    }, 200);
   };
+
+  useEffect(() => {
+    if (TopCard && !hasSwiped) {
+      setHasSwiped(true);
+    }
+  }, [TopCard]);
 
   return ( 
     <motion.div 
@@ -100,13 +132,14 @@ export default function SwipeCard({
       dragConstraints={{left: 0, right: 0}}
       dragElastic={0.8}
       onDragEnd={handleDragEnd}
+      dragMomentum={false}
       onDoubleClick={() => setFlipped((prev) => !prev)}
       whileTap={{cursor: "grabbing"}}
       whileHover={!isExiting ? {scale: 1.05} : {}}
-      initial={{scale: 0.95, opacity: 0}}
-      animate={{scale: 1, opacity: 1}}
+      initial={{opacity: 1}}
+      animate={TopCard && hasSwiped ? {scale: 1, opacity: 1, x: [0, -100, 100, 0], rotate: [0, -5, 5, -3, 3, 0], animationDuration: 400} : controls}
       exit={{ scale: 0.8, opacity: 0}}
-      transition={{duration: 0.3}}
+      transition={TopCard && hasSwiped ? {duration: 2.5, ease: "easeInOut"} : {duration: 0.3}}
       className="w-[90vw] max-w-[420px] h-[55vh] cursor-grab">
         <motion.div
           animate={{ rotateY: flipped ? 180 : 0 }}
@@ -177,4 +210,6 @@ export default function SwipeCard({
         </motion.div>
       </motion.div>
   );
-};
+});
+
+export default SwipeCard;
