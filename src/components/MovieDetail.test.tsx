@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import MovieDetail from '@/components/MovieDetail';
+import Image from 'next/image';
 
 jest.mock('next/link', () => {
   // FIX: named const → React kann displayName ableiten
@@ -12,7 +13,7 @@ jest.mock('next/link', () => {
 
 jest.mock('next/image', () => {
   const MockImage = ({ src, alt }: { src: string; alt: string }) => (
-    <img src={src} alt={alt} />
+    <Image src={src} alt={alt} />
   );
   MockImage.displayName = 'MockImage';
   return MockImage;

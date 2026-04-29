@@ -1,5 +1,5 @@
 import { motion, PanInfo, useMotionValue, useTransform, useAnimation } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import NextImage from "next/image";
 import { getPosterUrl, type Movie } from "@/lib/tmdb"
 import { forwardRef, useImperativeHandle } from "react";
@@ -47,7 +47,6 @@ const SwipeCard = forwardRef(function SwipeCard({
 
   const [flipped, setFlipped] = useState(false);
   const [isExiting, setExiting] = useState(false);
-  const [hasSwiped, setHasSwiped] = useState(false);
 
   const controls = useAnimation();
 
