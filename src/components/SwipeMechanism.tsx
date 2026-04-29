@@ -119,12 +119,6 @@ const SwipeCard = forwardRef(function SwipeCard({
     swipeRight: () => handleSwipe("right", 1, 1)
   }));
 
-  useEffect(() => {
-    if (TopCard && !hasSwiped) {
-      setHasSwiped(true);
-    }
-  }, [TopCard, hasSwiped]);
-
   return ( 
     <motion.div 
       style={{x, rotate, opacity}}
@@ -137,9 +131,9 @@ const SwipeCard = forwardRef(function SwipeCard({
       whileTap={{cursor: "grabbing"}}
       whileHover={!isExiting ? {scale: 1.05} : {}}
       initial={{opacity: 1}}
-      animate={TopCard && hasSwiped ? {scale: 1, opacity: 1, x: [0, -100, 100, 0], rotate: [0, -5, 5, -3, 3, 0], animationDuration: 400} : controls}
+      animate={TopCard ? {scale: 1, opacity: 1, x: [0, -100, 100, 0], rotate: [0, -5, 5, -3, 3, 0], animationDuration: 400} : controls}
       exit={{ scale: 0.8, opacity: 0}}
-      transition={TopCard && hasSwiped ? {duration: 2.5, ease: "easeInOut"} : {duration: 0.3}}
+      transition={TopCard ? {duration: 2.5, ease: "easeInOut"} : {duration: 0.3}}
       className="w-[90vw] max-w-[420px] h-[55vh] cursor-grab">
         <motion.div
           animate={{ rotateY: flipped ? 180 : 0 }}

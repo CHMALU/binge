@@ -74,13 +74,16 @@ export default function FilterBar() {
       else params["first_air_date_year"] = selectedYear;
     }
 
-    setLoading(true);
-    const fetch = mediaType === "movie" ? discoverMovies(params) : discoverSeries(params);
-    fetch.then((data) => {
-      setResults(data.slice(0, 10));
+    const fetchData = async () => {
+      setLoading(true);
+      const fetch = mediaType === "movie" ? await discoverMovies(params) : await discoverSeries(params);
+      setResults(fetch.slice(0, 10));
       setIsOpen(true);
       setLoading(false);
-    });
+    };
+
+    fetchData();
+
   }, [mediaType, selectedGenre, selectedYear]);
 
   const hasFilter = mediaType !== null || selectedGenre !== null || selectedYear !== null;
