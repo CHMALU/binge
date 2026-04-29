@@ -1,6 +1,6 @@
 import MovieSwiper from "@/components/MovieSwiper";
 import { getPopularMovies, getPopularSeries } from "@/lib/tmdb";
-import { main } from "framer-motion/client";
+import Navbar from "@/components/Navbar";
 
 export default async function SwipeRouter() {
   const [movies, series] = await Promise.all([
@@ -11,6 +11,7 @@ export default async function SwipeRouter() {
 
   return (
     <main className="">
+      <Navbar />
       <MovieSwiper movies={all}/>
     </main>
   );
