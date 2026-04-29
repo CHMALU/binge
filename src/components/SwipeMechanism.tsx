@@ -1,5 +1,5 @@
 import { motion, PanInfo, useMotionValue, useTransform, useAnimation } from "framer-motion";
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import NextImage from "next/image";
 import { getPosterUrl, type Movie } from "@/lib/tmdb"
 import { forwardRef, useImperativeHandle } from "react";
@@ -51,29 +51,6 @@ const SwipeCard = forwardRef(function SwipeCard({
 
   const controls = useAnimation();
 
-  const handleDragEnd = (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo): void => {
-    if (isExiting) return;
-
-    const { offset, velocity } = info;
-    const swipeOffset = offset.x;
-
-    const isSwipedRight = (swipeOffset > swipeThreshold && velocity.x >= -velocityThreshold) || velocity.x > velocityThreshold;
-    const isSwipedLeft = (swipeOffset < -swipeThreshold && velocity.x <= velocityThreshold) || velocity.x < -velocityThreshold;
-
-    if (isSwipedRight) {
-      handleSwipe("right", offset.x, velocity.x);
-    } else if(isSwipedLeft) {
-      handleSwipe("left", offset.x, velocity.x);
-    } else {
-      x.set(0);
-    }
-  };
-
-  useImperativeHandle(ref, () => ({
-    swipeLeft: () => handleSwipe("left", -1, 1),
-    swipeRight: () => handleSwipe("right", 1, 1)
-  }));
-
   const handleSwipe = async (action: SwipeAction, offset: number, velocity: number) => {
     if (isExiting) return;
     setExiting(true);
@@ -119,11 +96,34 @@ const SwipeCard = forwardRef(function SwipeCard({
     }, 200);
   };
 
+  const handleDragEnd = (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo): void => {
+    if (isExiting) return;
+
+    const { offset, velocity } = info;
+    const swipeOffset = offset.x;
+
+    const isSwipedRight = (swipeOffset > swipeThreshold && velocity.x >= -velocityThreshold) || velocity.x > velocityThreshold;
+    const isSwipedLeft = (swipeOffset < -swipeThreshold && velocity.x <= velocityThreshold) || velocity.x < -velocityThreshold;
+
+    if (isSwipedRight) {
+      handleSwipe("right", offset.x, velocity.x);
+    } else if(isSwipedLeft) {
+      handleSwipe("left", offset.x, velocity.x);
+    } else {
+      x.set(0);
+    }
+  };
+
+  useImperativeHandle(ref, () => ({
+    swipeLeft: () => handleSwipe("left", -1, 1),
+    swipeRight: () => handleSwipe("right", 1, 1)
+  }));
+
   useEffect(() => {
     if (TopCard && !hasSwiped) {
       setHasSwiped(true);
     }
-  }, [TopCard]);
+  }, [TopCard, hasSwiped]);
 
   return ( 
     <motion.div 
