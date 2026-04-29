@@ -52,14 +52,18 @@ export default function FilterBar() {
 
   useEffect(() => {
     if (!mediaType) return;
-    getGenres(mediaType).then(setGenres);
-    setSelectedGenre(null);
+    getGenres(mediaType).then((fetchedGenres) => {
+      setGenres(fetchedGenres);
+      setSelectedGenre(null);
+    });
   }, [mediaType]);
 
   useEffect(() => {
     if (!mediaType) {
-      setResults([]);
-      setIsOpen(false);
+      Promise.resolve().then(() => {
+        setResults([]);
+        setIsOpen(false);
+      });
       return;
     }
 
