@@ -1,8 +1,6 @@
-import { render, screen, fireEvent, waitFor, within } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import FilterBar from '@/components/FilterBar';
 import { getGenres, discoverMovies, discoverSeries } from "@/lib/tmdb"
-import type { Genre, Movie } from "@/lib/tmdb";
-import { title } from "process";
 
 
 jest.mock('@/lib/tmdb', () => ({

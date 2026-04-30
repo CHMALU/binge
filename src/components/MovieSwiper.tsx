@@ -21,6 +21,11 @@ interface Props {
   movies: Movie[];
 }
 
+type SwipeCardRef = {
+  swipeLeft: () => void;
+  swipeRight: () => void;
+};
+
 export default function MovieSwiper( {movies}: Props ) {
 
   const movie_selection = movies.slice(0,5);
@@ -29,12 +34,13 @@ export default function MovieSwiper( {movies}: Props ) {
   const currentMovie = movie_selection[currentIndex];
 
   const handleSwipe = (result: SwipeResult) => {
-    console.log("Swiped");
+    console.log(result);
+    
     // Move to next card
     //setCurrentIndex((prev) => prev + 1);
   };
   const swipeInfo = currentIndex === 0;
-  const cardRef = useRef<any>(null);
+  const cardRef = useRef<SwipeCardRef>(null);
 
 
   useEffect(() => {

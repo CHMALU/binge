@@ -9,7 +9,6 @@ stages:
 workflow:
     rules:
         - if: '$CI_COMMIT_BRANCH == "main"'
-        - when: always
 
 cache:
     paths:
@@ -25,8 +24,8 @@ build:
     script:
         - echo "[INFO] Start building project..."
         - if [ -z "$NEXT_PUBLIC_TMDB_API_KEY" ];
-            then echo "[TEST] API key is set...";
-            else echo "[TEST] API key is not set...";
+            then echo "[TEST] API key is not set...";
+            else echo "[TEST] API key is set...";
             fi
         - npm run build
 
