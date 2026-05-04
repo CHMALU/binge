@@ -4,6 +4,9 @@ import { useState, useEffect } from "react";
 import { getGenres, discoverMovies, discoverSeries } from "@/lib/tmdb";
 import type { Genre, Movie } from "@/lib/tmdb";
 import MovieCard from "@/components/MovieCard";
+import type { Dictionary } from "@/app/[lang]/dictionaries";
+
+type FilterDict = Dictionary["filter"];
 
 const YEARS = Array.from({ length: 30 }, (_, i) => String(new Date().getFullYear() - i));
 
@@ -41,7 +44,7 @@ function selectStyle(): React.CSSProperties {
   };
 }
 
-export default function FilterBar() {
+export default function FilterBar({ lang, dict }: { lang: string; dict: FilterDict }) {
   const [mediaType, setMediaType] = useState<"movie" | "tv" | null>(null);
   const [genres, setGenres] = useState<Genre[]>([]);
   const [selectedGenre, setSelectedGenre] = useState<string | null>(null);
@@ -52,7 +55,7 @@ export default function FilterBar() {
 
   useEffect(() => {
     if (!mediaType) return;
-    getGenres(mediaType).then((fetchedGenres) => {
+    getGenres(mediaType, lang).then((fetchedGenres) => {
       setGenres(fetchedGenres);
       setSelectedGenre(null);
     });
@@ -76,7 +79,7 @@ export default function FilterBar() {
 
     const fetchData = async () => {
       setLoading(true);
-      const fetch = mediaType === "movie" ? await discoverMovies(params) : await discoverSeries(params);
+      const fetch = mediaType === "movie" ? await discoverMovies(params, lang) : await discoverSeries(params, lang);
       setResults(fetch.slice(0, 10));
       setIsOpen(true);
       setLoading(false);
@@ -88,18 +91,25 @@ export default function FilterBar() {
 
   const hasFilter = mediaType !== null || selectedGenre !== null || selectedYear !== null;
 
+  function reset() {
+    setMediaType(null);
+    setSelectedGenre(null);
+    setSelectedYear(null);
+    setIsOpen(false);
+  }
+
   return (
     <div className="relative border-b" style={{ borderColor: "var(--border)" }}>
       <div className="max-w-[1440px] mx-auto px-6 xl:px-12 py-4">
         <div className="flex gap-2.5 flex-wrap items-center">
-          <button style={chipStyle(!mediaType)} onClick={() => { setMediaType(null); setSelectedGenre(null); setSelectedYear(null); setIsOpen(false); }}>
-            All
+          <button style={chipStyle(!mediaType)} onClick={reset}>
+            {dict.all}
           </button>
           <button style={chipStyle(mediaType === "movie")} onClick={() => setMediaType(mediaType === "movie" ? null : "movie")}>
-            🎬 Movies
+            🎬 {dict.movies}
           </button>
           <button style={chipStyle(mediaType === "tv")} onClick={() => setMediaType(mediaType === "tv" ? null : "tv")}>
-            📺 Series
+            📺 {dict.series}
           </button>
 
           {genres.length > 0 && mediaType && (
@@ -111,7 +121,7 @@ export default function FilterBar() {
                 value={selectedGenre ?? ""}
                 onChange={(e) => setSelectedGenre(e.target.value || null)}
               >
-                <option value="">All Genres</option>
+                <option value="">{dict.allGenres}</option>
                 {genres.map((g) => (
                   <option key={g.id} value={String(g.id)}>{g.name}</option>
                 ))}
@@ -125,7 +135,7 @@ export default function FilterBar() {
               value={selectedYear ?? ""}
               onChange={(e) => setSelectedYear(e.target.value || null)}
             >
-              <option value="">All Years</option>
+              <option value="">{dict.allYears}</option>
               {YEARS.map((y) => (
                 <option key={y} value={y}>{y}</option>
               ))}
@@ -136,9 +146,9 @@ export default function FilterBar() {
             <button
               data-testid="reset"
               style={chipStyle(false)}
-              onClick={() => { setMediaType(null); setSelectedGenre(null); setSelectedYear(null); setIsOpen(false); }}
+              onClick={reset}
             >
-              ✕ Reset
+              ✕ {dict.reset}
             </button>
           )}
         </div>
@@ -150,15 +160,15 @@ export default function FilterBar() {
           style={{ top: "calc(100% + 8px)", background: "var(--bg-elev)", border: "1px solid var(--border)" }}
         >
           {loading ? (
-            <p className="text-sm text-center py-4" style={{ color: "var(--text-muted)" }}>Loading...</p>
+            <p className="text-sm text-center py-4" style={{ color: "var(--text-muted)" }}>{dict.loading}</p>
           ) : results.length > 0 ? (
             <div className="binge-rail">
               {results.map((movie) => (
-                <MovieCard key={movie.id} movie={movie} />
+                <MovieCard key={movie.id} movie={movie} lang={lang} />
               ))}
             </div>
           ) : (
-            <p className="text-sm text-center py-4" style={{ color: "var(--text-muted)" }}>No results found.</p>
+            <p className="text-sm text-center py-4" style={{ color: "var(--text-muted)" }}>{dict.noResults}</p>
           )}
         </div>
       )}

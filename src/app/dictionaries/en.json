@@ -1,0 +1,52 @@
+{
+  "nav": {
+    "discover": "Discover",
+    "movies": "Movies",
+    "series": "Series",
+    "signIn": "Sign in"
+  },
+  "hero": {
+    "featured": "Featured",
+    "topRated": "Top rated",
+    "watchTrailer": "Watch Trailer",
+    "moreInfo": "More info"
+  },
+  "sections": {
+    "popularMovies": "Popular Movies",
+    "popularMoviesEyebrow": "Trending now",
+    "nowInCinemas": "Now in Cinemas",
+    "nowInCinemasEyebrow": "In theaters",
+    "popularSeries": "Popular Series",
+    "popularSeriesEyebrow": "On everyone's list",
+    "currentlyOnTV": "Currently on TV",
+    "currentlyOnTVEyebrow": "Airing now",
+    "seeAll": "See all"
+  },
+  "filter": {
+    "all": "All",
+    "movies": "Movies",
+    "series": "Series",
+    "allGenres": "All Genres",
+    "allYears": "All Years",
+    "reset": "Reset",
+    "loading": "Loading...",
+    "noResults": "No results found."
+  },
+  "detail": {
+    "overview": "Overview",
+    "network": "Network",
+    "createdBy": "Created by",
+    "lastAired": "Last aired",
+    "budget": "Budget",
+    "revenue": "Revenue",
+    "languages": "Languages",
+    "status": "Status",
+    "language": "Language",
+    "votes": "votes",
+    "viewOnIMDb": "View on IMDb",
+    "officialSite": "Official site",
+    "season": "season",
+    "seasons": "seasons",
+    "episode": "ep."
+  }
+}

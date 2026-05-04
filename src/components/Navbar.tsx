@@ -1,8 +1,12 @@
 "use client";
 import Link from "next/link";
 import SearchBar from "./SearchBar";
+import LanguageSwitcher from "./LanguageSwitcher";
+import type { Dictionary } from "@/app/[lang]/dictionaries";
 
-export default function Navbar() {
+type NavDict = Dictionary["nav"];
+
+export default function Navbar({ lang, dict }: { lang: string; dict: NavDict }) {
   return (
     <nav
       className="sticky top-0 z-50 border-b"
@@ -14,7 +18,7 @@ export default function Navbar() {
       }}
     >
       <div className="max-w-[1440px] mx-auto px-6 xl:px-12 flex items-center gap-6 h-16">
-        <Link href="/" className="flex items-center gap-2.5 shrink-0">
+        <Link href={`/${lang}`} className="flex items-center gap-2.5 shrink-0">
           <span
             className="w-9 h-9 rounded-[10px] grid place-items-center text-black font-black text-lg leading-none select-none"
             style={{
@@ -34,10 +38,14 @@ export default function Navbar() {
         </Link>
 
         <div className="hidden lg:flex items-center gap-1">
-          {[{label: "Discover", link: "./swipe"}, {label: "Movies", link: "/"}, {label: "Series", link: "/"}].map(({label, link}) => (
+          {[
+            { label: dict.discover, href: `/${lang}/swipe` },
+            { label: dict.movies, href: `/${lang}` },
+            { label: dict.series, href: `/${lang}` },
+          ].map(({ label, href }) => (
             <Link
               key={label}
-              href={link}
+              href={href}
               className="px-4 py-2 rounded-lg text-sm font-medium transition-all duration-150"
               style={{ color: "var(--text-muted)" }}
               onMouseEnter={(e) => {
@@ -59,11 +67,12 @@ export default function Navbar() {
         </div>
 
         <div className="ml-auto flex items-center gap-3 shrink-0">
+          <LanguageSwitcher lang={lang} />
           <button
             className="px-4 py-2 rounded-lg text-sm font-semibold border transition-colors hover:bg-[var(--bg-card)]"
             style={{ borderColor: "var(--border-strong)", color: "var(--text)" }}
           >
-            Sign in
+            {dict.signIn}
           </button>
           <div
             className="w-9 h-9 rounded-full grid place-items-center text-black text-xs font-bold cursor-pointer select-none"

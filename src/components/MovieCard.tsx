@@ -2,11 +2,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { getPosterUrl, type Movie } from "@/lib/tmdb";
 
-export default function MovieCard({ movie }: { movie: Movie }) {
+export default function MovieCard({ movie, lang = "en" }: { movie: Movie; lang?: string }) {
   const title = movie.title ?? movie.name ?? "No title";
   const posterUrl = getPosterUrl(movie.poster_path, "w300");
   const rating = movie.vote_average?.toFixed(1) ?? "N/A";
-  const href = movie.media_type === "tv" ? `/tv/${movie.id}` : `/movie/${movie.id}`;
+  const href = movie.media_type === "tv"
+    ? `/${lang}/tv/${movie.id}`
+    : `/${lang}/movie/${movie.id}`;
   const year = movie.release_date
     ? new Date(movie.release_date).getFullYear()
     : movie.first_air_date

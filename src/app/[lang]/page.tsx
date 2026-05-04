@@ -1,0 +1,219 @@
+import { notFound } from "next/navigation";
+import Navbar from "@/components/Navbar";
+import MovieCard from "@/components/MovieCard";
+import FilterBar from "@/components/FilterBar";
+import { getPopularMovies, getPopularSeries, getNowPlaying, getOnAir } from "@/lib/tmdb";
+import type { Movie } from "@/lib/tmdb";
+import Image from "next/image";
+import { getDictionary, hasLocale } from "./dictionaries";
+import type { Dictionary } from "./dictionaries";
+
+export default async function Home({
+  params,
+}: {
+  params: Promise<{ lang: string }>;
+}) {
+  const { lang } = await params;
+  if (!hasLocale(lang)) notFound();
+
+  const [dict, popularMovies, popularSeries, nowPlaying, onAir] = await Promise.all([
+    getDictionary(lang),
+    getPopularMovies(lang),
+    getPopularSeries(lang),
+    getNowPlaying(lang),
+    getOnAir(lang),
+  ]);
+
+  const hero = popularMovies[0];
+  const backdropUrl = hero?.backdrop_path
+    ? `https://image.tmdb.org/t/p/w1280${hero.backdrop_path}`
+    : null;
+
+  return (
+    <div style={{ background: "var(--bg)", color: "var(--text)" }}>
+      <Navbar lang={lang} dict={dict.nav} />
+
+      {hero && (
+        <section
+          className="relative overflow-hidden border-b"
+          style={{ height: 580, borderColor: "var(--border)" }}
+        >
+          {backdropUrl && (
+            <Image
+              src={backdropUrl}
+              alt=""
+              fill
+              sizes="100vw"
+              className="object-cover object-center"
+              style={{ filter: "saturate(1.1)" }}
+              priority
+            />
+          )}
+          <div
+            className="absolute inset-0"
+            style={{
+              background:
+                "linear-gradient(180deg, transparent 0%, rgba(10,10,15,0.45) 50%, #0a0a0f 100%), linear-gradient(90deg, rgba(10,10,15,0.95) 0%, rgba(10,10,15,0.6) 40%, transparent 70%)",
+            }}
+          />
+          <div className="relative z-10 max-w-[1440px] mx-auto px-6 xl:px-12 h-full flex flex-col justify-end pb-16">
+            <div className="flex gap-2 mb-4">
+              <span
+                className="px-3 py-1 rounded-full text-[11px] font-bold tracking-widest uppercase"
+                style={{ background: "var(--crimson)", color: "white" }}
+              >
+                ● {dict.hero.featured}
+              </span>
+              <span
+                className="px-3 py-1 rounded-full text-[11px] font-bold tracking-widest uppercase"
+                style={{
+                  background: "rgba(255,205,0,0.15)",
+                  color: "var(--gold)",
+                  border: "1px solid rgba(255,205,0,0.3)",
+                }}
+              >
+                {dict.hero.topRated}
+              </span>
+            </div>
+            <h1
+              className="text-5xl lg:text-7xl font-extrabold tracking-tight leading-none mb-3 max-w-2xl"
+              style={{ fontFamily: "var(--font-poppins, inherit)" }}
+            >
+              {hero.title ?? hero.name}
+            </h1>
+            <div
+              className="flex items-center gap-4 text-sm mb-3"
+              style={{ color: "var(--text-muted)" }}
+            >
+              <span
+                className="flex items-center gap-1.5 font-semibold"
+                style={{ color: "var(--gold)" }}
+              >
+                ★ {hero.vote_average?.toFixed(1)}
+              </span>
+              {hero.release_date && (
+                <span>{new Date(hero.release_date).getFullYear()}</span>
+              )}
+            </div>
+            {hero.overview && (
+              <p
+                className="text-base max-w-lg mb-7 leading-relaxed"
+                style={{ color: "var(--text-muted)" }}
+              >
+                {hero.overview.length > 200
+                  ? hero.overview.slice(0, 200) + "…"
+                  : hero.overview}
+              </p>
+            )}
+            <div className="flex gap-3">
+              <button
+                className="px-6 py-3.5 rounded-xl font-bold text-sm flex items-center gap-2 transition-all hover:-translate-y-0.5"
+                style={{ background: "var(--text)", color: "#000" }}
+              >
+                ▶ {dict.hero.watchTrailer}
+              </button>
+              <a
+                href={`/${lang}/movie/${hero.id}`}
+                className="px-6 py-3.5 rounded-xl font-semibold text-sm flex items-center gap-2 transition-all border"
+                style={{
+                  background: "rgba(255,255,255,0.1)",
+                  backdropFilter: "blur(10px)",
+                  borderColor: "rgba(255,255,255,0.15)",
+                  color: "var(--text)",
+                }}
+              >
+                ℹ {dict.hero.moreInfo}
+              </a>
+            </div>
+          </div>
+        </section>
+      )}
+
+      <FilterBar lang={lang} dict={dict.filter} />
+
+      <div className="px-6 xl:px-12 max-w-[1440px] mx-auto py-10 flex flex-col gap-14">
+        <Section
+          title={dict.sections.popularMovies}
+          eyebrow={dict.sections.popularMoviesEyebrow}
+          movies={popularMovies.slice(0, 14)}
+          seeAll={dict.sections.seeAll}
+          lang={lang}
+        />
+        <Section
+          title={dict.sections.nowInCinemas}
+          eyebrow={dict.sections.nowInCinemasEyebrow}
+          movies={nowPlaying.slice(0, 14)}
+          seeAll={dict.sections.seeAll}
+          lang={lang}
+        />
+        <Section
+          title={dict.sections.popularSeries}
+          eyebrow={dict.sections.popularSeriesEyebrow}
+          movies={popularSeries.slice(0, 14)}
+          seeAll={dict.sections.seeAll}
+          lang={lang}
+        />
+        <Section
+          title={dict.sections.currentlyOnTV}
+          eyebrow={dict.sections.currentlyOnTVEyebrow}
+          movies={onAir.slice(0, 14)}
+          seeAll={dict.sections.seeAll}
+          lang={lang}
+        />
+      </div>
+    </div>
+  );
+}
+
+function Section({
+  title,
+  eyebrow,
+  movies,
+  seeAll,
+  lang,
+}: {
+  title: string;
+  eyebrow?: string;
+  movies: Movie[];
+  seeAll: string;
+  lang: string;
+}) {
+  return (
+    <section>
+      <div className="flex items-end justify-between mb-5">
+        <div>
+          {eyebrow && (
+            <div
+              className="flex items-center gap-2 text-xs font-semibold tracking-widest uppercase mb-2"
+              style={{ color: "var(--gold)" }}
+            >
+              <span
+                className="inline-block w-6 h-0.5"
+                style={{ background: "var(--gold)" }}
+              />
+              {eyebrow}
+            </div>
+          )}
+          <h2
+            className="text-2xl font-bold tracking-tight"
+            style={{ fontFamily: "var(--font-poppins, inherit)" }}
+          >
+            {title}
+          </h2>
+        </div>
+        <a
+          href="#"
+          className="flex items-center gap-1.5 text-sm font-medium px-3 py-2 rounded-lg border transition-colors"
+          style={{ color: "var(--text-muted)", borderColor: "var(--border)" }}
+        >
+          {seeAll} →
+        </a>
+      </div>
+      <div className="binge-rail">
+        {movies.map((movie) => (
+          <MovieCard key={movie.id} movie={movie} lang={lang} />
+        ))}
+      </div>
+    </section>
+  );
+}

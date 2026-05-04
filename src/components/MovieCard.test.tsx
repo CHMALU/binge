@@ -44,12 +44,12 @@ describe('MovieCard', () => {
   });
 
   it('links to the movie detail page', () => {
-    render(<MovieCard movie={mockMovie} />);
-    expect(screen.getByRole('link')).toHaveAttribute('href', '/movie/1');
+    render(<MovieCard movie={mockMovie} lang="en" />);
+    expect(screen.getByRole('link')).toHaveAttribute('href', '/en/movie/1');
   });
 
   it('links to the tv detail page when media_type is tv', () => {
-    render(<MovieCard movie={mockTv} />);
-    expect(screen.getByRole('link')).toHaveAttribute('href', '/tv/42');
+    render(<MovieCard movie={mockTv} lang="en" />);
+    expect(screen.getByRole('link')).toHaveAttribute('href', '/en/tv/42');
   });
 });

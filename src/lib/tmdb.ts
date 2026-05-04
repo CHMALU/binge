@@ -12,10 +12,19 @@ export function getPosterUrl(path: string | null, size: "w300" | "w500" | "origi
   return `${IMAGE_BASE_URL}/${size}${path}`;
 }
 
+const LOCALE_TO_TMDB: Record<string, string> = {
+  en: "en-US",
+  pl: "pl-PL",
+  ar: "ar",
+};
+
+function tmdbLang(locale: string): string {
+  return LOCALE_TO_TMDB[locale] ?? "en-US";
+}
+
 async function tmdbFetch<T>(endpoint: string, params: Record<string, string> = {}): Promise<T> {
   const url = new URL(`${BASE_URL}${endpoint}`);
   url.searchParams.set("api_key", apiKey());
-  url.searchParams.set("language", "en-US");
   for (const [key, value] of Object.entries(params)) {
     url.searchParams.set(key, value);
   }
@@ -82,40 +91,42 @@ interface TMDbListResponse {
   total_results: number;
 }
 
-export async function getPopularMovies(): Promise<Movie[]> {
-  const data = await tmdbFetch<TMDbListResponse>("/movie/popular");
+export async function getPopularMovies(locale = "en"): Promise<Movie[]> {
+  const data = await tmdbFetch<TMDbListResponse>("/movie/popular", { language: tmdbLang(locale) });
   return data.results;
 }
 
-export async function getPopularSeries(): Promise<Movie[]> {
-  const data = await tmdbFetch<TMDbListResponse>("/tv/popular");
+export async function getPopularSeries(locale = "en"): Promise<Movie[]> {
+  const data = await tmdbFetch<TMDbListResponse>("/tv/popular", { language: tmdbLang(locale) });
   return data.results.map((m) => ({ ...m, media_type: "tv" as const }));
 }
 
-export async function getNowPlaying(): Promise<Movie[]> {
-  const data = await tmdbFetch<TMDbListResponse>("/movie/now_playing");
+export async function getNowPlaying(locale = "en"): Promise<Movie[]> {
+  const data = await tmdbFetch<TMDbListResponse>("/movie/now_playing", { language: tmdbLang(locale) });
   return data.results;
 }
 
-export async function getOnAir(): Promise<Movie[]> {
-  const data = await tmdbFetch<TMDbListResponse>("/tv/on_the_air");
+export async function getOnAir(locale = "en"): Promise<Movie[]> {
+  const data = await tmdbFetch<TMDbListResponse>("/tv/on_the_air", { language: tmdbLang(locale) });
   return data.results.map((m) => ({ ...m, media_type: "tv" as const }));
 }
 
-export async function getMovieDetails(id: number): Promise<MovieDetailData> {
-  return tmdbFetch<MovieDetailData>(`/movie/${id}`);
+export async function getMovieDetails(id: number, locale = "en"): Promise<MovieDetailData> {
+  return tmdbFetch<MovieDetailData>(`/movie/${id}`, { language: tmdbLang(locale) });
 }
 
-export async function getTvDetails(id: number): Promise<MovieDetailData> {
-  return tmdbFetch<MovieDetailData>(`/tv/${id}`);
+export async function getTvDetails(id: number, locale = "en"): Promise<MovieDetailData> {
+  return tmdbFetch<MovieDetailData>(`/tv/${id}`, { language: tmdbLang(locale) });
 }
 
-export async function searchMovies(query: string): Promise<Movie[]> {
+export async function searchMovies(query: string, locale = "en"): Promise<Movie[]> {
   if (!query.trim()) return [];
 
-  const data = await tmdbFetch<TMDbListResponse>(
-    `/search/multi?query=${encodeURIComponent(query)}&include_adult=false`
-  );
+  const data = await tmdbFetch<TMDbListResponse>("/search/multi", {
+    query: encodeURIComponent(query),
+    include_adult: "false",
+    language: tmdbLang(locale),
+  });
 
   return (data.results ?? []).filter(
     (item) => item.media_type === "movie" || item.media_type === "tv"
@@ -126,17 +137,17 @@ export interface GenreListResponse {
   genres: Genre[];
 }
 
-export async function getGenres(type: "movie" | "tv" = "movie"): Promise<Genre[]> {
-  const data = await tmdbFetch<GenreListResponse>(`/genre/${type}/list`);
+export async function getGenres(type: "movie" | "tv" = "movie", locale = "en"): Promise<Genre[]> {
+  const data = await tmdbFetch<GenreListResponse>(`/genre/${type}/list`, { language: tmdbLang(locale) });
   return data.genres;
 }
 
-export async function discoverMovies(params: Record<string, string>): Promise<Movie[]> {
-  const data = await tmdbFetch<TMDbListResponse>("/discover/movie", params);
+export async function discoverMovies(params: Record<string, string>, locale = "en"): Promise<Movie[]> {
+  const data = await tmdbFetch<TMDbListResponse>("/discover/movie", { ...params, language: tmdbLang(locale) });
   return data.results;
 }
 
-export async function discoverSeries(params: Record<string, string>): Promise<Movie[]> {
-  const data = await tmdbFetch<TMDbListResponse>("/discover/tv", params);
+export async function discoverSeries(params: Record<string, string>, locale = "en"): Promise<Movie[]> {
+  const data = await tmdbFetch<TMDbListResponse>("/discover/tv", { ...params, language: tmdbLang(locale) });
   return data.results.map((m) => ({ ...m, media_type: "tv" as const }));
 }
