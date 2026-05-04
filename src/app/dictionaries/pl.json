@@ -1,0 +1,52 @@
+{
+  "nav": {
+    "discover": "Odkryj",
+    "movies": "Filmy",
+    "series": "Seriale",
+    "signIn": "Zaloguj się"
+  },
+  "hero": {
+    "featured": "Polecane",
+    "topRated": "Najlepiej oceniane",
+    "watchTrailer": "Obejrzyj zwiastun",
+    "moreInfo": "Więcej info"
+  },
+  "sections": {
+    "popularMovies": "Popularne filmy",
+    "popularMoviesEyebrow": "Trendy teraz",
+    "nowInCinemas": "Teraz w kinach",
+    "nowInCinemasEyebrow": "W kinach",
+    "popularSeries": "Popularne seriale",
+    "popularSeriesEyebrow": "Na liście wszystkich",
+    "currentlyOnTV": "Aktualnie w TV",
+    "currentlyOnTVEyebrow": "Teraz na ekranie",
+    "seeAll": "Zobacz wszystko"
+  },
+  "filter": {
+    "all": "Wszystkie",
+    "movies": "Filmy",
+    "series": "Seriale",
+    "allGenres": "Wszystkie gatunki",
+    "allYears": "Wszystkie lata",
+    "reset": "Resetuj",
+    "loading": "Ładowanie...",
+    "noResults": "Brak wyników."
+  },
+  "detail": {
+    "overview": "Opis",
+    "network": "Sieć",
+    "createdBy": "Stworzony przez",
+    "lastAired": "Ostatni odcinek",
+    "budget": "Budżet",
+    "revenue": "Przychody",
+    "languages": "Języki",
+    "status": "Status",
+    "language": "Język",
+    "votes": "głosów",
+    "viewOnIMDb": "Zobacz na IMDb",
+    "officialSite": "Oficjalna strona",
+    "season": "sezon",
+    "seasons": "sezony",
+    "episode": "odc."
+  }
+}

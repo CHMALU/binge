@@ -1,0 +1,52 @@
+{
+  "nav": {
+    "discover": "اكتشف",
+    "movies": "الأفلام",
+    "series": "المسلسلات",
+    "signIn": "تسجيل الدخول"
+  },
+  "hero": {
+    "featured": "مميز",
+    "topRated": "الأعلى تقييمًا",
+    "watchTrailer": "شاهد الإعلان",
+    "moreInfo": "مزيد من المعلومات"
+  },
+  "sections": {
+    "popularMovies": "الأفلام الشائعة",
+    "popularMoviesEyebrow": "الأكثر رواجاً",
+    "nowInCinemas": "في السينما الآن",
+    "nowInCinemasEyebrow": "في دور العرض",
+    "popularSeries": "المسلسلات الشائعة",
+    "popularSeriesEyebrow": "على قائمة الجميع",
+    "currentlyOnTV": "على التلفاز الآن",
+    "currentlyOnTVEyebrow": "يُعرض الآن",
+    "seeAll": "عرض الكل"
+  },
+  "filter": {
+    "all": "الكل",
+    "movies": "الأفلام",
+    "series": "المسلسلات",
+    "allGenres": "جميع الأنواع",
+    "allYears": "جميع السنوات",
+    "reset": "إعادة تعيين",
+    "loading": "جاري التحميل...",
+    "noResults": "لا توجد نتائج."
+  },
+  "detail": {
+    "overview": "نظرة عامة",
+    "network": "الشبكة",
+    "createdBy": "أنشأه",
+    "lastAired": "آخر بث",
+    "budget": "الميزانية",
+    "revenue": "الإيرادات",
+    "languages": "اللغات",
+    "status": "الحالة",
+    "language": "اللغة",
+    "votes": "تقييم",
+    "viewOnIMDb": "عرض على IMDb",
+    "officialSite": "الموقع الرسمي",
+    "season": "موسم",
+    "seasons": "مواسم",
+    "episode": "حلقة"
+  }
+}

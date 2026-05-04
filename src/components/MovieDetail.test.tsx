@@ -14,6 +14,24 @@ jest.mock('next/image', () => {
   );
 });
 
+const mockDict = {
+  overview: 'Overview',
+  network: 'Network',
+  createdBy: 'Created by',
+  lastAired: 'Last aired',
+  budget: 'Budget',
+  revenue: 'Revenue',
+  languages: 'Languages',
+  status: 'Status',
+  language: 'Language',
+  votes: 'votes',
+  viewOnIMDb: 'View on IMDb',
+  officialSite: 'Official site',
+  season: 'season',
+  seasons: 'seasons',
+  episode: 'ep.',
+};
+
 const mockMovie = {
   id: 1,
   title: 'Inception',
@@ -44,7 +62,7 @@ const mockTv = {
 describe('MovieDetail', () => {
   describe('movie', () => {
     beforeEach(() => {
-      render(<MovieDetail detail={mockMovie} />);
+      render(<MovieDetail detail={mockMovie} lang="en" dict={mockDict} />);
     });
 
     it('renders the title', () => {
@@ -81,7 +99,7 @@ describe('MovieDetail', () => {
 
   describe('tv series', () => {
     beforeEach(() => {
-      render(<MovieDetail detail={mockTv} />);
+      render(<MovieDetail detail={mockTv} lang="en" dict={mockDict} />);
     });
 
     it('renders the series name', () => {

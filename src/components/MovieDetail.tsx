@@ -2,8 +2,19 @@ import Image from "next/image";
 import Link from "next/link";
 import { IoArrowBack } from "react-icons/io5";
 import { getPosterUrl, type MovieDetailData } from "@/lib/tmdb";
+import type { Dictionary } from "@/app/[lang]/dictionaries";
 
-export default function MovieDetail({ detail }: { detail: MovieDetailData }) {
+type DetailDict = Dictionary["detail"];
+
+export default function MovieDetail({
+  detail,
+  lang,
+  dict,
+}: {
+  detail: MovieDetailData;
+  lang: string;
+  dict: DetailDict;
+}) {
   const title = detail.title ?? detail.name ?? "No title";
   const originalTitle = detail.original_title ?? detail.original_name;
   const posterUrl = getPosterUrl(detail.poster_path, "w500");
@@ -23,12 +34,15 @@ export default function MovieDetail({ detail }: { detail: MovieDetailData }) {
   const isTv = detail.media_type === "tv";
   const stars = Math.round(detail.vote_average / 2);
 
+  const seasonLabel = (n: number) =>
+    n === 1 ? `1 ${dict.season}` : `${n} ${dict.seasons}`;
+
   return (
     <div className="min-h-screen" style={{ background: "var(--bg)", color: "var(--text)" }}>
       {/* Back button */}
       <div className="fixed top-4 left-4 z-50">
         <Link
-          href="/"
+          href={`/${lang}`}
           className="flex items-center justify-center w-11 h-11 rounded-full border transition-colors"
           style={{ background: "rgba(10,10,15,0.8)", backdropFilter: "blur(10px)", borderColor: "var(--border)", color: "var(--text)" }}
         >
@@ -102,8 +116,8 @@ export default function MovieDetail({ detail }: { detail: MovieDetailData }) {
               {runtime && <span>{runtime} min</span>}
               {isTv && detail.number_of_seasons && (
                 <span>
-                  {detail.number_of_seasons} season{detail.number_of_seasons > 1 ? "s" : ""}
-                  {detail.number_of_episodes ? ` · ${detail.number_of_episodes} ep.` : ""}
+                  {seasonLabel(detail.number_of_seasons)}
+                  {detail.number_of_episodes ? ` · ${detail.number_of_episodes} ${dict.episode}` : ""}
                 </span>
               )}
               {detail.status && (
@@ -129,7 +143,7 @@ export default function MovieDetail({ detail }: { detail: MovieDetailData }) {
 
             {/* Overview */}
             <div>
-              <div className="text-xs font-semibold tracking-widest uppercase mb-3" style={{ color: "var(--gold)" }}>Overview</div>
+              <div className="text-xs font-semibold tracking-widest uppercase mb-3" style={{ color: "var(--gold)" }}>{dict.overview}</div>
               <p className="text-base leading-relaxed" style={{ color: "var(--text-muted)" }}>{detail.overview}</p>
             </div>
 
@@ -137,13 +151,13 @@ export default function MovieDetail({ detail }: { detail: MovieDetailData }) {
             {isTv && (
               <div className="flex flex-col gap-2 text-sm" style={{ color: "var(--text-muted)" }}>
                 {detail.networks && detail.networks.length > 0 && (
-                  <div className="flex gap-2"><span style={{ color: "var(--text-dim)" }}>Network:</span><span>{detail.networks.map((n) => n.name).join(", ")}</span></div>
+                  <div className="flex gap-2"><span style={{ color: "var(--text-dim)" }}>{dict.network}:</span><span>{detail.networks.map((n) => n.name).join(", ")}</span></div>
                 )}
                 {detail.created_by && detail.created_by.length > 0 && (
-                  <div className="flex gap-2"><span style={{ color: "var(--text-dim)" }}>Created by:</span><span>{detail.created_by.map((c) => c.name).join(", ")}</span></div>
+                  <div className="flex gap-2"><span style={{ color: "var(--text-dim)" }}>{dict.createdBy}:</span><span>{detail.created_by.map((c) => c.name).join(", ")}</span></div>
                 )}
                 {detail.last_air_date && (
-                  <div className="flex gap-2"><span style={{ color: "var(--text-dim)" }}>Last aired:</span><span>{detail.last_air_date}</span></div>
+                  <div className="flex gap-2"><span style={{ color: "var(--text-dim)" }}>{dict.lastAired}:</span><span>{detail.last_air_date}</span></div>
                 )}
               </div>
             )}
@@ -151,15 +165,15 @@ export default function MovieDetail({ detail }: { detail: MovieDetailData }) {
             {/* Movie extras */}
             {!isTv && (detail.budget ?? 0) > 0 && (
               <div className="flex flex-col gap-2 text-sm" style={{ color: "var(--text-muted)" }}>
-                {(detail.budget ?? 0) > 0 && <div className="flex gap-2"><span style={{ color: "var(--text-dim)" }}>Budget:</span><span>${detail.budget!.toLocaleString()}</span></div>}
-                {(detail.revenue ?? 0) > 0 && <div className="flex gap-2"><span style={{ color: "var(--text-dim)" }}>Revenue:</span><span>${detail.revenue!.toLocaleString()}</span></div>}
+                {(detail.budget ?? 0) > 0 && <div className="flex gap-2"><span style={{ color: "var(--text-dim)" }}>{dict.budget}:</span><span>${detail.budget!.toLocaleString()}</span></div>}
+                {(detail.revenue ?? 0) > 0 && <div className="flex gap-2"><span style={{ color: "var(--text-dim)" }}>{dict.revenue}:</span><span>${detail.revenue!.toLocaleString()}</span></div>}
               </div>
             )}
 
             {/* Languages */}
             {detail.spoken_languages && detail.spoken_languages.length > 0 && (
               <div className="flex gap-2 text-sm" style={{ color: "var(--text-muted)" }}>
-                <span style={{ color: "var(--text-dim)" }}>Languages:</span>
+                <span style={{ color: "var(--text-dim)" }}>{dict.languages}:</span>
                 <span>{detail.spoken_languages.map((l) => l.english_name).join(", ")}</span>
               </div>
             )}
@@ -181,16 +195,16 @@ export default function MovieDetail({ detail }: { detail: MovieDetailData }) {
               </div>
               {detail.vote_count && (
                 <div className="text-sm" style={{ color: "var(--text-dim)" }}>
-                  {detail.vote_count.toLocaleString()} votes
+                  {detail.vote_count.toLocaleString()} {dict.votes}
                 </div>
               )}
             </div>
 
             {/* Metadata rows */}
             {[
-              detail.status && { label: "Status", value: detail.status },
-              detail.spoken_languages && detail.spoken_languages.length > 0 && { label: "Language", value: detail.spoken_languages[0].english_name },
-              !isTv && detail.budget && detail.budget > 0 && { label: "Budget", value: `$${detail.budget.toLocaleString()}` },
+              detail.status && { label: dict.status, value: detail.status },
+              detail.spoken_languages && detail.spoken_languages.length > 0 && { label: dict.language, value: detail.spoken_languages[0].english_name },
+              !isTv && detail.budget && detail.budget > 0 && { label: dict.budget, value: `$${detail.budget.toLocaleString()}` },
             ]
               .filter(Boolean)
               .map((row) => (
@@ -210,7 +224,7 @@ export default function MovieDetail({ detail }: { detail: MovieDetailData }) {
                   className="w-full py-3 rounded-xl text-sm font-bold text-center transition-colors"
                   style={{ background: "var(--gold)", color: "#000" }}
                 >
-                  View on IMDb
+                  {dict.viewOnIMDb}
                 </a>
               )}
               {detail.homepage && (
@@ -221,7 +235,7 @@ export default function MovieDetail({ detail }: { detail: MovieDetailData }) {
                   className="w-full py-3 rounded-xl text-sm font-semibold text-center border transition-colors"
                   style={{ background: "var(--bg-card)", borderColor: "var(--border)", color: "var(--text)" }}
                 >
-                  Official site
+                  {dict.officialSite}
                 </a>
               )}
             </div>

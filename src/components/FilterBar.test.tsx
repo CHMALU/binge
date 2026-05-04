@@ -4,6 +4,17 @@ import { getGenres, discoverMovies, discoverSeries } from "@/lib/tmdb"
 import type { Genre, Movie } from "@/lib/tmdb";
 import { title } from "process";
 
+const mockDict = {
+  all: 'All',
+  movies: 'Movies',
+  series: 'Series',
+  allGenres: 'All Genres',
+  allYears: 'All Years',
+  reset: 'Reset',
+  loading: 'Loading...',
+  noResults: 'No results found.',
+};
+
 
 jest.mock('@/lib/tmdb', () => ({
   getGenres: jest.fn(),
@@ -21,7 +32,7 @@ describe('FilterBar', () => {
 
   test('select movie and displaying Years', async () => {
   
-    render(<FilterBar />);
+    render(<FilterBar lang="en" dict={mockDict} />);
 
     const btn = screen.getByText("🎬 Movies");
     
@@ -34,7 +45,7 @@ describe('FilterBar', () => {
 
   test('select series and displaying Years', async () => {
   
-    render(<FilterBar />);
+    render(<FilterBar lang="en" dict={mockDict} />);
 
     const btn = screen.getByText("📺 Series");
     
@@ -49,7 +60,7 @@ describe('FilterBar', () => {
     (getGenres as jest.Mock).mockResolvedValue([
       {id: 1, name: "All Genres"},
     ]);
-    render(<FilterBar />);
+    render(<FilterBar lang="en" dict={mockDict} />);
 
     const btn = screen.getByText("📺 Series");
     
@@ -63,7 +74,7 @@ describe('FilterBar', () => {
     (getGenres as jest.Mock).mockResolvedValue([
       {id: 1, name: "All Genres"},
     ]);
-    render(<FilterBar />);
+    render(<FilterBar lang="en" dict={mockDict} />);
 
     const btn = screen.getByText("🎬 Movies");
     
@@ -77,7 +88,7 @@ describe('FilterBar', () => {
       {id: 1, name: "Action"},
     ]);
 
-    render(<FilterBar />);
+    render(<FilterBar lang="en" dict={mockDict} />);
 
     fireEvent.click(screen.getByText("🎬 Movies"));
 
@@ -93,7 +104,7 @@ describe('FilterBar', () => {
       {id: 1, name: "Action"},
     ]);
 
-    render(<FilterBar />);
+    render(<FilterBar lang="en" dict={mockDict} />);
 
     const btn = screen.getByText("🎬 Movies");
     fireEvent.click(btn);
