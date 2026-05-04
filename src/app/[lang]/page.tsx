@@ -18,10 +18,10 @@ export default async function Home({
 
   const [dict, popularMovies, popularSeries, nowPlaying, onAir] = await Promise.all([
     getDictionary(lang),
-    getPopularMovies(),
-    getPopularSeries(),
-    getNowPlaying(),
-    getOnAir(),
+    getPopularMovies(lang),
+    getPopularSeries(lang),
+    getNowPlaying(lang),
+    getOnAir(lang),
   ]);
 
   const hero = popularMovies[0];

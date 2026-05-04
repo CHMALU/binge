@@ -16,7 +16,7 @@ export default async function MoviePage({
 
   const [dict, detail] = await Promise.all([
     getDictionary(lang),
-    getMovieDetails(numericId),
+    getMovieDetails(numericId, lang),
   ]);
 
   return <MovieDetail detail={{ ...detail, media_type: "movie" }} lang={lang} dict={dict.detail} />;

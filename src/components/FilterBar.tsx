@@ -55,7 +55,7 @@ export default function FilterBar({ lang, dict }: { lang: string; dict: FilterDi
 
   useEffect(() => {
     if (!mediaType) return;
-    getGenres(mediaType).then((fetchedGenres) => {
+    getGenres(mediaType, lang).then((fetchedGenres) => {
       setGenres(fetchedGenres);
       setSelectedGenre(null);
     });
@@ -79,7 +79,7 @@ export default function FilterBar({ lang, dict }: { lang: string; dict: FilterDi
 
     const fetchData = async () => {
       setLoading(true);
-      const fetch = mediaType === "movie" ? await discoverMovies(params) : await discoverSeries(params);
+      const fetch = mediaType === "movie" ? await discoverMovies(params, lang) : await discoverSeries(params, lang);
       setResults(fetch.slice(0, 10));
       setIsOpen(true);
       setLoading(false);
