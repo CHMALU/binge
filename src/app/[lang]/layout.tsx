@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { hasLocale } from "./dictionaries";
+import HtmlAttributes from "@/components/HtmlAttributes";
 
 export default async function LocaleLayout({
   children,
@@ -15,12 +16,7 @@ export default async function LocaleLayout({
 
   return (
     <>
-      {/* Set lang and dir on <html> synchronously before paint */}
-      <script
-        dangerouslySetInnerHTML={{
-          __html: `document.documentElement.lang="${lang}";document.documentElement.dir="${isRtl ? "rtl" : "ltr"}"`,
-        }}
-      />
+      <HtmlAttributes lang={lang} dir={isRtl ? "rtl" : "ltr"} />
       {children}
     </>
   );
