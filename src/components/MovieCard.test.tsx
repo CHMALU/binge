@@ -2,16 +2,20 @@ import { render, screen } from '@testing-library/react';
 import MovieCard from '@/components/MovieCard';
 
 jest.mock('next/link', () => {
-  return ({ children, href }: { children: React.ReactNode; href: string }) => (
+  // FIX: named const → React kann displayName ableiten
+  const MockLink = ({ children, href }: { children: React.ReactNode; href: string }) => (
     <a href={href}>{children}</a>
   );
+  MockLink.displayName = 'MockLink';
+  return MockLink;
 });
 
 jest.mock('next/image', () => {
-  return ({ src, alt }: { src: string; alt: string }) => (
-    // eslint-disable-next-line @next/next/no-img-element
+  const MockImage = ({ src, alt }: { src: string; alt: string }) => (
     <img src={src} alt={alt} />
   );
+  MockImage.displayName = 'MockImage';
+  return MockImage;
 });
 
 const mockMovie = {

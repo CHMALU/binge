@@ -1,7 +1,6 @@
 import { searchMovies } from "@/lib/tmdb";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react"
+import { render, screen, fireEvent } from "@testing-library/react"
 import SearchBar from "@/components/SearchBar";
-import { title } from "process";
 
 jest.mock("@/lib/tmdb", () => ({
   searchMovies: jest.fn(),

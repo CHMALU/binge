@@ -1,5 +1,4 @@
 "use client";
-
 import { useState, useEffect, useRef } from "react";
 import { searchMovies } from "@/lib/tmdb";
 import type { Movie } from "@/lib/tmdb";
@@ -16,8 +15,10 @@ export default function SearchBar() {
     if (debounceRef.current) clearTimeout(debounceRef.current);
 
     if (!query.trim()) {
-      setResults([]);
-      setIsOpen(false);
+      Promise.resolve().then(() => {
+        setResults([]);
+        setIsOpen(false);
+      });
       return;
     }
 

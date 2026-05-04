@@ -64,3 +64,42 @@ Use `git rebase -i` to reorder commits if needed before opening a PR.
 - Swipe decisions are stored and used to compute top matches
 - Watchlist and watched-list features require a logged-in account
 - Filters apply to both search and swipe session
+
+## Implemented: Internationalization (i18n)
+
+Branch: `refactor/cinema-design-system`
+
+### How it works
+
+- **URL-based locale routing:** all routes are prefixed with locale — `/en`, `/pl`, `/ar`
+- **`src/proxy.ts`** — Next.js 16 proxy (equivalent of middleware in older versions). Intercepts every request without a locale prefix and redirects to `/en` (or the locale from cookie). Export name must be `proxy`, not `middleware`.
+- **`src/app/[lang]/`** — all pages live here. The `[lang]` segment is a dynamic route parameter carrying the locale.
+- **Cookie `BINGE_LOCALE`** — set on language switch, persists for 1 year (`max-age=31536000`). The proxy reads it on the next visit to restore the user's language.
+- **Arabic RTL** — `src/app/[lang]/layout.tsx` injects an inline `<script>` that sets `document.documentElement.lang` and `document.documentElement.dir` synchronously before paint. No flicker.
+
+### Files changed / created
+
+| File | Role |
+|------|------|
+| `src/proxy.ts` | Locale redirect + cookie read |
+| `src/app/[lang]/layout.tsx` | Nested layout — sets RTL via inline script |
+| `src/app/[lang]/page.tsx` | Home page (replaces `app/page.tsx`) |
+| `src/app/[lang]/movie/[id]/page.tsx` | Movie detail page |
+| `src/app/[lang]/tv/[id]/page.tsx` | TV detail page |
+| `src/app/[lang]/dictionaries.ts` | `getDictionary(locale)` — server-only |
+| `src/app/dictionaries/en.json` | English strings |
+| `src/app/dictionaries/pl.json` | Polish strings |
+| `src/app/dictionaries/ar.json` | Arabic strings |
+| `src/components/LanguageSwitcher.tsx` | Dropdown in Navbar — sets cookie + navigates |
+| `src/components/Navbar.tsx` | Now accepts `lang` and `dict` props |
+| `src/components/MovieCard.tsx` | Now accepts `lang?: string` (default `"en"`) — builds locale-prefixed hrefs |
+| `src/components/MovieDetail.tsx` | Now accepts `lang` and `dict` — back button uses `/${lang}` |
+| `src/components/FilterBar.tsx` | Now accepts `lang` and `dict` — passes `lang` to `MovieCard` |
+| `src/app/page.tsx` | Fallback redirect to `/en` (proxy handles it normally) |
+
+### Adding a new language
+
+1. Add a new JSON file to `src/app/dictionaries/<code>.json` (copy `en.json` as template)
+2. Register it in `src/app/[lang]/dictionaries.ts` — add to the `dictionaries` object
+3. Add to `LOCALES` array in both `src/proxy.ts` and `src/components/LanguageSwitcher.tsx`
+4. If RTL, `src/app/[lang]/layout.tsx` already handles it — just add the locale code to the `isRtl` check

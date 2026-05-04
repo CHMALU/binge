@@ -39,7 +39,7 @@ export default function Navbar({ lang, dict }: { lang: string; dict: NavDict }) 
 
         <div className="hidden lg:flex items-center gap-1">
           {[
-            { label: dict.discover, href: `/${lang}` },
+            { label: dict.discover, href: `/${lang}/swipe` },
             { label: dict.movies, href: `/${lang}` },
             { label: dict.series, href: `/${lang}` },
           ].map(({ label, href }) => (

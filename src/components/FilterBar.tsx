@@ -55,14 +55,18 @@ export default function FilterBar({ lang, dict }: { lang: string; dict: FilterDi
 
   useEffect(() => {
     if (!mediaType) return;
-    getGenres(mediaType).then(setGenres);
-    setSelectedGenre(null);
+    getGenres(mediaType).then((fetchedGenres) => {
+      setGenres(fetchedGenres);
+      setSelectedGenre(null);
+    });
   }, [mediaType]);
 
   useEffect(() => {
     if (!mediaType) {
-      setResults([]);
-      setIsOpen(false);
+      Promise.resolve().then(() => {
+        setResults([]);
+        setIsOpen(false);
+      });
       return;
     }
 
@@ -73,13 +77,16 @@ export default function FilterBar({ lang, dict }: { lang: string; dict: FilterDi
       else params["first_air_date_year"] = selectedYear;
     }
 
-    setLoading(true);
-    const fetch = mediaType === "movie" ? discoverMovies(params) : discoverSeries(params);
-    fetch.then((data) => {
-      setResults(data.slice(0, 10));
+    const fetchData = async () => {
+      setLoading(true);
+      const fetch = mediaType === "movie" ? await discoverMovies(params) : await discoverSeries(params);
+      setResults(fetch.slice(0, 10));
       setIsOpen(true);
       setLoading(false);
-    });
+    };
+
+    fetchData();
+
   }, [mediaType, selectedGenre, selectedYear]);
 
   const hasFilter = mediaType !== null || selectedGenre !== null || selectedYear !== null;
@@ -168,3 +175,4 @@ export default function FilterBar({ lang, dict }: { lang: string; dict: FilterDi
     </div>
   );
 }
+
