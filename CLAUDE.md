@@ -65,6 +65,48 @@ Use `git rebase -i` to reorder commits if needed before opening a PR.
 - Watchlist and watched-list features require a logged-in account
 - Filters apply to both search and swipe session
 
+## Architecture
+
+### Server vs Client components
+
+Page routes (`app/[lang]/page.tsx`, `movie/[id]`, `tv/[id]`, `swipe`) are **Server Components** — they fetch data and pass it down as props. UI components with state or events are `"use client"` (Navbar, FilterBar, SearchBar, MovieSwiper, LanguageSwitcher).
+
+`MovieCard` and `MovieDetail` are presentational — no state, no events — so they render server-side too.
+
+### TMDb calls from the browser
+
+`FilterBar` and `SearchBar` call `tmdb.ts` functions **directly from the browser** (not via API routes). This is intentional:
+- `NEXT_PUBLIC_TMDB_API_KEY` is public by design — TMDb keys are rate-limited per IP, not secret
+- Avoids server round-trip for interactive features (search, filter)
+- Don't add an API route proxy — it adds latency and no real security benefit
+
+### Caching / ISR
+
+All `tmdbFetch` calls use `{ next: { revalidate: 3600 } }`. Home and swipe pages are pre-rendered at build time via `generateStaticParams` in `[lang]/layout.tsx`, then revalidated every hour in background (ISR). Movie/TV detail pages are dynamic (too many IDs to pre-render).
+
+### No i18n library
+
+Dictionaries are plain JSON loaded via dynamic `import()` in `dictionaries.ts` (server-only). No next-intl, no i18next — intentional to keep bundle small. Trade-off: no built-in formatters for dates/numbers, manual locale sync in LanguageSwitcher.
+
+### Styling
+
+CSS variables for all design tokens (`--bg`, `--gold`, `--crimson`, etc.) defined in `globals.css`. Tailwind for layout utilities only. Hover states use `onMouseEnter`/`onMouseLeave` inline handlers (not CSS pseudos) because inline `style` props with CSS vars don't support `:hover` in CSS.
+
+### Swipe mechanic
+
+`SwipeMechanism` exposes `swipeLeft()`/`swipeRight()` via `useImperativeHandle`. `MovieSwiper` calls these imperatively from button clicks. Framer Motion handles drag physics and exit animations. **Currently incomplete** — swipe results are logged but not persisted, "top matches" screen never triggers.
+
+## Known Bugs
+
+- **TV detail page** (`[lang]/tv/[id]/page.tsx`): `getTvDetails()` is called without the `lang` argument — TV detail pages are always in English regardless of locale. Fix: pass `lang` as second argument.
+- **Swipe** (`MovieSwiper.tsx`): only loads 5 movies, no persistence of swipe decisions, no results screen.
+
+## Planned (not yet started)
+
+- **Auth** (US8): stack TBD — likely NextAuth.js or Lucia + DB session
+- **Database** (US9–11): stack TBD — watchlist and watched list require persistent storage per user. Likely PostgreSQL (Vercel Postgres or Supabase) with an ORM (Prisma or Drizzle).
+- When auth is added: Server Components on protected pages should read session via `cookies()` / `headers()` — this will make those routes dynamic (SSR), which is correct for personalized data.
+
 ## Implemented: Internationalization (i18n)
 
 Branch: `refactor/cinema-design-system`
@@ -76,26 +118,6 @@ Branch: `refactor/cinema-design-system`
 - **`src/app/[lang]/`** — all pages live here. The `[lang]` segment is a dynamic route parameter carrying the locale.
 - **Cookie `BINGE_LOCALE`** — set on language switch, persists for 1 year (`max-age=31536000`). The proxy reads it on the next visit to restore the user's language.
 - **Arabic RTL** — `src/app/[lang]/layout.tsx` injects an inline `<script>` that sets `document.documentElement.lang` and `document.documentElement.dir` synchronously before paint. No flicker.
-
-### Files changed / created
-
-| File | Role |
-|------|------|
-| `src/proxy.ts` | Locale redirect + cookie read |
-| `src/app/[lang]/layout.tsx` | Nested layout — sets RTL via inline script |
-| `src/app/[lang]/page.tsx` | Home page (replaces `app/page.tsx`) |
-| `src/app/[lang]/movie/[id]/page.tsx` | Movie detail page |
-| `src/app/[lang]/tv/[id]/page.tsx` | TV detail page |
-| `src/app/[lang]/dictionaries.ts` | `getDictionary(locale)` — server-only |
-| `src/app/dictionaries/en.json` | English strings |
-| `src/app/dictionaries/pl.json` | Polish strings |
-| `src/app/dictionaries/ar.json` | Arabic strings |
-| `src/components/LanguageSwitcher.tsx` | Dropdown in Navbar — sets cookie + navigates |
-| `src/components/Navbar.tsx` | Now accepts `lang` and `dict` props |
-| `src/components/MovieCard.tsx` | Now accepts `lang?: string` (default `"en"`) — builds locale-prefixed hrefs |
-| `src/components/MovieDetail.tsx` | Now accepts `lang` and `dict` — back button uses `/${lang}` |
-| `src/components/FilterBar.tsx` | Now accepts `lang` and `dict` — passes `lang` to `MovieCard` |
-| `src/app/page.tsx` | Fallback redirect to `/en` (proxy handles it normally) |
 
 ### Adding a new language
 

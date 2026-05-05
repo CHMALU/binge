@@ -1,6 +1,10 @@
 import { notFound } from "next/navigation";
-import { hasLocale } from "./dictionaries";
+import { hasLocale, LOCALES } from "./dictionaries";
 import HtmlAttributes from "@/components/HtmlAttributes";
+
+export function generateStaticParams() {
+  return LOCALES.map((lang) => ({ lang }));
+}
 
 export default async function LocaleLayout({
   children,

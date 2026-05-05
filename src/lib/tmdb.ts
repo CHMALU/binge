@@ -93,22 +93,22 @@ interface TMDbListResponse {
 
 export async function getPopularMovies(locale = "en"): Promise<Movie[]> {
   const data = await tmdbFetch<TMDbListResponse>("/movie/popular", { language: tmdbLang(locale) });
-  return data.results;
+  return data.results ?? [];
 }
 
 export async function getPopularSeries(locale = "en"): Promise<Movie[]> {
   const data = await tmdbFetch<TMDbListResponse>("/tv/popular", { language: tmdbLang(locale) });
-  return data.results.map((m) => ({ ...m, media_type: "tv" as const }));
+  return (data.results ?? []).map((m) => ({ ...m, media_type: "tv" as const }));
 }
 
 export async function getNowPlaying(locale = "en"): Promise<Movie[]> {
   const data = await tmdbFetch<TMDbListResponse>("/movie/now_playing", { language: tmdbLang(locale) });
-  return data.results;
+  return data.results ?? [];
 }
 
 export async function getOnAir(locale = "en"): Promise<Movie[]> {
   const data = await tmdbFetch<TMDbListResponse>("/tv/on_the_air", { language: tmdbLang(locale) });
-  return data.results.map((m) => ({ ...m, media_type: "tv" as const }));
+  return (data.results ?? []).map((m) => ({ ...m, media_type: "tv" as const }));
 }
 
 export async function getMovieDetails(id: number, locale = "en"): Promise<MovieDetailData> {
@@ -144,10 +144,10 @@ export async function getGenres(type: "movie" | "tv" = "movie", locale = "en"): 
 
 export async function discoverMovies(params: Record<string, string>, locale = "en"): Promise<Movie[]> {
   const data = await tmdbFetch<TMDbListResponse>("/discover/movie", { ...params, language: tmdbLang(locale) });
-  return data.results;
+  return data.results ?? [];
 }
 
 export async function discoverSeries(params: Record<string, string>, locale = "en"): Promise<Movie[]> {
   const data = await tmdbFetch<TMDbListResponse>("/discover/tv", { ...params, language: tmdbLang(locale) });
-  return data.results.map((m) => ({ ...m, media_type: "tv" as const }));
+  return (data.results ?? []).map((m) => ({ ...m, media_type: "tv" as const }));
 }
