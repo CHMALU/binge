@@ -59,7 +59,7 @@ export default function FilterBar({ lang, dict }: { lang: string; dict: FilterDi
       setGenres(fetchedGenres);
       setSelectedGenre(null);
     });
-  }, [mediaType]);
+  }, [mediaType, lang]);
 
   useEffect(() => {
     if (!mediaType) {
@@ -87,7 +87,7 @@ export default function FilterBar({ lang, dict }: { lang: string; dict: FilterDi
 
     fetchData();
 
-  }, [mediaType, selectedGenre, selectedYear]);
+  }, [mediaType, selectedGenre, selectedYear, lang]);
 
   const hasFilter = mediaType !== null || selectedGenre !== null || selectedYear !== null;
 

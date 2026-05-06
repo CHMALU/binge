@@ -6,7 +6,6 @@ import { getPopularMovies, getPopularSeries, getNowPlaying, getOnAir } from "@/l
 import type { Movie } from "@/lib/tmdb";
 import Image from "next/image";
 import { getDictionary, hasLocale } from "./dictionaries";
-import type { Dictionary } from "./dictionaries";
 
 export default async function Home({
   params,
