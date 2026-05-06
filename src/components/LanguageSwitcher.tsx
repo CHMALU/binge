@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { MdOutlineLanguage } from "react-icons/md";
 
 const LOCALES = [
@@ -14,13 +14,19 @@ export default function LanguageSwitcher({ lang }: { lang: string }) {
   const pathname = usePathname();
   const router = useRouter();
   const [open, setOpen] = useState(false);
+  const [pendingLocale, setPendingLocale] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!pendingLocale) return;
+    document.cookie = `BINGE_LOCALE=${pendingLocale};path=/;max-age=31536000;SameSite=Lax`;
+  }, [pendingLocale]);
 
   function switchLocale(newLang: string) {
     const segments = pathname.split("/");
     segments[1] = newLang;
     const newPath = segments.join("/") || `/${newLang}`;
 
-    document.cookie = `BINGE_LOCALE=${newLang};path=/;max-age=31536000;SameSite=Lax`;
+    setPendingLocale(newLang);
     setOpen(false);
     router.push(newPath);
   }
