@@ -21,6 +21,7 @@ jest.mock('next/image', () => {
 
 const mockDict = {
   overview: 'Overview',
+  availableOn: 'Available on',
   network: 'Network',
   createdBy: 'Created by',
   lastAired: 'Last aired',
@@ -99,6 +100,38 @@ describe('MovieDetail', () => {
 
     it('renders a back link for navigation', () => {
       expect(screen.getByRole('link', { name: /back/i })).toBeInTheDocument();
+    });
+
+    it('renders streaming providers when provided and deduplicates duplicates', () => {
+      const providers = {
+        link: 'https://www.themoviedb.org/movie/1/watch?locale=US',
+        flatrate: [
+          { provider_id: 8, provider_name: 'Netflix', logo_path: '/nf.png' },
+          { provider_id: 3, provider_name: 'HBO Max', logo_path: '/hbo.png' },
+        ],
+        rent: [
+          { provider_id: 8, provider_name: 'Netflix', logo_path: '/nf.png' }, // duplicate on purpose
+          { provider_id: 192, provider_name: 'Apple TV+', logo_path: '/apple.png' },
+        ],
+        buy: [
+          { provider_id: 192, provider_name: 'Apple TV+', logo_path: '/apple.png' }, // duplicate
+        ],
+      } as any;
+
+      render(<MovieDetail detail={mockMovie} lang="en" dict={mockDict} providers={providers} />);
+
+      // logos should be present
+      expect(screen.getByAltText('Netflix')).toBeInTheDocument();
+      expect(screen.getByAltText('HBO Max')).toBeInTheDocument();
+      expect(screen.getByAltText('Apple TV+')).toBeInTheDocument();
+
+      // duplicates should be deduped (Netflix appears twice in source, but only once rendered)
+      const netflixImgs = screen.getAllByAltText('Netflix');
+      expect(netflixImgs.length).toBe(1);
+
+      // provider anchors should link to the TMDb country page
+      const anchor = screen.getByAltText('Netflix').closest('a') as HTMLAnchorElement;
+      expect(anchor).toHaveAttribute('href', providers.link);
     });
   });
 
