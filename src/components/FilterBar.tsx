@@ -63,10 +63,8 @@ export default function FilterBar({ lang, dict }: { lang: string; dict: FilterDi
 
   useEffect(() => {
     if (!mediaType) {
-      Promise.resolve().then(() => {
-        setResults([]);
-        setIsOpen(false);
-      });
+      setResults([]);
+      setIsOpen(false);
       return;
     }
 

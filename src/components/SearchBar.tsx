@@ -15,10 +15,8 @@ export default function SearchBar() {
     if (debounceRef.current) clearTimeout(debounceRef.current);
 
     if (!query.trim()) {
-      Promise.resolve().then(() => {
-        setResults([]);
-        setIsOpen(false);
-      });
+      setResults([]);
+      setIsOpen(false);
       return;
     }
 
