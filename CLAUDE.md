@@ -101,6 +101,28 @@ CSS variables for all design tokens (`--bg`, `--gold`, `--crimson`, etc.) define
 - **TV detail page** (`[lang]/tv/[id]/page.tsx`): `getTvDetails()` is called without the `lang` argument — TV detail pages are always in English regardless of locale. Fix: pass `lang` as second argument.
 - **Swipe** (`MovieSwiper.tsx`): only loads 5 movies, no persistence of swipe decisions, no results screen.
 
+## Team Assignments (Phase 1 & 2)
+
+### Phase 1 — parallel
+
+| Pair | US | Feature | Pts |
+|------|----|---------|-----|
+| Dawid + Bernd | US8 | Auth + DB setup ("create an account") — foundation for everything | 3 |
+| Dawid + Bernd | US9 | Save titles to watchlist | 3 |
+| Dawid + Bernd | US10 | View watchlist | 3 |
+| Christoph + Lucas | US6-streaming | Streaming provider info on detail page — fully independent | 5 |
+| Christoph + Lucas | US-ratings | Rate movies/series — **waits for DB from Dawid+Bernd** | 3 |
+
+### Phase 2 — after Phase 1 DB is merged (pairs swap)
+
+| Pair | US | Feature | Pts |
+|------|----|---------|-----|
+| Dawid + Lucas | US11 | Mark titles as watched | 3 |
+| Dawid + Lucas | US-swipe-filter | Watched titles don't appear in swipe session | 5 |
+| Bernd + Christoph | US7 | Recommendations based on swipes + ratings (= finishing swipe end-to-end) | 8 |
+
+> Phase 2 implementation depends on Phase 1 DB being merged — don't start coding watchlist/swipe persistence before that lands.
+
 ## Planned (not yet started)
 
 - **Auth** (US8): stack TBD — likely NextAuth.js or Lucia + DB session
@@ -109,14 +131,14 @@ CSS variables for all design tokens (`--bg`, `--gold`, `--crimson`, etc.) define
 
 ## Implemented: Internationalization (i18n)
 
-Branch: `refactor/cinema-design-system`
+Branch: `feature/i18n-language-switcher` (pushed to GitLab + GitHub, pending MR to main)
 
 ### How it works
 
 - **URL-based locale routing:** all routes are prefixed with locale — `/en`, `/pl`, `/ar`
 - **`src/proxy.ts`** — Next.js 16 proxy (equivalent of middleware in older versions). Intercepts every request without a locale prefix and redirects to `/en` (or the locale from cookie). Export name must be `proxy`, not `middleware`.
 - **`src/app/[lang]/`** — all pages live here. The `[lang]` segment is a dynamic route parameter carrying the locale.
-- **Cookie `BINGE_LOCALE`** — set on language switch, persists for 1 year (`max-age=31536000`). The proxy reads it on the next visit to restore the user's language.
+- **Cookie `BINGE_LOCALE`** — set on language switch via `useEffect` in `LanguageSwitcher` (required by `react-hooks/immutability` rule), persists for 1 year (`max-age=31536000`). The proxy reads it on the next visit to restore the user's language.
 - **Arabic RTL** — `src/app/[lang]/layout.tsx` injects an inline `<script>` that sets `document.documentElement.lang` and `document.documentElement.dir` synchronously before paint. No flicker.
 
 ### Adding a new language
