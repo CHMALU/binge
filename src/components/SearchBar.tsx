@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
+import { LuCommand } from "react-icons/lu";
 import { searchMovies } from "@/lib/tmdb";
 import type { Movie } from "@/lib/tmdb";
 import MovieCard from "@/components/MovieCard";
@@ -72,10 +73,10 @@ export default function SearchBar() {
         </div>
       )}
       <kbd
-        className="absolute right-3 top-1/2 -translate-y-1/2 text-[11px] px-1.5 py-0.5 rounded border pointer-events-none"
+        className="absolute right-3 top-1/2 -translate-y-1/2 text-[11px] px-1.5 py-0.5 rounded border pointer-events-none inline-flex items-center gap-0.5"
         style={{ background: "var(--bg)", borderColor: "var(--border)", color: "var(--text-dim)", fontFamily: "inherit" }}
       >
-        ⌘K
+        <LuCommand aria-hidden="true" />K
       </kbd>
       {isOpen && results.length > 0 && (
         <div

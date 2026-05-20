@@ -5,6 +5,13 @@ import FilterBar from "@/components/FilterBar";
 import { getPopularMovies, getPopularSeries, getNowPlaying, getOnAir } from "@/lib/tmdb";
 import type { Movie } from "@/lib/tmdb";
 import Image from "next/image";
+import {
+  IoStar,
+  IoPlay,
+  IoInformationCircleOutline,
+  IoArrowForward,
+  IoEllipse,
+} from "react-icons/io5";
 import { getDictionary, hasLocale } from "./dictionaries";
 
 export default async function Home({
@@ -57,13 +64,13 @@ export default async function Home({
           />
           <div className="relative z-10 max-w-[1440px] mx-auto px-6 xl:px-12 h-full flex flex-col justify-end pb-16">
             <div className="flex gap-2 mb-4">
-              <span
-                className="px-3 py-1 rounded-full text-[11px] font-bold tracking-widest uppercase"
+              <div
+                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold tracking-widest uppercase"
                 style={{ background: "var(--crimson)", color: "white" }}
               >
-                ● {dict.hero.featured}
-              </span>
-              <span
+                <IoEllipse aria-hidden="true" size={8} /> {dict.hero.featured}
+              </div>
+              <div
                 className="px-3 py-1 rounded-full text-[11px] font-bold tracking-widest uppercase"
                 style={{
                   background: "rgba(255,205,0,0.15)",
@@ -72,7 +79,7 @@ export default async function Home({
                 }}
               >
                 {dict.hero.topRated}
-              </span>
+              </div>
             </div>
             <h1
               className="text-5xl lg:text-7xl font-extrabold tracking-tight leading-none mb-3 max-w-2xl"
@@ -84,12 +91,12 @@ export default async function Home({
               className="flex items-center gap-4 text-sm mb-3"
               style={{ color: "var(--text-muted)" }}
             >
-              <span
+              <div
                 className="flex items-center gap-1.5 font-semibold"
                 style={{ color: "var(--gold)" }}
               >
-                ★ {hero.vote_average?.toFixed(1)}
-              </span>
+                <IoStar aria-hidden="true" /> {hero.vote_average?.toFixed(1)}
+              </div>
               {hero.release_date && (
                 <span>{new Date(hero.release_date).getFullYear()}</span>
               )}
@@ -109,7 +116,7 @@ export default async function Home({
                 className="px-6 py-3.5 rounded-xl font-bold text-sm flex items-center gap-2 transition-all hover:-translate-y-0.5"
                 style={{ background: "var(--text)", color: "#000" }}
               >
-                ▶ {dict.hero.watchTrailer}
+                <IoPlay aria-hidden="true" /> {dict.hero.watchTrailer}
               </button>
               <a
                 href={`/${lang}/movie/${hero.id}`}
@@ -121,7 +128,7 @@ export default async function Home({
                   color: "var(--text)",
                 }}
               >
-                ℹ {dict.hero.moreInfo}
+                <IoInformationCircleOutline aria-hidden="true" /> {dict.hero.moreInfo}
               </a>
             </div>
           </div>
@@ -205,7 +212,7 @@ function Section({
           className="flex items-center gap-1.5 text-sm font-medium px-3 py-2 rounded-lg border transition-colors"
           style={{ color: "var(--text-muted)", borderColor: "var(--border)" }}
         >
-          {seeAll} →
+          {seeAll} <IoArrowForward aria-hidden="true" />
         </a>
       </div>
       <div className="binge-rail">

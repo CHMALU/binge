@@ -21,6 +21,13 @@ Movie/series discovery app — like Tinder for films. Data sourced from the **TM
 - Read existing code before suggesting modifications
 - Point out potential security issues (XSS, injection, exposed keys)
 
+## Icons — NO text/Unicode emojis
+
+- **Never use Unicode emoji or text-symbol glyphs as UI icons** — no `🎬`, `📺`, `★`, `☆`, `✕`, `▶`, `ℹ`, `→`, `●`, `⌘`, `+` etc. in buttons, badges, labels, anything user-facing.
+- **Always import from `react-icons`** (already in `dependencies`). Default family is **Ionicons 5** (`react-icons/io5`) for consistency with `IoArrowBack`, `IoStar`, `IoFilm`, `IoTv`, `IoClose`, `IoPlay`, `IoAdd`, `IoInformationCircleOutline`, `IoArrowForward`, `IoEllipse`, `IoStarOutline`. Use Lucide (`react-icons/lu`) only when io5 has no equivalent (e.g. `LuCommand` for the ⌘ key).
+- Decorative icons: pass `aria-hidden="true"`. Icon-only buttons: add an `aria-label`.
+- Tests must query icon+text buttons by **role + accessible name** (`screen.getByRole("button", { name: /Movies/ })`), not by emoji string.
+
 ## Test-First Approach
 
 - **Always write a `[red]` commit before `[green]`** — tests must fail without production code
@@ -34,6 +41,7 @@ Movie/series discovery app — like Tinder for films. Data sourced from the **TM
 - Do not rewrite code that wasn't asked to be changed
 - Do not suggest architectural changes mid-feature
 - Do not add comments to code that is already self-explanatory
+- **Do not use Unicode emojis or text-symbol glyphs as UI icons** — always `react-icons` (see "Icons" section above)
 
 ## User Stories
 
