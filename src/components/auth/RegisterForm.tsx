@@ -41,17 +41,17 @@ export default function RegisterForm({ lang, t, modal = false }: Props) {
   }
 
   return (
-    <div className="bg-binge-card border border-binge-border rounded-2xl p-8">
+    <div className="bg-surface-card border border-border rounded-2xl p-8">
       {!modal && (
         <div className="text-center mb-7">
-          <span className="[font-family:var(--font-poppins)] text-[2rem] font-extrabold text-binge-gold tracking-tight">
+          <span className="font-poppins text-[2rem] font-extrabold text-gold-400 tracking-tight">
             Binge
           </span>
-          <p className="text-binge-muted text-sm mt-1">{t.tagline}</p>
+          <p className="text-fg-muted text-sm mt-1">{t.tagline}</p>
         </div>
       )}
 
-      <h1 className="[font-family:var(--font-poppins)] font-bold text-xl text-binge-text mb-6">
+      <h1 className="font-poppins font-bold text-xl text-fg mb-6">
         {t.register}
       </h1>
 
@@ -64,32 +64,32 @@ export default function RegisterForm({ lang, t, modal = false }: Props) {
         <button
           type="submit"
           disabled={loading}
-          className="mt-1 rounded-lg py-[11px] font-bold text-[0.9rem] [font-family:var(--font-poppins)] transition-opacity
-            bg-binge-gold text-binge-bg cursor-pointer
-            disabled:bg-binge-border-strong disabled:text-binge-muted disabled:cursor-not-allowed"
+          className="mt-1 rounded-lg py-[11px] font-bold text-[0.9rem] font-poppins transition-opacity
+            bg-action text-action-fg cursor-pointer
+            disabled:bg-border-strong disabled:text-fg-muted disabled:cursor-not-allowed"
         >
           {loading ? "…" : t.registerButton}
         </button>
       </form>
 
       <div className="flex items-center gap-3 my-5">
-        <div className="flex-1 h-px bg-binge-border" />
-        <span className="text-xs text-binge-dim">{t.orContinueWith}</span>
-        <div className="flex-1 h-px bg-binge-border" />
+        <div className="flex-1 h-px bg-border" />
+        <span className="text-xs text-fg-subtle">{t.orContinueWith}</span>
+        <div className="flex-1 h-px bg-border" />
       </div>
 
       <button
         type="button"
         onClick={() => signIn("google", { callbackUrl: `/${lang}` })}
-        className="w-full flex items-center justify-center gap-2.5 bg-binge-elev border border-binge-border hover:border-binge-border-strong rounded-lg py-2.5 text-binge-text text-sm font-medium cursor-pointer transition-colors"
+        className="w-full flex items-center justify-center gap-2.5 bg-surface-raised border border-border hover:border-border-strong rounded-lg py-2.5 text-fg text-sm font-medium cursor-pointer transition-colors"
       >
         <GoogleIcon />
         {t.google}
       </button>
 
-      <p className="text-center mt-5 text-sm text-binge-muted">
+      <p className="text-center mt-5 text-sm text-fg-muted">
         {t.haveAccount}{" "}
-        <Link href={`/${lang}/login`} replace={modal} className="text-binge-gold font-semibold hover:underline">
+        <Link href={`/${lang}/login`} replace={modal} className="text-gold-400 font-semibold hover:underline">
           {t.loginLink}
         </Link>
       </p>
@@ -104,7 +104,7 @@ function Field({ label, type, value, onChange, autoComplete, required }: {
   const id = useId();
   return (
     <div className="flex flex-col gap-1.5">
-      <label htmlFor={id} className="text-[0.8rem] text-binge-muted font-medium">{label}</label>
+      <label htmlFor={id} className="text-[0.8rem] text-fg-muted font-medium">{label}</label>
       <input
         id={id}
         type={type}
@@ -112,7 +112,7 @@ function Field({ label, type, value, onChange, autoComplete, required }: {
         autoComplete={autoComplete}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="bg-binge-elev border border-binge-border focus:border-binge-gold rounded-lg px-3.5 py-2.5 text-binge-text text-[0.9rem] outline-none transition-colors"
+        className="bg-surface-raised border border-border focus:border-action rounded-lg px-3.5 py-2.5 text-fg text-[0.9rem] outline-none transition-colors"
       />
     </div>
   );

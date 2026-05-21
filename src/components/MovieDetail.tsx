@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { IoArrowBack, IoStar, IoStarOutline } from "react-icons/io5";
 import { getPosterUrl, type MovieDetailData, type ProvidersCountry } from "@/lib/tmdb";
+import { cn } from "@/lib/utils";
 import type { Dictionary } from "@/app/[lang]/dictionaries";
 
 type DetailDict = Dictionary["detail"];
@@ -41,13 +42,12 @@ export default function MovieDetail({
 
 
   return (
-    <div className="min-h-screen" style={{ background: "var(--bg)", color: "var(--text)" }}>
+    <div className="min-h-screen bg-surface text-fg">
       {/* Back button */}
       <div className="fixed top-4 left-4 z-50">
         <Link
           href={`/${lang}`}
-          className="flex items-center justify-center w-11 h-11 rounded-full border transition-colors"
-          style={{ background: "rgba(10,10,15,0.8)", backdropFilter: "blur(10px)", borderColor: "var(--border)", color: "var(--text)" }}
+          className="flex items-center justify-center w-11 h-11 rounded-full border border-border text-fg transition-colors bg-surface/80 backdrop-blur-md"
         >
           <IoArrowBack size={20} aria-hidden="true" />
           <span className="sr-only">Back</span>
@@ -62,34 +62,32 @@ export default function MovieDetail({
             alt={title}
             fill
             sizes="100vw"
-            className="object-cover object-center"
-            style={{ filter: "saturate(1.1)" }}
+            className="object-cover object-center saturate-[1.1]"
             priority
           />
           <div
             className="absolute inset-0"
-            style={{ background: "linear-gradient(0deg, var(--bg) 0%, rgba(10,10,15,0.4) 60%, transparent 100%)" }}
+            style={{ background: "linear-gradient(0deg, var(--color-surface) 0%, rgba(10,10,15,0.4) 60%, transparent 100%)" }}
           />
         </div>
       )}
 
       {/* 3-column layout */}
       <div
-        className="relative z-10 max-w-[1440px] mx-auto px-6 xl:px-12 pb-20"
-        style={{ marginTop: backdropUrl ? -200 : 80 }}
+        className={cn(
+          "relative z-10 max-w-[1440px] mx-auto px-6 xl:px-12 pb-20",
+          backdropUrl ? "-mt-[200px]" : "mt-20"
+        )}
       >
         <div className="flex flex-col lg:flex-row gap-10 lg:gap-12 items-start">
 
           {/* Poster */}
           <div className="w-56 lg:w-[300px] shrink-0 mx-auto lg:mx-0">
-            <div
-              className="relative aspect-[2/3] rounded-2xl overflow-hidden shadow-2xl border"
-              style={{ borderColor: "var(--border)" }}
-            >
+            <div className="relative aspect-[2/3] rounded-2xl overflow-hidden shadow-2xl border border-border">
               {posterUrl ? (
                 <Image src={posterUrl} alt={title} fill sizes="(max-width: 1024px) 224px, 300px" className="object-cover" />
               ) : (
-                <div className="flex h-full items-center justify-center text-sm" style={{ background: "var(--bg-card)", color: "var(--text-dim)" }}>
+                <div className="flex h-full items-center justify-center text-sm bg-surface-card text-fg-subtle">
                   No poster
                 </div>
               )}
@@ -99,22 +97,19 @@ export default function MovieDetail({
           {/* Main info */}
           <div className="flex flex-col gap-5 min-w-0 flex-1">
             <div>
-              <h1
-                className="font-extrabold tracking-tight leading-tight mb-2"
-                style={{ fontFamily: "var(--font-poppins, inherit)", fontSize: "clamp(2rem, 4vw, 3.5rem)" }}
-              >
+              <h1 className="font-extrabold tracking-tight leading-tight mb-2 font-poppins text-[clamp(2rem,4vw,3.5rem)]">
                 {title}
               </h1>
               {originalTitle && originalTitle !== title && (
-                <p className="text-sm italic mb-1" style={{ color: "var(--text-dim)" }}>{originalTitle}</p>
+                <p className="text-sm italic mb-1 text-fg-subtle">{originalTitle}</p>
               )}
               {detail.tagline && (
-                <p className="text-base italic" style={{ color: "var(--gold)" }}>{detail.tagline}</p>
+                <p className="text-base italic text-gold-400">{detail.tagline}</p>
               )}
             </div>
 
             {/* Meta */}
-            <div className="flex flex-wrap gap-3 text-sm py-4 border-b" style={{ color: "var(--text-muted)", borderColor: "var(--border)" }}>
+            <div className="flex flex-wrap gap-3 text-sm py-4 border-b text-fg-muted border-border">
               {year && <span>{year}</span>}
               {runtime && <span>{runtime} min</span>}
               {isTv && detail.number_of_seasons && (
@@ -125,8 +120,10 @@ export default function MovieDetail({
               )}
               {detail.status && (
                 <span
-                  className="px-2.5 py-0.5 rounded-md text-xs font-semibold border"
-                  style={{ background: "var(--bg-card)", borderColor: "var(--border)", color: detail.status === "Returning Series" ? "var(--emerald)" : "var(--text)" }}
+                  className={cn(
+                    "px-2.5 py-0.5 rounded-md text-xs font-semibold border bg-surface-card border-border",
+                    detail.status === "Returning Series" ? "text-success" : "text-fg"
+                  )}
                 >
                   {detail.status}
                 </span>
@@ -137,7 +134,7 @@ export default function MovieDetail({
             {detail.genres.length > 0 && (
               <div className="flex flex-wrap gap-2">
                 {detail.genres.map((g) => (
-                  <span key={g.id} className="px-3 py-1.5 rounded-full text-sm font-medium border" style={{ background: "var(--bg-card)", borderColor: "var(--border)", color: "var(--text)" }}>
+                  <span key={g.id} className="px-3 py-1.5 rounded-full text-sm font-medium border bg-surface-card border-border text-fg">
                     {g.name}
                   </span>
                 ))}
@@ -146,54 +143,51 @@ export default function MovieDetail({
 
             {/* Overview */}
             <div>
-              <div className="text-xs font-semibold tracking-widest uppercase mb-3" style={{ color: "var(--gold)" }}>{dict.overview}</div>
-              <p className="text-base leading-relaxed" style={{ color: "var(--text-muted)" }}>{detail.overview}</p>
+              <div className="text-xs font-semibold tracking-widest uppercase mb-3 text-gold-400">{dict.overview}</div>
+              <p className="text-base leading-relaxed text-fg-muted">{detail.overview}</p>
             </div>
 
             {/* TV extras */}
             {isTv && (
-              <div className="flex flex-col gap-2 text-sm" style={{ color: "var(--text-muted)" }}>
+              <div className="flex flex-col gap-2 text-sm text-fg-muted">
                 {detail.networks && detail.networks.length > 0 && (
-                  <div className="flex gap-2"><span style={{ color: "var(--text-dim)" }}>{dict.network}:</span><span>{detail.networks.map((n) => n.name).join(", ")}</span></div>
+                  <div className="flex gap-2"><span className="text-fg-subtle">{dict.network}:</span><span>{detail.networks.map((n) => n.name).join(", ")}</span></div>
                 )}
                 {detail.created_by && detail.created_by.length > 0 && (
-                  <div className="flex gap-2"><span style={{ color: "var(--text-dim)" }}>{dict.createdBy}:</span><span>{detail.created_by.map((c) => c.name).join(", ")}</span></div>
+                  <div className="flex gap-2"><span className="text-fg-subtle">{dict.createdBy}:</span><span>{detail.created_by.map((c) => c.name).join(", ")}</span></div>
                 )}
                 {detail.last_air_date && (
-                  <div className="flex gap-2"><span style={{ color: "var(--text-dim)" }}>{dict.lastAired}:</span><span>{detail.last_air_date}</span></div>
+                  <div className="flex gap-2"><span className="text-fg-subtle">{dict.lastAired}:</span><span>{detail.last_air_date}</span></div>
                 )}
               </div>
             )}
 
             {/* Movie extras */}
             {!isTv && (detail.budget ?? 0) > 0 && (
-              <div className="flex flex-col gap-2 text-sm" style={{ color: "var(--text-muted)" }}>
-                {(detail.budget ?? 0) > 0 && <div className="flex gap-2"><span style={{ color: "var(--text-dim)" }}>{dict.budget}:</span><span>${detail.budget!.toLocaleString()}</span></div>}
-                {(detail.revenue ?? 0) > 0 && <div className="flex gap-2"><span style={{ color: "var(--text-dim)" }}>{dict.revenue}:</span><span>${detail.revenue!.toLocaleString()}</span></div>}
+              <div className="flex flex-col gap-2 text-sm text-fg-muted">
+                {(detail.budget ?? 0) > 0 && <div className="flex gap-2"><span className="text-fg-subtle">{dict.budget}:</span><span>${detail.budget!.toLocaleString()}</span></div>}
+                {(detail.revenue ?? 0) > 0 && <div className="flex gap-2"><span className="text-fg-subtle">{dict.revenue}:</span><span>${detail.revenue!.toLocaleString()}</span></div>}
               </div>
             )}
 
             {/* Languages */}
             {detail.spoken_languages && detail.spoken_languages.length > 0 && (
-              <div className="flex gap-2 text-sm" style={{ color: "var(--text-muted)" }}>
-                <span style={{ color: "var(--text-dim)" }}>{dict.languages}:</span>
+              <div className="flex gap-2 text-sm text-fg-muted">
+                <span className="text-fg-subtle">{dict.languages}:</span>
                 <span>{detail.spoken_languages.map((l) => l.english_name).join(", ")}</span>
               </div>
             )}
           </div>
 
           {/* Sidebar */}
-          <div
-            className="w-full lg:w-[280px] shrink-0 rounded-2xl p-7 lg:sticky lg:top-24 border"
-            style={{ background: "var(--bg-elev)", borderColor: "var(--border)" }}
-          >
+          <div className="w-full lg:w-[280px] shrink-0 rounded-2xl p-7 lg:sticky lg:top-24 border bg-surface-raised border-border">
             {/* Rating box */}
-            <div className="text-center pb-6 mb-6 border-b" style={{ borderColor: "var(--border)" }}>
-              <div className="font-extrabold leading-none mb-2" style={{ fontFamily: "var(--font-poppins, inherit)", fontSize: 56, color: "var(--gold)" }}>
+            <div className="text-center pb-6 mb-6 border-b border-border">
+              <div className="font-extrabold leading-none mb-2 text-gold-400 font-poppins text-[56px]">
                 {rating}
-                <span className="text-lg font-medium" style={{ color: "var(--text-dim)" }}>/10</span>
+                <span className="text-lg font-medium text-fg-subtle">/10</span>
               </div>
-              <div className="inline-flex items-center gap-0.5 mb-2" style={{ color: "var(--gold)" }} aria-label={`${stars} out of 5`}>
+              <div className="inline-flex items-center gap-0.5 mb-2 text-gold-400" aria-label={`${stars} out of 5`}>
                 {Array.from({ length: 5 }).map((_, i) =>
                   i < stars
                     ? <IoStar key={i} aria-hidden="true" />
@@ -201,7 +195,7 @@ export default function MovieDetail({
                 )}
               </div>
               {detail.vote_count && (
-                <div className="text-sm" style={{ color: "var(--text-dim)" }}>
+                <div className="text-sm text-fg-subtle">
                   {detail.vote_count.toLocaleString()} {dict.votes}
                 </div>
               )}
@@ -215,9 +209,9 @@ export default function MovieDetail({
             ]
               .filter(Boolean)
               .map((row) => (
-                <div key={(row as { label: string }).label} className="flex justify-between py-3 text-sm border-b last:border-0" style={{ borderColor: "var(--border)" }}>
-                  <span style={{ color: "var(--text-dim)" }}>{(row as { label: string; value: string }).label}</span>
-                  <span className="font-medium text-right" style={{ color: "var(--text)" }}>{(row as { label: string; value: string }).value}</span>
+                <div key={(row as { label: string }).label} className="flex justify-between py-3 text-sm border-b last:border-0 border-border">
+                  <span className="text-fg-subtle">{(row as { label: string; value: string }).label}</span>
+                  <span className="font-medium text-right text-fg">{(row as { label: string; value: string }).value}</span>
                 </div>
               ))}
 
@@ -225,7 +219,7 @@ export default function MovieDetail({
             {/* Providers / Action links */}
             {providers && (
               <div className="mt-4">
-                <div className="text-xs font-semibold tracking-widest uppercase mb-3" style={{ color: "var(--gold)" }}>{dict.availableOn}</div>
+                <div className="text-xs font-semibold tracking-widest uppercase mb-3 text-gold-400">{dict.availableOn}</div>
                 <div className="flex flex-wrap gap-2">
                   {(() => {
                     const list = [
@@ -245,11 +239,11 @@ export default function MovieDetail({
                     }
 
                     return unique.map((p) => (
-                      <a key={p.provider_id} href={providers.link ?? undefined} target="_blank" rel="noopener noreferrer" title={p.provider_name} className="inline-flex items-center justify-center rounded-md overflow-hidden border" style={{ borderColor: "var(--border)", background: "var(--bg-card)" }}>
+                      <a key={p.provider_id} href={providers.link ?? undefined} target="_blank" rel="noopener noreferrer" title={p.provider_name} className="inline-flex items-center justify-center rounded-md overflow-hidden border border-border bg-surface-card">
                         {p.logo_path ? (
                           <img src={`https://image.tmdb.org/t/p/w92${p.logo_path}`} alt={p.provider_name} width={44} height={44} />
                         ) : (
-                          <span className="px-3 py-2 text-sm" style={{ color: "var(--text)" }}>{p.provider_name}</span>
+                          <span className="px-3 py-2 text-sm text-fg">{p.provider_name}</span>
                         )}
                       </a>
                     ));
@@ -264,8 +258,7 @@ export default function MovieDetail({
                   href={`https://www.imdb.com/title/${detail.imdb_id}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full py-3 rounded-xl text-sm font-bold text-center transition-colors"
-                  style={{ background: "var(--gold)", color: "#000" }}
+                  className="w-full py-3 rounded-xl text-sm font-bold text-center transition-colors bg-action text-action-fg"
                 >
                   {dict.viewOnIMDb}
                 </a>
@@ -275,8 +268,7 @@ export default function MovieDetail({
                   href={detail.homepage}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full py-3 rounded-xl text-sm font-semibold text-center border transition-colors"
-                  style={{ background: "var(--bg-card)", borderColor: "var(--border)", color: "var(--text)" }}
+                  className="w-full py-3 rounded-xl text-sm font-semibold text-center border transition-colors bg-surface-card border-border text-fg"
                 >
                   {dict.officialSite}
                 </a>

@@ -2,52 +2,84 @@
 
 @theme inline {
   --font-sans: var(--font-inter);
+  --font-poppins: var(--font-poppins);
 
-  --color-binge-gold: var(--gold);
-  --color-binge-crimson: var(--crimson);
-  --color-binge-emerald: var(--emerald);
+  /* ============ LAYER 1: PRIMITIVES ============ */
 
-  --color-binge-bg: var(--bg);
-  --color-binge-elev: var(--bg-elev);
-  --color-binge-card: var(--bg-card);
+  /* Neutrals — cool-tinted dark scale */
+  --color-neutral-50:  #f5f5f7;
+  --color-neutral-100: #e4e4eb;
+  --color-neutral-200: #c4c4cf;
+  --color-neutral-300: #a0a0ad;
+  --color-neutral-400: #797985;
+  --color-neutral-500: #5a5a66;
+  --color-neutral-600: #3a3a48;
+  --color-neutral-700: #2a2a35;
+  --color-neutral-800: #23232d;
+  --color-neutral-850: #191921;
+  --color-neutral-900: #13131a;
+  --color-neutral-950: #0a0a0f;
 
-  --color-binge-border: var(--border);
-  --color-binge-border-strong: var(--border-strong);
+  /* Brand primary — gold */
+  --color-gold-50:  #fffbe6;
+  --color-gold-100: #fff3b3;
+  --color-gold-200: #ffea80;
+  --color-gold-300: #ffdd4d;
+  --color-gold-400: #ffcd00;
+  --color-gold-500: #ffb800;
+  --color-gold-600: #d99c00;
+  --color-gold-700: #a67800;
+  --color-gold-800: #735300;
+  --color-gold-900: #402e00;
 
-  --color-binge-text: var(--text);
-  --color-binge-muted: var(--text-muted);
-  --color-binge-dim: var(--text-dim);
-}
+  /* Brand secondary — crimson */
+  --color-crimson-400: #ff5d75;
+  --color-crimson-500: #ff2d4a;
+  --color-crimson-600: #a61221;
 
-:root {
-  --bg: #0a0a0f;
-  --bg-elev: #13131a;
-  --bg-card: #191921;
-  --bg-hover: #23232d;
-  --border: #2a2a35;
-  --border-strong: #3a3a48;
-  --text: #f5f5f7;
-  --text-muted: #b0b0bd;
-  --text-dim: #797985;
-  --gold: #ffcd00;
-  --gold-warm: #ffb800;
-  --crimson: #ff2d4a;
-  --crimson-warm: #a61221;
-  --emerald: #22c06a;
-  --emerald-warm: #138f47;
+  /* Status — single values */
+  --color-success:       #22c06a;
+  --color-success-hover: #138f47;
+  --color-danger:        #ff2d4a;
+
+  /* ============ LAYER 2: SEMANTIC ALIASES ============ */
+
+  /* Surfaces (elevation system) */
+  --color-surface:        var(--color-neutral-950);
+  --color-surface-raised: var(--color-neutral-900);
+  --color-surface-card:   var(--color-neutral-850);
+  --color-surface-hover:  var(--color-neutral-800);
+
+  /* Foreground (text) */
+  --color-fg:        var(--color-neutral-50);
+  --color-fg-muted:  var(--color-neutral-300);
+  --color-fg-subtle: var(--color-neutral-400);
+
+  /* Borders */
+  --color-border:        var(--color-neutral-700);
+  --color-border-strong: var(--color-neutral-600);
+
+  /* Action (gold CTA) */
+  --color-action:       var(--color-gold-400);
+  --color-action-hover: var(--color-gold-500);
+  --color-action-fg:    var(--color-neutral-950);
+
+  /* Accent (crimson featured/highlight) */
+  --color-accent:       var(--color-crimson-500);
+  --color-accent-hover: var(--color-crimson-600);
 }
 
 html,
 body {
-  background: var(--bg);
-  color: var(--text);
+  background: var(--color-surface);
+  color: var(--color-fg);
   -webkit-font-smoothing: antialiased;
   font-feature-settings: "ss01" on, "cv11" on;
 }
 
 body {
   background: radial-gradient(1200px 600px at 80% -10%, rgba(255, 205, 0, 0.06), transparent 60%),
-    radial-gradient(900px 500px at 10% 20%, rgba(255, 45, 74, 0.04), transparent 60%), var(--bg);
+    radial-gradient(900px 500px at 10% 20%, rgba(255, 45, 74, 0.04), transparent 60%), var(--color-surface);
   min-height: 100vh;
 }
 
@@ -67,7 +99,7 @@ button {
   overflow-x: auto;
   padding: 8px 0 20px;
   scrollbar-width: thin;
-  scrollbar-color: var(--border-strong) transparent;
+  scrollbar-color: var(--color-border-strong) transparent;
 }
 .binge-rail::-webkit-scrollbar {
   height: 5px;
@@ -76,6 +108,6 @@ button {
   background: transparent;
 }
 .binge-rail::-webkit-scrollbar-thumb {
-  background: var(--border-strong);
+  background: var(--color-border-strong);
   border-radius: 3px;
 }

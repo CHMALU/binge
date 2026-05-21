@@ -38,14 +38,14 @@ export default function RootLayout({
           position="top-center"
           toastOptions={{
             style: {
-              background: "#191921",
-              color: "#f5f5f7",
-              border: "1px solid #2a2a35",
+              background: "var(--color-surface-card)",
+              color: "var(--color-fg)",
+              border: "1px solid var(--color-border)",
               fontFamily: "var(--font-inter)",
               fontSize: "14px",
             },
-            success: { iconTheme: { primary: "var(--emerald)", secondary: "var(--bg)" } },
-            error: { iconTheme: { primary: "#ff2d4a", secondary: "#f5f5f7" } },
+            success: { iconTheme: { primary: "var(--color-success)", secondary: "var(--color-surface)" } },
+            error: { iconTheme: { primary: "var(--color-danger)", secondary: "var(--color-fg)" } },
           }}
         />
       </body>

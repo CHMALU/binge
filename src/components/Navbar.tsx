@@ -32,31 +32,19 @@ export default function Navbar({ lang, dict }: { lang: string; dict: NavDict }) 
     : session?.user?.email?.[0].toUpperCase() ?? "?";
 
   return (
-    <nav
-      className="sticky top-0 z-40 border-b"
-      style={{
-        background: "rgba(10,10,15,0.82)",
-        backdropFilter: "blur(16px)",
-        WebkitBackdropFilter: "blur(16px)",
-        borderColor: "var(--border)",
-      }}
-    >
+    <nav className="sticky top-0 z-40 border-b border-border bg-surface/[0.82] backdrop-blur-lg">
       <div className="max-w-[1440px] mx-auto px-6 xl:px-12 flex items-center gap-6 h-16">
         <Link href={`/${lang}`} className="flex items-center gap-2.5 shrink-0">
           <span
-            className="w-9 h-9 rounded-[10px] grid place-items-center text-black font-black text-lg leading-none select-none"
+            className="w-9 h-9 rounded-[10px] grid place-items-center text-black font-black text-lg leading-none select-none font-poppins"
             style={{
-              background: "linear-gradient(135deg, var(--gold), var(--gold-warm))",
+              background: "linear-gradient(135deg, var(--color-gold-400), var(--color-gold-500))",
               boxShadow: "0 4px 16px rgba(255,205,0,0.35)",
-              fontFamily: "var(--font-poppins, inherit)",
             }}
           >
             B
           </span>
-          <span
-            className="text-xl font-extrabold tracking-tight"
-            style={{ fontFamily: "var(--font-poppins, inherit)", color: "var(--text)" }}
-          >
+          <span className="text-xl font-extrabold tracking-tight text-fg font-poppins">
             Binge
           </span>
         </Link>
@@ -70,16 +58,7 @@ export default function Navbar({ lang, dict }: { lang: string; dict: NavDict }) 
             <Link
               key={label}
               href={href}
-              className="px-4 py-2 rounded-lg text-sm font-medium transition-all duration-150"
-              style={{ color: "var(--text-muted)" }}
-              onMouseEnter={(e) => {
-                (e.currentTarget as HTMLElement).style.color = "var(--text)";
-                (e.currentTarget as HTMLElement).style.background = "var(--bg-card)";
-              }}
-              onMouseLeave={(e) => {
-                (e.currentTarget as HTMLElement).style.color = "var(--text-muted)";
-                (e.currentTarget as HTMLElement).style.background = "transparent";
-              }}
+              className="px-4 py-2 rounded-lg text-sm font-medium transition-all duration-150 text-fg-muted hover:text-fg hover:bg-surface-card"
             >
               {label}
             </Link>
@@ -96,8 +75,7 @@ export default function Navbar({ lang, dict }: { lang: string; dict: NavDict }) 
           {!session && (
             <button
               onClick={() => router.push(`/${lang}/login`)}
-              className="px-4 py-2 rounded-lg text-sm font-semibold border transition-colors hover:bg-binge-card"
-              style={{ borderColor: "var(--border-strong)", color: "var(--text)" }}
+              className="px-4 py-2 rounded-lg text-sm font-semibold border transition-colors hover:bg-surface-card border-border-strong text-fg"
             >
               {dict.signIn}
             </button>
@@ -109,25 +87,22 @@ export default function Navbar({ lang, dict }: { lang: string; dict: NavDict }) 
               className="w-9 h-9 rounded-full grid place-items-center text-xs font-bold cursor-pointer select-none shrink-0 transition-opacity hover:opacity-80"
               style={{
                 background: session
-                  ? "linear-gradient(135deg, var(--gold), var(--gold-warm))"
-                  : "linear-gradient(135deg, var(--crimson), var(--gold))",
-                color: "#0a0a0f",
+                  ? "linear-gradient(135deg, var(--color-gold-400), var(--color-gold-500))"
+                  : "linear-gradient(135deg, var(--color-crimson-500), var(--color-gold-400))",
+                color: "var(--color-action-fg)",
               }}
             >
               {session ? initials : <FiUser size={16} />}
             </button>
 
             {dropdownOpen && session && (
-              <div
-                className="absolute right-0 top-12 w-56 rounded-xl border overflow-hidden z-50 py-1"
-                style={{ background: "var(--bg-elev)", borderColor: "var(--border)" }}
-              >
-                <div className="px-4 py-3 border-b" style={{ borderColor: "var(--border)" }}>
-                  <p className="text-sm font-semibold text-binge-text truncate">
+              <div className="absolute right-0 top-12 w-56 rounded-xl border border-border overflow-hidden z-50 py-1 bg-surface-raised">
+                <div className="px-4 py-3 border-b border-border">
+                  <p className="text-sm font-semibold text-fg truncate">
                     {session.user?.name ?? session.user?.email}
                   </p>
                   {session.user?.name && (
-                    <p className="text-xs text-binge-muted truncate">{session.user.email}</p>
+                    <p className="text-xs text-fg-muted truncate">{session.user.email}</p>
                   )}
                 </div>
 
@@ -137,11 +112,11 @@ export default function Navbar({ lang, dict }: { lang: string; dict: NavDict }) 
                   <DropdownItem icon={<FiZap size={15} />} label="Odkryj filmy" href={`/${lang}/swipe`} />
                 </div>
 
-                <div className="border-t" style={{ borderColor: "var(--border)" }} />
+                <div className="border-t border-border" />
 
                 <button
                   onClick={() => signOut({ callbackUrl: `/${lang}` })}
-                  className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-binge-crimson hover:bg-binge-card transition-colors cursor-pointer"
+                  className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-accent hover:bg-surface-card transition-colors cursor-pointer"
                 >
                   <FiLogOut size={15} />
                   Wyloguj
@@ -160,7 +135,7 @@ function DropdownItem({ icon, label, href, disabled }: {
 }) {
   if (disabled) {
     return (
-      <div className="flex items-center gap-3 px-4 py-2.5 text-sm text-binge-dim cursor-not-allowed select-none">
+      <div className="flex items-center gap-3 px-4 py-2.5 text-sm text-fg-subtle cursor-not-allowed select-none">
         {icon}
         <span>{label}</span>
         <span className="ml-auto text-xs opacity-40">wkrótce</span>
@@ -170,7 +145,7 @@ function DropdownItem({ icon, label, href, disabled }: {
   return (
     <Link
       href={href}
-      className="flex items-center gap-3 px-4 py-2.5 text-sm text-binge-text hover:bg-binge-card transition-colors"
+      className="flex items-center gap-3 px-4 py-2.5 text-sm text-fg hover:bg-surface-card transition-colors"
     >
       {icon}
       <span>{label}</span>

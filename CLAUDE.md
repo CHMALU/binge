@@ -119,9 +119,26 @@ All `tmdbFetch` calls use `{ next: { revalidate: 3600 } }`. Home and swipe pages
 
 Dictionaries are plain JSON loaded via dynamic `import()` in `dictionaries.ts` (server-only). No next-intl, no i18next — intentional to keep bundle small. Trade-off: no built-in formatters for dates/numbers, manual locale sync in LanguageSwitcher.
 
-### Styling
+### Styling — 2-layer color system
 
-CSS variables for all design tokens (`--bg`, `--gold`, `--crimson`, etc.) defined in `globals.css`. Design tokens registered in `@theme inline` with `binge-` prefix (e.g. `text-binge-gold`, `bg-binge-card`) to avoid collisions with Tailwind internals. Hover states use `onMouseEnter`/`onMouseLeave` inline handlers on elements that use CSS vars in `style` props.
+All design tokens live in `globals.css` inside a single `@theme inline` block. Two layers:
+
+**Layer 1 — primitives** (scale-based, answer "what color is this?"):
+- `neutral-50..950` (cool-tinted dark scale, with custom `neutral-850` step for cards)
+- `gold-50..900` (brand primary, full scale)
+- `crimson-400/500/600` (brand secondary, 3 shades)
+- `--color-success`, `--color-success-hover`, `--color-danger` (status, single values)
+
+**Layer 2 — semantic aliases** (role-based, answer "what is this for?"):
+- Surfaces: `surface`, `surface-raised`, `surface-card`, `surface-hover`
+- Foreground: `fg`, `fg-muted`, `fg-subtle`
+- Borders: `border`, `border-strong`
+- Action (gold CTA): `action`, `action-hover`, `action-fg`
+- Accent (crimson featured): `accent`, `accent-hover`
+
+**Usage rule:** ~90% semantic aliases (`bg-surface-card`, `text-fg-muted`, `bg-action`), primitives only when semantic doesn't fit (decorative gold text → `text-gold-400`, decorative bar → `bg-gold-400`). Status colors (`bg-success`, `bg-danger`) bypass action/accent because they signal intent, not brand.
+
+Hover states use `onMouseEnter`/`onMouseLeave` inline handlers when conditional; otherwise `hover:bg-surface-card`-style Tailwind utilities. Dynamic colors in `style={{}}` use `var(--color-X)` directly (e.g. `var(--color-action)`).
 
 ### Swipe mechanic
 
