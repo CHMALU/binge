@@ -58,6 +58,7 @@
   },
   "detail": {
     "overview": "Overview",
+    "availableOn": "Available on",
     "network": "Network",
     "createdBy": "Created by",
     "lastAired": "Last aired",

@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { IoArrowBack, IoStar, IoStarOutline } from "react-icons/io5";
-import { getPosterUrl, type MovieDetailData } from "@/lib/tmdb";
+import { getPosterUrl, type MovieDetailData, type ProvidersCountry } from "@/lib/tmdb";
 import { cn } from "@/lib/utils";
 import type { Dictionary } from "@/app/[lang]/dictionaries";
 
@@ -11,10 +11,12 @@ export default function MovieDetail({
   detail,
   lang,
   dict,
+  providers,
 }: {
   detail: MovieDetailData;
   lang: string;
   dict: DetailDict;
+  providers?: ProvidersCountry | null;
 }) {
   const title = detail.title ?? detail.name ?? "No title";
   const originalTitle = detail.original_title ?? detail.original_name;
@@ -37,6 +39,7 @@ export default function MovieDetail({
 
   const seasonLabel = (n: number) =>
     n === 1 ? `1 ${dict.season}` : `${n} ${dict.seasons}`;
+
 
   return (
     <div className="min-h-screen bg-surface text-fg">
@@ -213,6 +216,42 @@ export default function MovieDetail({
               ))}
 
             {/* Action links */}
+            {/* Providers / Action links */}
+            {providers && (
+              <div className="mt-4">
+                <div className="text-xs font-semibold tracking-widest uppercase mb-3 text-gold-400">{dict.availableOn}</div>
+                <div className="flex flex-wrap gap-2">
+                  {(() => {
+                    const list = [
+                      ...(providers.flatrate ?? []),
+                      ...(providers.free ?? []),
+                      ...(providers.ads ?? []),
+                      ...(providers.rent ?? []),
+                      ...(providers.buy ?? []),
+                    ].filter(Boolean) as { provider_id: number; provider_name: string; logo_path: string | null }[];
+                    const seen = new Set<number>();
+                    const unique: typeof list = [];
+                    for (const p of list) {
+                      if (!seen.has(p.provider_id)) {
+                        seen.add(p.provider_id);
+                        unique.push(p);
+                      }
+                    }
+
+                    return unique.map((p) => (
+                      <a key={p.provider_id} href={providers.link ?? undefined} target="_blank" rel="noopener noreferrer" title={p.provider_name} className="inline-flex items-center justify-center rounded-md overflow-hidden border border-border bg-surface-card">
+                        {p.logo_path ? (
+                          <img src={`https://image.tmdb.org/t/p/w92${p.logo_path}`} alt={p.provider_name} width={44} height={44} />
+                        ) : (
+                          <span className="px-3 py-2 text-sm text-fg">{p.provider_name}</span>
+                        )}
+                      </a>
+                    ));
+                  })()}
+                </div>
+              </div>
+            )}
+
             <div className="flex flex-col gap-3 mt-6">
               {detail.imdb_id && (
                 <a
