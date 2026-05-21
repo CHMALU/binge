@@ -85,6 +85,47 @@ export interface MovieDetailData {
   media_type?: "movie" | "tv";
 }
 
+export interface WatchProvider {
+  provider_id: number;
+  provider_name: string;
+  logo_path: string | null;
+}
+
+export interface ProvidersCountry {
+  link?: string;
+  flatrate?: WatchProvider[];
+  rent?: WatchProvider[];
+  buy?: WatchProvider[];
+  ads?: WatchProvider[];
+  free?: WatchProvider[];
+}
+
+export interface WatchProvidersResponse {
+  id: number;
+  results: Record<string, ProvidersCountry>;
+}
+
+export async function getWatchProviders(mediaType: "movie" | "tv", id: number): Promise<Record<string, ProvidersCountry> | null> {
+  try {
+    const data = await tmdbFetch<WatchProvidersResponse>(`/${mediaType}/${id}/watch/providers`);
+    return data.results ?? null;
+  } catch (err) {
+    return null;
+  }
+}
+
+export async function getProvidersForLocale(mediaType: "movie" | "tv", id: number, locale = "en") {
+  const results = await getWatchProviders(mediaType, id);
+  if (!results) return null;
+
+  // derive country code from locale mapping (e.g. en -> en-US -> US)
+  const tmdbLang = LOCALE_TO_TMDB[locale] ?? "en-US";
+  const parts = tmdbLang.split("-");
+  const country = parts.length > 1 ? parts[1].toUpperCase() : locale.slice(0, 2).toUpperCase();
+
+  return results[country] ?? null;
+}
+
 interface TMDbListResponse {
   results: Movie[];
   total_pages: number;

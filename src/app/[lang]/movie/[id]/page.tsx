@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import MovieDetail from "@/components/MovieDetail";
-import { getMovieDetails } from "@/lib/tmdb";
+import { getMovieDetails, getProvidersForLocale } from "@/lib/tmdb";
 import { getDictionary, hasLocale } from "../../dictionaries";
 
 export default async function MoviePage({
@@ -19,5 +19,7 @@ export default async function MoviePage({
     getMovieDetails(numericId, lang),
   ]);
 
-  return <MovieDetail detail={{ ...detail, media_type: "movie" }} lang={lang} dict={dict.detail} />;
+  const providers = await getProvidersForLocale("movie", numericId, lang);
+
+  return <MovieDetail detail={{ ...detail, media_type: "movie" }} lang={lang} dict={dict.detail} providers={providers} />;
 }
