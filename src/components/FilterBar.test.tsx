@@ -29,11 +29,11 @@ describe('FilterBar', () => {
   });
 
   test('select movie and displaying Years', async () => {
-  
+
     render(<FilterBar lang="en" dict={mockDict} />);
 
-    const btn = screen.getByText("🎬 Movies");
-    
+    const btn = screen.getByRole("button", { name: /Movies/ });
+
     fireEvent.click(btn);
 
     await waitFor(() => {
@@ -42,11 +42,11 @@ describe('FilterBar', () => {
   });
 
   test('select series and displaying Years', async () => {
-  
+
     render(<FilterBar lang="en" dict={mockDict} />);
 
-    const btn = screen.getByText("📺 Series");
-    
+    const btn = screen.getByRole("button", { name: /Series/ });
+
     fireEvent.click(btn);
 
     await waitFor(() => {
@@ -60,8 +60,8 @@ describe('FilterBar', () => {
     ]);
     render(<FilterBar lang="en" dict={mockDict} />);
 
-    const btn = screen.getByText("📺 Series");
-    
+    const btn = screen.getByRole("button", { name: /Series/ });
+
     fireEvent.click(btn);
     const option = await screen.findByTestId("genre");
     expect(option).toBeInTheDocument();
@@ -74,8 +74,8 @@ describe('FilterBar', () => {
     ]);
     render(<FilterBar lang="en" dict={mockDict} />);
 
-    const btn = screen.getByText("🎬 Movies");
-    
+    const btn = screen.getByRole("button", { name: /Movies/ });
+
     fireEvent.click(btn);
     const option = await screen.findByTestId("genre");
     expect(option).toBeInTheDocument();
@@ -88,7 +88,7 @@ describe('FilterBar', () => {
 
     render(<FilterBar lang="en" dict={mockDict} />);
 
-    fireEvent.click(screen.getByText("🎬 Movies"));
+    fireEvent.click(screen.getByRole("button", { name: /Movies/ }));
 
     const reset = await screen.findByTestId("reset");
 
@@ -104,7 +104,7 @@ describe('FilterBar', () => {
 
     render(<FilterBar lang="en" dict={mockDict} />);
 
-    const btn = screen.getByText("🎬 Movies");
+    const btn = screen.getByRole("button", { name: /Movies/ });
     fireEvent.click(btn);
 
     const dropdown = await screen.findAllByRole("combobox");

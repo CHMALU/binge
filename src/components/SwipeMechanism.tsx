@@ -1,6 +1,7 @@
 import { motion, PanInfo, useMotionValue, useTransform, useAnimation } from "framer-motion";
 import { useState } from "react";
 import NextImage from "next/image";
+import { IoStar } from "react-icons/io5";
 import { getPosterUrl, type Movie } from "@/lib/tmdb"
 import { forwardRef, useImperativeHandle } from "react";
 
@@ -154,7 +155,7 @@ const SwipeCard = forwardRef(function SwipeCard({
               <div className="absolute w-full h-1/10 p-3 bottom-0">
               <h3 className="text-sm font-medium text-white leading-snug line-clamp-2">{title}</h3>
               <div className="flex items-center gap-1 text-yellow-400 text-sm font-semibold">
-                <span>★</span>
+                <IoStar aria-hidden="true" />
                 <span>{rating}</span>
               </div>
               </div>
@@ -179,10 +180,10 @@ const SwipeCard = forwardRef(function SwipeCard({
                     {title}
                   </h3>
                   <div className="flex items-center gap-3 text-sm text-zinc-40">
-                    <span className="flex items-center gap-1">
-                      <span className="text-yellow-400">★</span>
+                    <div className="flex items-center gap-1">
+                      <IoStar className="text-yellow-400" aria-hidden="true" />
                       {rating}
-                    </span>
+                    </div>
                     <span>
                       {year}
                     </span>

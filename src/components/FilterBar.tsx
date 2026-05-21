@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { IoFilm, IoTv, IoClose } from "react-icons/io5";
 import { getGenres, discoverMovies, discoverSeries } from "@/lib/tmdb";
 import type { Genre, Movie } from "@/lib/tmdb";
 import MovieCard from "@/components/MovieCard";
@@ -106,10 +107,10 @@ export default function FilterBar({ lang, dict }: { lang: string; dict: FilterDi
             {dict.all}
           </button>
           <button style={chipStyle(mediaType === "movie")} onClick={() => setMediaType(mediaType === "movie" ? null : "movie")}>
-            🎬 {dict.movies}
+            <IoFilm aria-hidden="true" /> {dict.movies}
           </button>
           <button style={chipStyle(mediaType === "tv")} onClick={() => setMediaType(mediaType === "tv" ? null : "tv")}>
-            📺 {dict.series}
+            <IoTv aria-hidden="true" /> {dict.series}
           </button>
 
           {genres.length > 0 && mediaType && (
@@ -148,7 +149,7 @@ export default function FilterBar({ lang, dict }: { lang: string; dict: FilterDi
               style={chipStyle(false)}
               onClick={reset}
             >
-              ✕ {dict.reset}
+              <IoClose aria-hidden="true" /> {dict.reset}
             </button>
           )}
         </div>

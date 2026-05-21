@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { IoPlay, IoAdd, IoStar } from "react-icons/io5";
 import { getPosterUrl, type Movie } from "@/lib/tmdb";
 
 export default function MovieCard({ movie, lang = "en" }: { movie: Movie; lang?: string }) {
@@ -40,18 +41,18 @@ export default function MovieCard({ movie, lang = "en" }: { movie: Movie; lang?:
           style={{ background: "linear-gradient(0deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.2) 50%, transparent 100%)" }}
         >
           <div className="flex gap-1.5">
-            <span
-              className="w-8 h-8 rounded-full grid place-items-center text-sm font-bold"
+            <div
+              className="w-8 h-8 rounded-full inline-flex items-center justify-center text-sm font-bold"
               style={{ background: "var(--gold)", color: "#000" }}
             >
-              ▶
-            </span>
-            <span
-              className="w-8 h-8 rounded-full grid place-items-center text-sm border"
+              <IoPlay aria-hidden="true" />
+            </div>
+            <div
+              className="w-8 h-8 rounded-full inline-flex items-center justify-center text-sm border"
               style={{ background: "rgba(255,255,255,0.15)", backdropFilter: "blur(8px)", borderColor: "rgba(255,255,255,0.2)", color: "white" }}
             >
-              +
-            </span>
+              <IoAdd aria-hidden="true" />
+            </div>
           </div>
         </div>
       </div>
@@ -62,10 +63,11 @@ export default function MovieCard({ movie, lang = "en" }: { movie: Movie; lang?:
         >
           {title}
         </h3>
-        <div className="flex items-center justify-between text-xs" style={{ color: "var(--text-dim)" }}>
-          <span className="flex items-center gap-1 font-semibold" style={{ color: "var(--gold)" }}>
-            ★ {rating}
-          </span>
+        <div className="flex items-center justify-between text-xs text-binge-dim">
+          <div className="flex items-center gap-1 font-semibold text-binge-gold">
+            <IoStar aria-hidden="true" />
+            {rating}
+          </div>
           {year && <span>{year}</span>}
         </div>
       </div>

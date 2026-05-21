@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { IoArrowBack } from "react-icons/io5";
+import { IoArrowBack, IoStar, IoStarOutline } from "react-icons/io5";
 import { getPosterUrl, type MovieDetailData, type ProvidersCountry } from "@/lib/tmdb";
 import type { Dictionary } from "@/app/[lang]/dictionaries";
 
@@ -193,8 +193,12 @@ export default function MovieDetail({
                 {rating}
                 <span className="text-lg font-medium" style={{ color: "var(--text-dim)" }}>/10</span>
               </div>
-              <div className="text-base tracking-widest mb-2" style={{ color: "var(--gold)" }}>
-                {"★".repeat(stars)}{"☆".repeat(5 - stars)}
+              <div className="inline-flex items-center gap-0.5 mb-2" style={{ color: "var(--gold)" }} aria-label={`${stars} out of 5`}>
+                {Array.from({ length: 5 }).map((_, i) =>
+                  i < stars
+                    ? <IoStar key={i} aria-hidden="true" />
+                    : <IoStarOutline key={i} aria-hidden="true" />
+                )}
               </div>
               {detail.vote_count && (
                 <div className="text-sm" style={{ color: "var(--text-dim)" }}>
