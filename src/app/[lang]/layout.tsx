@@ -8,9 +8,11 @@ export function generateStaticParams() {
 
 export default async function LocaleLayout({
   children,
+  modal,
   params,
 }: {
   children: React.ReactNode;
+  modal: React.ReactNode;
   params: Promise<{ lang: string }>;
 }) {
   const { lang } = await params;
@@ -22,6 +24,7 @@ export default async function LocaleLayout({
     <>
       <HtmlAttributes lang={lang} dir={isRtl ? "rtl" : "ltr"} />
       {children}
+      {modal}
     </>
   );
 }

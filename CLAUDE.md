@@ -7,10 +7,33 @@ Movie/series discovery app — like Tinder for films. Data sourced from the **TM
 ## Tech Stack
 
 - **Framework:** Next.js (App Router, TypeScript)
-- **Styling:** Tailwind CSS
+- **Styling:** Tailwind CSS v4
 - **Data:** TMDb API
-- **Auth:** TBD
-- **Database:** TBD
+- **Auth:** NextAuth.js v5 (Credentials + Google OAuth)
+- **Database:** Neon PostgreSQL + Prisma v6 (driver adapter)
+
+## Coding Principles
+
+- Follow Clean Code: small focused functions, meaningful names, no magic values
+- Prefer simple solutions over clever ones (XP: Simplicity)
+- Do not add features, abstractions, or error handling beyond what is asked
+- Do not create new files unless strictly necessary
+- Read existing code before suggesting modifications
+- Point out potential security issues (XSS, injection, exposed keys)
+
+## Test-First Approach
+
+- **Always write a `[red]` commit before `[green]`** — tests must fail without production code
+- Before implementing a feature ask: what are the acceptance criteria and how do we test them?
+- Suggest test cases for edge cases and acceptance criteria from user stories
+- Do not skip tests or mark them as "to be done later"
+
+## What NOT to Do
+
+- Do not generate large amounts of boilerplate without being asked
+- Do not rewrite code that wasn't asked to be changed
+- Do not suggest architectural changes mid-feature
+- Do not add comments to code that is already self-explanatory
 
 ## User Stories
 
@@ -90,7 +113,7 @@ Dictionaries are plain JSON loaded via dynamic `import()` in `dictionaries.ts` (
 
 ### Styling
 
-CSS variables for all design tokens (`--bg`, `--gold`, `--crimson`, etc.) defined in `globals.css`. Tailwind for layout utilities only. Hover states use `onMouseEnter`/`onMouseLeave` inline handlers (not CSS pseudos) because inline `style` props with CSS vars don't support `:hover` in CSS.
+CSS variables for all design tokens (`--bg`, `--gold`, `--crimson`, etc.) defined in `globals.css`. Design tokens registered in `@theme inline` with `binge-` prefix (e.g. `text-binge-gold`, `bg-binge-card`) to avoid collisions with Tailwind internals. Hover states use `onMouseEnter`/`onMouseLeave` inline handlers on elements that use CSS vars in `style` props.
 
 ### Swipe mechanic
 
@@ -98,25 +121,97 @@ CSS variables for all design tokens (`--bg`, `--gold`, `--crimson`, etc.) define
 
 ## Known Bugs
 
-- **TV detail page** (`[lang]/tv/[id]/page.tsx`): `getTvDetails()` is called without the `lang` argument — TV detail pages are always in English regardless of locale. Fix: pass `lang` as second argument.
 - **Swipe** (`MovieSwiper.tsx`): only loads 5 movies, no persistence of swipe decisions, no results screen.
+
+## Team Assignments (Phase 1 & 2)
+
+### Phase 1 — parallel
+
+| Pair | US | Feature | Pts |
+|------|----|---------|-----|
+| Dawid + Bernd | US8 | Auth + DB setup ("create an account") — foundation for everything | 3 |
+| Dawid + Bernd | US9 | Save titles to watchlist | 3 |
+| Dawid + Bernd | US10 | View watchlist | 3 |
+| Christoph + Lucas | US6-streaming | Streaming provider info on detail page — fully independent | 5 |
+| Christoph + Lucas | US-ratings | Rate movies/series — **waits for DB from Dawid+Bernd** | 3 |
+
+### Phase 2 — after Phase 1 DB is merged (pairs swap)
+
+| Pair | US | Feature | Pts |
+|------|----|---------|-----|
+| Dawid + Lucas | US11 | Mark titles as watched | 3 |
+| Dawid + Lucas | US-swipe-filter | Watched titles don't appear in swipe session | 5 |
+| Bernd + Christoph | US7 | Recommendations based on swipes + ratings (= finishing swipe end-to-end) | 8 |
+
+> Phase 2 implementation depends on Phase 1 DB being merged — don't start coding watchlist/swipe persistence before that lands.
+
+## Implemented: Auth + Database (US8)
+<<<<<<< Updated upstream
+
+Branch: `feature/us8-auth-db` (ready for MR)
+
+### Stack
+- **Neon PostgreSQL** (Frankfurt) — `DATABASE_URL` (pooler) + `DATABASE_URL_UNPOOLED` (direct, for migrations)
+- **Prisma v6** with `@prisma/adapter-neon` — schema in `prisma/schema.prisma`, client generated to `src/generated/prisma/` (gitignored)
+- **NextAuth v5** — JWT strategy, Credentials (email+password) + Google OAuth (keys TODO)
+
+### Key files
+- `prisma/schema.prisma` — models: User, Account, Session, VerificationToken, WatchlistItem, WatchedItem
+- `prisma.config.ts` — reads from `.env.local`, uses unpooled URL for `db push`
+- `src/lib/prisma.ts` — PrismaClient singleton with Neon adapter
+- `src/auth.ts` — NextAuth config (providers, JWT callbacks that expose `session.user.id`)
+- `src/app/api/auth/[...nextauth]/route.ts` — NextAuth route handler
+- `src/app/api/auth/register/route.ts` — POST endpoint for registration (bcrypt, 409 on duplicate)
+- `src/components/auth/` — LoginForm, RegisterForm, AuthModal (intercepting route modal)
+- `src/components/SessionProvider.tsx` — wraps app with NextAuth SessionProvider
+
+### Schema notes
+- Titles (name, poster) are NOT stored in DB — always fetched from TMDb by `tmdbId`
+- `WatchlistItem` and `WatchedItem` have `@@unique([userId, tmdbId, mediaType])` — no duplicates
+- `WatchedItem.rating` is nullable — rated after watching
+
+### TODO before deploy
+- Google OAuth: add `GOOGLE_CLIENT_ID` + `GOOGLE_CLIENT_SECRET` to `.env.local` and Vercel. Redirect URI: `http://localhost:3000/api/auth/callback/google`
+=======
+
+Branch: `feature/us8-auth-db` (ready for MR)
+
+### Stack
+- **Neon PostgreSQL** (Frankfurt) — `DATABASE_URL` (pooler) + `DATABASE_URL_UNPOOLED` (direct, for migrations)
+- **Prisma v6** with `@prisma/adapter-neon` — schema in `prisma/schema.prisma`, client generated to `src/generated/prisma/` (gitignored)
+- **NextAuth v5** — JWT strategy, Credentials (email+password) + Google OAuth (keys TODO)
+
+### Key files
+- `prisma/schema.prisma` — models: User, Account, Session, VerificationToken, WatchlistItem, WatchedItem
+- `prisma.config.ts` — reads from `.env.local`, uses unpooled URL for `db push`
+- `src/lib/prisma.ts` — PrismaClient singleton with Neon adapter
+- `src/auth.ts` — NextAuth config (providers, JWT callbacks that expose `session.user.id`)
+- `src/app/api/auth/[...nextauth]/route.ts` — NextAuth route handler
+- `src/app/api/auth/register/route.ts` — POST endpoint for registration (bcrypt, 409 on duplicate)
+
+### Schema notes
+- Titles (name, poster) are NOT stored in DB — always fetched from TMDb by `tmdbId`
+- `WatchlistItem` and `WatchedItem` have `@@unique([userId, tmdbId, mediaType])` — no duplicates
+- `WatchedItem.rating` is nullable — rated after watching
+
+### TODO before deploy
+- Google OAuth: add `GOOGLE_CLIENT_ID` + `GOOGLE_CLIENT_SECRET` to `.env.local` and Vercel. Redirect URI: `http://localhost:3000/api/auth/callback/google`
 
 ## Planned (not yet started)
 
-- **Auth** (US8): stack TBD — likely NextAuth.js or Lucia + DB session
-- **Database** (US9–11): stack TBD — watchlist and watched list require persistent storage per user. Likely PostgreSQL (Vercel Postgres or Supabase) with an ORM (Prisma or Drizzle).
-- When auth is added: Server Components on protected pages should read session via `cookies()` / `headers()` — this will make those routes dynamic (SSR), which is correct for personalized data.
+- When auth is added: Server Components on protected pages should read session via `auth()` from `src/auth.ts` — this will make those routes dynamic (SSR), which is correct for personalized data.
+>>>>>>> Stashed changes
 
 ## Implemented: Internationalization (i18n)
 
-Branch: `refactor/cinema-design-system`
+Branch: `feature/i18n-language-switcher` (merged to main)
 
 ### How it works
 
 - **URL-based locale routing:** all routes are prefixed with locale — `/en`, `/pl`, `/ar`
 - **`src/proxy.ts`** — Next.js 16 proxy (equivalent of middleware in older versions). Intercepts every request without a locale prefix and redirects to `/en` (or the locale from cookie). Export name must be `proxy`, not `middleware`.
 - **`src/app/[lang]/`** — all pages live here. The `[lang]` segment is a dynamic route parameter carrying the locale.
-- **Cookie `BINGE_LOCALE`** — set on language switch, persists for 1 year (`max-age=31536000`). The proxy reads it on the next visit to restore the user's language.
+- **Cookie `BINGE_LOCALE`** — set on language switch via `useEffect` in `LanguageSwitcher`, persists for 1 year (`max-age=31536000`). The proxy reads it on the next visit to restore the user's language.
 - **Arabic RTL** — `src/app/[lang]/layout.tsx` injects an inline `<script>` that sets `document.documentElement.lang` and `document.documentElement.dir` synchronously before paint. No flicker.
 
 ### Adding a new language

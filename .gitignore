@@ -44,3 +44,5 @@ next-env.d.ts
 # design assets
 *.zip
 fetch-test.mjs
+
+/src/generated/prisma
