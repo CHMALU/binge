@@ -39,7 +39,7 @@ export default function SearchBar() {
   return (
     <div className="relative w-full">
       <svg
-        className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none"
+        className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-fg-subtle"
         width="16"
         height="16"
         viewBox="0 0 24 24"
@@ -48,7 +48,6 @@ export default function SearchBar() {
         strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
-        style={{ color: "var(--text-dim)" }}
       >
         <circle cx="11" cy="11" r="8" />
         <path d="m21 21-4.3-4.3" />
@@ -58,31 +57,19 @@ export default function SearchBar() {
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         placeholder="Search movies & series..."
-        className="w-full h-11 rounded-xl pl-10 pr-14 text-sm outline-none border transition-colors"
-        style={{
-          background: "var(--bg-card)",
-          borderColor: "var(--border)",
-          color: "var(--text)",
-        }}
-        onFocus={(e) => (e.currentTarget.style.borderColor = "var(--gold)")}
-        onBlur={(e) => (e.currentTarget.style.borderColor = "var(--border)")}
+        className="w-full h-11 rounded-xl pl-10 pr-14 text-sm outline-none border transition-colors bg-surface-card border-border focus:border-action text-fg"
       />
       {loading && (
-        <div className="absolute right-10 top-1/2 -translate-y-1/2 text-xs" style={{ color: "var(--text-dim)" }}>
+        <div className="absolute right-10 top-1/2 -translate-y-1/2 text-xs text-fg-subtle">
           ...
         </div>
       )}
-      <kbd
-        className="absolute right-3 top-1/2 -translate-y-1/2 text-[11px] px-1.5 py-0.5 rounded border pointer-events-none inline-flex items-center gap-0.5"
-        style={{ background: "var(--bg)", borderColor: "var(--border)", color: "var(--text-dim)", fontFamily: "inherit" }}
-      >
+      <kbd className="absolute right-3 top-1/2 -translate-y-1/2 text-[11px] px-1.5 py-0.5 rounded border pointer-events-none inline-flex items-center gap-0.5 bg-surface border-border text-fg-subtle font-[inherit]">
+
         <LuCommand aria-hidden="true" />K
       </kbd>
       {isOpen && results.length > 0 && (
-        <div
-          className="absolute top-12 left-0 rounded-xl shadow-xl z-50 p-3"
-          style={{ width: 360, background: "var(--bg-elev)", border: "1px solid var(--border)" }}
-        >
+        <div className="absolute top-12 left-0 w-[360px] rounded-xl shadow-xl z-50 p-3 bg-surface-raised border border-border">
           <div className="grid grid-cols-3 gap-2">
             {results.map((movie) => (
               <div key={movie.id} onClick={() => { setIsOpen(false); setQuery(""); }}>

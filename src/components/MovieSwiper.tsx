@@ -1,14 +1,13 @@
 // MovieSwiper.tsx
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import SwipeCard from "@/components/SwipeMechanism";
 import type { Movie } from "@/lib/tmdb";
 import Link from "next/link";
-import { FaThumbsUp, FaThumbsDown } from "react-icons/fa"; 
-import 'primeicons/primeicons.css'
-import { useRef } from "react";
+import { FaThumbsUp, FaThumbsDown } from "react-icons/fa";
+import { IoArrowBack, IoArrowForward } from "react-icons/io5";
 
 interface SwipeResult {
   action: "left" | "right";
@@ -30,12 +29,12 @@ export default function MovieSwiper( {movies}: Props ) {
 
   const movie_selection = movies.slice(0,5);
   const [currentIndex, setCurrentIndex] = useState(0);
-  
+
   const currentMovie = movie_selection[currentIndex];
 
   const handleSwipe = (result: SwipeResult) => {
     console.log(result);
-    
+
     // Move to next card
     //setCurrentIndex((prev) => prev + 1);
   };
@@ -50,7 +49,7 @@ export default function MovieSwiper( {movies}: Props ) {
   if (!currentMovie) {
     return (
       <div className="flex items-center justify-center h-[60vh]">
-        <p className="text-zinc-400">Here should be the final result!</p>
+        <p className="text-fg-muted">Here should be the final result!</p>
       </div>
     );
   }
@@ -58,7 +57,7 @@ export default function MovieSwiper( {movies}: Props ) {
   return (
     <div className="relative w-full h-screen">
       <div className="px-6 py-4">
-        <Link href="/" className="text-sm text-zinc-400 hover:text-white transition-colors">
+        <Link href="/" className="text-sm text-fg-muted hover:text-fg transition-colors">
           ← Back
         </Link>
       </div>
@@ -93,15 +92,15 @@ export default function MovieSwiper( {movies}: Props ) {
     </div>
     <div className="relative flex flex-col items-center justify-center min-h-[600px] mt-10">
       {swipeInfo && (
-        <div className="flex gap-8">
-        <i className="pi pi-arrow-left scale-x-300 pr-5 " style={{ fontSize: '1.5rem'}}/>
-        <span className="text-2xl tracking-[0.4em] text-bold uppercase">
-          Swipe
-        </span>
-        <i className="pi pi-arrow-right scale-x-300 pl-4" style={{ fontSize: '1.5rem'}}/>
-      </div>
+        <div className="flex gap-8 items-center">
+          <IoArrowBack className="text-2xl scale-x-[3]" aria-hidden="true" />
+          <span className="text-2xl tracking-[0.4em] font-bold uppercase">
+            Swipe
+          </span>
+          <IoArrowForward className="text-2xl scale-x-[3]" aria-hidden="true" />
+        </div>
       )}
-      
+
       <AnimatePresence>
         <div className="relative w-full flex items-center justify-center overflow-hidden">
             <div className="absolute inset-0 bg-cover bg-center blur-2xl scale-110">
@@ -129,7 +128,7 @@ export default function MovieSwiper( {movies}: Props ) {
       </AnimatePresence>
       <div className="flex gap-20">
         <button
-            className="px-7 py-7 rounded-full text-sm font-semibold transition-colors hover:bg-[var(--emerald-warm)] mr-30 bg-[var(--emerald)] shadow-[0_0_30px_rgba(34,197,94,0.6)]"
+            className="px-7 py-7 rounded-full text-sm font-semibold transition-colors bg-success hover:bg-success-hover mr-30 shadow-[0_0_30px_rgba(34,192,106,0.6)]"
             onClick={() => {
               console.log("Positive!");
               cardRef.current?.swipeLeft();
@@ -138,7 +137,7 @@ export default function MovieSwiper( {movies}: Props ) {
             <FaThumbsUp className="inline-block" size={20}/>
         </button>
         <button
-            className="px-7 py-7 rounded-full text-sm font-semibold hover:bg-[var(--crimson-warm)] bg-[var(--crimson)] transition-colors shadow-[0_0_30px_rgba(239,68,68,0.6)]"
+            className="px-7 py-7 rounded-full text-sm font-semibold bg-danger hover:bg-accent-hover transition-colors shadow-[0_0_30px_rgba(255,45,74,0.6)]"
             onClick={() => {
               console.log("Negative!");
               cardRef.current?.swipeRight();
@@ -147,7 +146,7 @@ export default function MovieSwiper( {movies}: Props ) {
             <FaThumbsDown className="inline-block" size={20}/>
         </button>
       </div>
-      
+
     </div>
     </div>
   );

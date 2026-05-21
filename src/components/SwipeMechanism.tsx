@@ -68,7 +68,7 @@ const SwipeCard = forwardRef(function SwipeCard({
       });
     } else {
       await controls.start({
-        
+
         x: exitX > 0 ? exitX + 1000 : exitX - 1000,
         rotate: exitX * 20,
         opacity: 0,
@@ -76,14 +76,14 @@ const SwipeCard = forwardRef(function SwipeCard({
       });
     }
 
-    const SwipeResult: SwipeResult = {
+    const result: SwipeResult = {
       action,
       movie,
       velocity,
       offset,
     };
 
-    onSwipe?.(SwipeResult);
+    onSwipe?.(result);
 
     if (action === "right") {
       onRightSwipe?.(movie);
@@ -119,8 +119,8 @@ const SwipeCard = forwardRef(function SwipeCard({
     swipeRight: () => handleSwipe("right", 1, 1)
   }));
 
-  return ( 
-    <motion.div 
+  return (
+    <motion.div
       style={{x, rotate, opacity}}
       drag = "x"
       dragConstraints={{left: 0, right: 0}}
@@ -138,23 +138,16 @@ const SwipeCard = forwardRef(function SwipeCard({
         <motion.div
           animate={{ rotateY: flipped ? 180 : 0 }}
           transition={{ duration: 0.5, type: "spring", damping: 20}}
-          className="relative w-full h-full"
-          style={{ transformStyle: "preserve-3d"}}>
-                <div
-              className="absolute w-full h-full bg-zinc-900 text-white p-3 rounded-xl flex flex-col justify-between overflow-hidden"
-              style={{
-                transform: "rotateY(0deg)",
-                backfaceVisibility: "hidden",
-                WebkitBackfaceVisibility: "hidden"
-              }}>
+          className="relative w-full h-full [transform-style:preserve-3d]">
+          <div className="absolute w-full h-full bg-surface-raised text-fg p-3 rounded-xl flex flex-col justify-between overflow-hidden [backface-visibility:hidden]">
               {posterUrl && (
                 <div className="absolute w-full h-9/10 inset-0">
                   <NextImage src={posterUrl} alt={title} fill loading="eager" className="object-cover" sizes="(max-width: 640px) 75vw"/>
                 </div>
               )}
               <div className="absolute w-full h-1/10 p-3 bottom-0">
-              <h3 className="text-sm font-medium text-white leading-snug line-clamp-2">{title}</h3>
-              <div className="flex items-center gap-1 text-yellow-400 text-sm font-semibold">
+              <h3 className="text-sm font-medium text-fg leading-snug line-clamp-2">{title}</h3>
+              <div className="flex items-center gap-1 text-gold-400 text-sm font-semibold">
                 <IoStar aria-hidden="true" />
                 <span>{rating}</span>
               </div>
@@ -162,26 +155,20 @@ const SwipeCard = forwardRef(function SwipeCard({
               <div className="relative z-10 flex flex-col h-full p-5">
               </div>
               </div>
-            <div
-              className="absolute w-full h-full bg-zinc-900 text-white p-3 rounded-xl flex flex-col justify-between"
-              style={{
-                transform: "rotateY(180deg)",
-                backfaceVisibility: "hidden",
-                WebkitBackfaceVisibility: "hidden"
-              }}>
+            <div className="absolute w-full h-full bg-surface-raised text-fg p-3 rounded-xl flex flex-col justify-between [transform:rotateY(180deg)] [backface-visibility:hidden]">
               {posterUrl && (
                 <div className="absolute inset-0">
                   <NextImage src={posterUrl} alt={title} fill loading="eager" className="object-cover opacity-20 blur-sm" sizes="(max-width: 640px) 75vw, 380px"/>
                 </div>
               )}
-              <div className="relativ z-10 flex flex-col h-full p-5">
+              <div className="relative z-10 flex flex-col h-full p-5">
                 <div className="mb-4">
                   <h3 className="font-bold text-xl leading-tight mb-1">
                     {title}
                   </h3>
-                  <div className="flex items-center gap-3 text-sm text-zinc-40">
+                  <div className="flex items-center gap-3 text-sm text-fg-muted">
                     <div className="flex items-center gap-1">
-                      <IoStar className="text-yellow-400" aria-hidden="true" />
+                      <IoStar className="text-gold-400" aria-hidden="true" />
                       {rating}
                     </div>
                     <span>
@@ -190,12 +177,12 @@ const SwipeCard = forwardRef(function SwipeCard({
                     </div>
                   </div>
                   <div className="flex-1 overflow-y-auto">
-                    <p className="text-sm text-zinc-300 leading-relaxed">
+                    <p className="text-sm text-fg-muted leading-relaxed">
                       {movie.overview || "No description available."}
                     </p>
                   </div>
-                  <div className="mt-4 pt-3 border-t border-zinc-800 text-center">
-                    <p className="text-xs text-zinc-500">
+                  <div className="mt-4 pt-3 border-t border-border text-center">
+                    <p className="text-xs text-fg-subtle">
                       Double-tap to flip back
                     </p>
                   </div>

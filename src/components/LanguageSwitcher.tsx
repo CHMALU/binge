@@ -3,6 +3,7 @@
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { MdOutlineLanguage } from "react-icons/md";
+import { cn } from "@/lib/utils";
 
 const LOCALES = [
   { code: "en", label: "EN", name: "English" },
@@ -36,8 +37,7 @@ export default function LanguageSwitcher({ lang }: { lang: string }) {
       <button
         aria-label="Change language"
         onClick={() => setOpen((v) => !v)}
-        className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold border transition-colors hover:bg-[var(--bg-card)]"
-        style={{ borderColor: "var(--border)", color: "var(--text)" }}
+        className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold border transition-colors hover:bg-surface-card border-border text-fg"
       >
         <MdOutlineLanguage size={18} />
         <span>{lang.toUpperCase()}</span>
@@ -46,26 +46,17 @@ export default function LanguageSwitcher({ lang }: { lang: string }) {
       {open && (
         <>
           <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
-          <div
-            className="absolute right-0 top-full mt-2 z-50 rounded-xl overflow-hidden shadow-xl border"
-            style={{ background: "var(--bg-elev)", borderColor: "var(--border)", minWidth: 140 }}
-          >
+          <div className="absolute right-0 top-full mt-2 z-50 min-w-[140px] rounded-xl overflow-hidden shadow-xl border bg-surface-raised border-border">
             {LOCALES.map(({ code, label, name }) => (
               <button
                 key={code}
                 onClick={() => switchLocale(code)}
-                className="w-full flex items-center gap-3 px-4 py-3 text-sm text-left transition-colors"
-                style={{
-                  background: code === lang ? "var(--bg-card)" : "transparent",
-                  color: code === lang ? "var(--gold)" : "var(--text)",
-                  fontWeight: code === lang ? 600 : 400,
-                }}
-                onMouseEnter={(e) => {
-                  if (code !== lang) (e.currentTarget as HTMLElement).style.background = "var(--bg-card)";
-                }}
-                onMouseLeave={(e) => {
-                  if (code !== lang) (e.currentTarget as HTMLElement).style.background = "transparent";
-                }}
+                className={cn(
+                  "w-full flex items-center gap-3 px-4 py-3 text-sm text-left transition-colors",
+                  code === lang
+                    ? "bg-surface-card text-gold-400 font-semibold"
+                    : "text-fg font-normal hover:bg-surface-card"
+                )}
               >
                 <span className="font-mono font-bold text-xs w-6">{label}</span>
                 <span>{name}</span>

@@ -5,44 +5,23 @@ import { IoFilm, IoTv, IoClose } from "react-icons/io5";
 import { getGenres, discoverMovies, discoverSeries } from "@/lib/tmdb";
 import type { Genre, Movie } from "@/lib/tmdb";
 import MovieCard from "@/components/MovieCard";
+import { cn } from "@/lib/utils";
 import type { Dictionary } from "@/app/[lang]/dictionaries";
 
 type FilterDict = Dictionary["filter"];
 
 const YEARS = Array.from({ length: 30 }, (_, i) => String(new Date().getFullYear() - i));
 
-function chipStyle(active: boolean): React.CSSProperties {
-  return {
-    display: "inline-flex",
-    alignItems: "center",
-    gap: 8,
-    padding: "10px 16px",
-    borderRadius: 999,
-    background: active ? "var(--gold)" : "var(--bg-card)",
-    border: `1px solid ${active ? "var(--gold)" : "var(--border)"}`,
-    color: active ? "#000" : "var(--text-muted)",
-    fontWeight: active ? 600 : 500,
-    fontSize: 13,
-    cursor: "pointer",
-    transition: "all 0.15s",
-    whiteSpace: "nowrap",
-  };
-}
+const CHIP_BASE = "inline-flex items-center gap-2 px-4 py-2.5 rounded-full border text-[13px] transition-all whitespace-nowrap cursor-pointer";
+const SELECT_CLASS = "px-3.5 py-2.5 rounded-full bg-surface-card border border-border text-fg-muted text-[13px] font-medium cursor-pointer outline-none appearance-none";
 
-function selectStyle(): React.CSSProperties {
-  return {
-    padding: "10px 14px",
-    borderRadius: 999,
-    background: "var(--bg-card)",
-    border: "1px solid var(--border)",
-    color: "var(--text-muted)",
-    fontSize: 13,
-    fontWeight: 500,
-    cursor: "pointer",
-    outline: "none",
-    appearance: "none" as const,
-    WebkitAppearance: "none" as const,
-  };
+function chipClass(active: boolean): string {
+  return cn(
+    CHIP_BASE,
+    active
+      ? "bg-action border-action text-action-fg font-semibold"
+      : "bg-surface-card border-border text-fg-muted font-medium hover:border-border-strong"
+  );
 }
 
 export default function FilterBar({ lang, dict }: { lang: string; dict: FilterDict }) {
@@ -100,25 +79,25 @@ export default function FilterBar({ lang, dict }: { lang: string; dict: FilterDi
   }
 
   return (
-    <div className="relative border-b" style={{ borderColor: "var(--border)" }}>
+    <div className="relative border-b border-border">
       <div className="max-w-[1440px] mx-auto px-6 xl:px-12 py-4">
         <div className="flex gap-2.5 flex-wrap items-center">
-          <button style={chipStyle(!mediaType)} onClick={reset}>
+          <button className={chipClass(!mediaType)} onClick={reset}>
             {dict.all}
           </button>
-          <button style={chipStyle(mediaType === "movie")} onClick={() => setMediaType(mediaType === "movie" ? null : "movie")}>
+          <button className={chipClass(mediaType === "movie")} onClick={() => setMediaType(mediaType === "movie" ? null : "movie")}>
             <IoFilm aria-hidden="true" /> {dict.movies}
           </button>
-          <button style={chipStyle(mediaType === "tv")} onClick={() => setMediaType(mediaType === "tv" ? null : "tv")}>
+          <button className={chipClass(mediaType === "tv")} onClick={() => setMediaType(mediaType === "tv" ? null : "tv")}>
             <IoTv aria-hidden="true" /> {dict.series}
           </button>
 
           {genres.length > 0 && mediaType && (
             <>
-              <span className="w-px h-5 self-center" style={{ background: "var(--border)" }} />
+              <span className="w-px h-5 self-center bg-border" />
               <select
                 data-testid="genre"
-                style={selectStyle()}
+                className={SELECT_CLASS}
                 value={selectedGenre ?? ""}
                 onChange={(e) => setSelectedGenre(e.target.value || null)}
               >
@@ -132,7 +111,7 @@ export default function FilterBar({ lang, dict }: { lang: string; dict: FilterDi
 
           {mediaType && (
             <select
-              style={selectStyle()}
+              className={SELECT_CLASS}
               value={selectedYear ?? ""}
               onChange={(e) => setSelectedYear(e.target.value || null)}
             >
@@ -146,7 +125,7 @@ export default function FilterBar({ lang, dict }: { lang: string; dict: FilterDi
           {hasFilter && (
             <button
               data-testid="reset"
-              style={chipStyle(false)}
+              className={chipClass(false)}
               onClick={reset}
             >
               <IoClose aria-hidden="true" /> {dict.reset}
@@ -156,12 +135,9 @@ export default function FilterBar({ lang, dict }: { lang: string; dict: FilterDi
       </div>
 
       {isOpen && (
-        <div
-          className="absolute left-6 right-6 xl:left-12 xl:right-12 z-40 rounded-xl shadow-xl p-4"
-          style={{ top: "calc(100% + 8px)", background: "var(--bg-elev)", border: "1px solid var(--border)" }}
-        >
+        <div className="absolute top-[calc(100%+8px)] left-6 right-6 xl:left-12 xl:right-12 z-40 rounded-xl shadow-xl p-4 bg-surface-raised border border-border">
           {loading ? (
-            <p className="text-sm text-center py-4" style={{ color: "var(--text-muted)" }}>{dict.loading}</p>
+            <p className="text-sm text-center py-4 text-fg-muted">{dict.loading}</p>
           ) : results.length > 0 ? (
             <div className="binge-rail">
               {results.map((movie) => (
@@ -169,11 +145,10 @@ export default function FilterBar({ lang, dict }: { lang: string; dict: FilterDi
               ))}
             </div>
           ) : (
-            <p className="text-sm text-center py-4" style={{ color: "var(--text-muted)" }}>{dict.noResults}</p>
+            <p className="text-sm text-center py-4 text-fg-muted">{dict.noResults}</p>
           )}
         </div>
       )}
     </div>
   );
 }
-
