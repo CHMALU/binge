@@ -1,6 +1,7 @@
 image: node:20
 
 stages:
+    - install
     - build
     - static_analysis
     - test
@@ -16,9 +17,17 @@ cache:
     paths:
         - node_modules/
 
+variables:
+    NODE_ENV: production
+
 before_script:
     - npm ci
     - echo "[INFO] Starting pipeline..."
+
+install:
+    stage: install
+    script:
+        - npx prisma generate
 
 build:
     stage:
@@ -31,12 +40,19 @@ build:
             fi
         - npm run build
 
+typecheck:
+    stage: static_analysis
+    script:
+        - npm run typecheck
+
 static_analysis:
     stage:
         static_analysis
     script:
         - npm run lint
     allow_failure: true
+
+
 
 test:
     stage:
