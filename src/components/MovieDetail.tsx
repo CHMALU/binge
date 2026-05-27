@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { IoArrowBack, IoStar, IoStarOutline } from "react-icons/io5";
+import { IoArrowBack, IoStar, IoStarOutline, IoEllipse } from "react-icons/io5";
 import { getPosterUrl, type MovieDetailData, type ProvidersCountry } from "@/lib/tmdb";
 import { cn } from "@/lib/utils";
 import type { Dictionary } from "@/app/[lang]/dictionaries";
@@ -131,10 +131,13 @@ export default function MovieDetail({
               {detail.status && (
                 <span
                   className={cn(
-                    "px-2.5 py-0.5 rounded-md text-xs font-semibold border bg-surface-card border-border",
+                    "inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-xs font-semibold border bg-surface-card border-border",
                     detail.status === "Returning Series" ? "text-success" : "text-fg"
                   )}
                 >
+                  {detail.status === "Returning Series" && (
+                    <IoEllipse aria-hidden="true" className="text-success" size={10} />
+                  )}
                   {detail.status}
                 </span>
               )}
