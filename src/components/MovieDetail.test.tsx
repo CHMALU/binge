@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import MovieDetail from '@/components/MovieDetail';
+import { ProvidersCountry } from '@/lib/tmdb';
 
 jest.mock('next/link', () => {
   // FIX: named const → React kann displayName ableiten
@@ -126,7 +127,7 @@ describe('MovieDetail', () => {
         buy: [
           { provider_id: 192, provider_name: 'Apple TV+', logo_path: '/apple.png' }, // duplicate
         ],
-      } as any;
+      } satisfies ProvidersCountry;
 
       render(<MovieDetail detail={mockMovie} lang="en" dict={mockDict} providers={providers} />);
 

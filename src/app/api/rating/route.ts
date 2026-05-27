@@ -1,13 +1,29 @@
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/auth";
 
+const MEDIA_TYPES = ["movie", "tv"] as const;
+
+function isMediaType(value: unknown): value is (typeof MEDIA_TYPES)[number] {
+  return typeof value === "string" && MEDIA_TYPES.includes(value as (typeof MEDIA_TYPES)[number]);
+}
+
+function isValidRatingInput(tmdbId: unknown, mediaType: unknown, stars: unknown) {
+  return (
+    Number.isInteger(tmdbId) &&
+    Number(tmdbId) > 0 &&
+    isMediaType(mediaType) &&
+    Number.isInteger(stars) &&
+    Number(stars) >= 1 &&
+    Number(stars) <= 5
+  );
+}
 
 export async function POST(req: Request) {
   const session = await auth();
 
   if (!session?.user?.email) {
     return Response.json(
-      { error: "Not authenticated. Please log in to submit a rating."},
+      { error: "Not authenticated. Please log in to submit a rating." },
       { status: 401 }
     );
   }
@@ -16,20 +32,20 @@ export async function POST(req: Request) {
 
   const { tmdbId, mediaType, stars } = body;
 
-  if (stars < 1 || stars > 5) {
+  if (!isValidRatingInput(tmdbId, mediaType, stars)) {
     return Response.json(
-      { error: "Invalid rating"},
+      { error: "Invalid rating" },
       { status: 400 }
-    )
+    );
   }
 
   const userID = session.user.id;
 
   if (!userID) {
     return Response.json(
-      { error: "No user found with the provided email."},
+      { error: "No user found with the provided email." },
       { status: 404 }
-    )
+    );
   }
 
   await prisma.rating.upsert({
@@ -47,7 +63,7 @@ export async function POST(req: Request) {
       userId: userID,
       tmdbId,
       mediaType,
-      stars
+      stars,
     },
   });
   return Response.json({ success: true });

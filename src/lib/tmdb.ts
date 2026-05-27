@@ -110,6 +110,7 @@ export async function getWatchProviders(mediaType: "movie" | "tv", id: number): 
     const data = await tmdbFetch<WatchProvidersResponse>(`/${mediaType}/${id}/watch/providers`);
     return data.results ?? null;
   } catch (err) {
+    console.error("Failed to fetch watch providers:", err);
     return null;
   }
 }
