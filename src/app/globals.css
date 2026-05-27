@@ -69,6 +69,64 @@
   --color-accent-hover: var(--color-crimson-600);
 }
 
+/* ============ COLOR VISION MODES (a11y) ============ */
+/* Tokens are overridden by a data-cv-mode attribute on <html>, set by
+   ColorVisionSwitcher and re-applied pre-paint by an inline script in
+   [lang]/layout.tsx to avoid a flash of the wrong palette.
+
+   Palette sources:
+   - Red-green safe: Okabe-Ito Color Universal Design (blue/orange pair).
+   - Blue-yellow safe: teal/magenta — distinguishable under tritanopia.
+   - High contrast: grayscale only, paired with text labels + icons in
+     components so meaning never depends on color alone. */
+
+:root[data-cv-mode="red-green"] {
+  --color-crimson-400: #f5b04b;
+  --color-crimson-500: #e69f00;
+  --color-crimson-600: #b87f00;
+  --color-success:       #0072b2;
+  --color-success-hover: #005a8e;
+  --color-danger:        #e69f00;
+  --color-accent:        var(--color-crimson-500);
+  --color-accent-hover:  var(--color-crimson-600);
+}
+
+:root[data-cv-mode="blue-yellow"] {
+  --color-crimson-400: #e498bd;
+  --color-crimson-500: #cc79a7;
+  --color-crimson-600: #a35e85;
+  --color-success:       #00a89b;
+  --color-success-hover: #008075;
+  --color-danger:        #cc79a7;
+  --color-accent:        var(--color-crimson-500);
+  --color-accent-hover:  var(--color-crimson-600);
+}
+
+:root[data-cv-mode="high-contrast"] {
+  --color-gold-400: #ffffff;
+  --color-gold-500: #e6e6e6;
+  --color-crimson-400: #cccccc;
+  --color-crimson-500: #bbbbbb;
+  --color-crimson-600: #888888;
+  --color-success:       #ffffff;
+  --color-success-hover: #d0d0d0;
+  --color-danger:        #999999;
+  --color-surface:        #000000;
+  --color-surface-raised: #0a0a0a;
+  --color-surface-card:   #1a1a1a;
+  --color-surface-hover:  #2a2a2a;
+  --color-fg:        #ffffff;
+  --color-fg-muted:  #cfcfcf;
+  --color-fg-subtle: #9a9a9a;
+  --color-border:        #ffffff;
+  --color-border-strong: #ffffff;
+  --color-action:       #ffffff;
+  --color-action-hover: #d0d0d0;
+  --color-action-fg:    #000000;
+  --color-accent:       #bbbbbb;
+  --color-accent-hover: #888888;
+}
+
 html,
 body {
   background: var(--color-surface);
