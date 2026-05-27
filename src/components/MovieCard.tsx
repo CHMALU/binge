@@ -22,7 +22,7 @@ export default function MovieCard({ movie, lang = "en", commonDict }: { movie: M
   return (
     <Link
       href={href}
-      className="flex-none w-[180px] rounded-xl overflow-hidden group transition-transform duration-300 hover:-translate-y-2 bg-surface-card"
+      className="flex-none w-[180px] rounded-xl overflow-hidden group transition-transform duration-300 hover:-translate-y-2 bg-surface-card border border-border"
     >
       <div className="relative aspect-[2/3] overflow-hidden bg-surface-hover">
         {posterUrl ? (

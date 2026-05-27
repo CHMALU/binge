@@ -40,7 +40,9 @@
   /* Status — single values */
   --color-success:       #22c06a;
   --color-success-hover: #138f47;
+  --color-success-fg:    #ffffff;
   --color-danger:        #ff2d4a;
+  --color-danger-fg:     #ffffff;
 
   /* ============ LAYER 2: SEMANTIC ALIASES ============ */
 
@@ -122,7 +124,9 @@
   --color-crimson-600: #888888;
   --color-success:       #ffffff;
   --color-success-hover: #d0d0d0;
+  --color-success-fg:    #000000;
   --color-danger:        #999999;
+  --color-danger-fg:     #000000;
   --color-surface:        #000000;
   --color-surface-raised: #0a0a0a;
   --color-surface-card:   #1a1a1a;

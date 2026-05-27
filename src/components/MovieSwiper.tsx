@@ -141,7 +141,10 @@ export default function MovieSwiper( {movies, lang, commonDict, swipeDict}: Prop
             <button
                 aria-label={swipeDict.like}
                 className="px-7 py-7 rounded-full text-sm font-semibold transition-colors bg-success hover:bg-success-hover"
-                style={{ boxShadow: "0 0 30px color-mix(in srgb, var(--color-success) 60%, transparent)" }}
+                style={{
+                  boxShadow: "0 0 30px color-mix(in srgb, var(--color-success) 60%, transparent)",
+                  color: "var(--color-success-fg)",
+                }}
                 onClick={() => {
                   console.log("Positive!");
                   cardRef.current?.swipeLeft();
@@ -155,7 +158,10 @@ export default function MovieSwiper( {movies, lang, commonDict, swipeDict}: Prop
             <button
                 aria-label={swipeDict.skip}
                 className="px-7 py-7 rounded-full text-sm font-semibold bg-danger hover:bg-accent-hover transition-colors"
-                style={{ boxShadow: "0 0 30px color-mix(in srgb, var(--color-danger) 60%, transparent)" }}
+                style={{
+                  boxShadow: "0 0 30px color-mix(in srgb, var(--color-danger) 60%, transparent)",
+                  color: "var(--color-danger-fg)",
+                }}
                 onClick={() => {
                   console.log("Negative!");
                   cardRef.current?.swipeRight();
