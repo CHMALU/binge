@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useCallback } from "react";
 import { IoClose } from "react-icons/io5";
 
-export default function AuthModal({ children }: { children: React.ReactNode }) {
+export default function AuthModal({ children, closeAriaLabel }: { children: React.ReactNode; closeAriaLabel: string }) {
   const router = useRouter();
   const close = useCallback(() => router.back(), [router]);
 
@@ -31,7 +31,7 @@ export default function AuthModal({ children }: { children: React.ReactNode }) {
         <button
           onClick={close}
           className="absolute top-3 right-3 z-20 inline-flex items-center justify-center text-fg-subtle hover:text-fg bg-transparent border-none cursor-pointer text-lg leading-none p-1"
-          aria-label="Close"
+          aria-label={closeAriaLabel}
         >
           <IoClose aria-hidden="true" />
         </button>

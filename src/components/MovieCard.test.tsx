@@ -38,19 +38,27 @@ const mockTv = {
   media_type: 'tv' as const,
 };
 
+const mockCommonDict = {
+  back: 'Back',
+  close: 'Close',
+  noTitle: 'No title',
+  noPoster: 'No poster',
+  notAvailable: 'N/A',
+};
+
 describe('MovieCard', () => {
   it('renders the movie title', () => {
-    render(<MovieCard movie={mockMovie} />);
+    render(<MovieCard movie={mockMovie} commonDict={mockCommonDict} />);
     expect(screen.getByText('Inception')).toBeInTheDocument();
   });
 
   it('links to the movie detail page', () => {
-    render(<MovieCard movie={mockMovie} lang="en" />);
+    render(<MovieCard movie={mockMovie} lang="en" commonDict={mockCommonDict} />);
     expect(screen.getByRole('link')).toHaveAttribute('href', '/en/movie/1');
   });
 
   it('links to the tv detail page when media_type is tv', () => {
-    render(<MovieCard movie={mockTv} lang="en" />);
+    render(<MovieCard movie={mockTv} lang="en" commonDict={mockCommonDict} />);
     expect(screen.getByRole('link')).toHaveAttribute('href', '/en/tv/42');
   });
 });

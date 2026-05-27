@@ -2,11 +2,14 @@ import Image from "next/image";
 import Link from "next/link";
 import { IoPlay, IoAdd, IoStar } from "react-icons/io5";
 import { getPosterUrl, type Movie } from "@/lib/tmdb";
+import type { Dictionary } from "@/app/[lang]/dictionaries";
 
-export default function MovieCard({ movie, lang = "en" }: { movie: Movie; lang?: string }) {
-  const title = movie.title ?? movie.name ?? "No title";
+type CommonDict = Dictionary["common"];
+
+export default function MovieCard({ movie, lang = "en", commonDict }: { movie: Movie; lang?: string; commonDict: CommonDict }) {
+  const title = movie.title ?? movie.name ?? commonDict.noTitle;
   const posterUrl = getPosterUrl(movie.poster_path, "w300");
-  const rating = movie.vote_average?.toFixed(1) ?? "N/A";
+  const rating = movie.vote_average?.toFixed(1) ?? commonDict.notAvailable;
   const href = movie.media_type === "tv"
     ? `/${lang}/tv/${movie.id}`
     : `/${lang}/movie/${movie.id}`;
@@ -32,7 +35,7 @@ export default function MovieCard({ movie, lang = "en" }: { movie: Movie; lang?:
           />
         ) : (
           <div className="flex h-full items-center justify-center text-xs text-fg-subtle">
-            No poster
+            {commonDict.noPoster}
           </div>
         )}
         <div

@@ -1,9 +1,27 @@
 {
+  "common": {
+    "back": "Back",
+    "close": "Close",
+    "noTitle": "No title",
+    "noPoster": "No poster",
+    "notAvailable": "N/A"
+  },
   "nav": {
     "discover": "Discover",
     "movies": "Movies",
     "series": "Series",
-    "signIn": "Sign in"
+    "signIn": "Sign in",
+    "watchlist": "My list",
+    "watched": "Watched",
+    "signOut": "Sign out",
+    "comingSoon": "soon",
+    "changeLanguage": "Change language",
+    "searchPlaceholder": "Search movies & series..."
+  },
+  "swipe": {
+    "label": "Swipe",
+    "noDescription": "No description available.",
+    "flipBackHint": "Double-tap to flip back"
   },
   "hero": {
     "featured": "Featured",
@@ -72,6 +90,7 @@
     "officialSite": "Official site",
     "season": "season",
     "seasons": "seasons",
-    "episode": "ep."
+    "episode": "ep.",
+    "ratingAriaLabel": "{stars} out of 5"
   }
 }

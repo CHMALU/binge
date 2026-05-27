@@ -4,6 +4,7 @@ import NextImage from "next/image";
 import { IoStar } from "react-icons/io5";
 import { getPosterUrl, type Movie } from "@/lib/tmdb"
 import { forwardRef, useImperativeHandle } from "react";
+import type { Dictionary } from "@/app/[lang]/dictionaries";
 
 type SwipeResult = {
   action: SwipeAction;
@@ -23,6 +24,8 @@ type Props = {
   velocityThreshold?: number;
   onExit?: () => void;
   TopCard?: boolean;
+  commonDict: Dictionary["common"];
+  swipeDict: Dictionary["swipe"];
 };
 
 
@@ -34,9 +37,11 @@ const SwipeCard = forwardRef(function SwipeCard({
   swipeThreshold = 120,
   velocityThreshold = 0.5,
   onExit,
-  TopCard
+  TopCard,
+  commonDict,
+  swipeDict
 }: Props, ref) {
-  const title = movie.title ?? movie.name ?? "No title";
+  const title = movie.title ?? movie.name ?? commonDict.noTitle;
   const posterUrl = getPosterUrl(movie.poster_path, "w500");
   const rating = movie.vote_average?.toFixed(1);
   const releaseDate = movie.release_date ?? movie.first_air_date;
@@ -178,12 +183,12 @@ const SwipeCard = forwardRef(function SwipeCard({
                   </div>
                   <div className="flex-1 overflow-y-auto">
                     <p className="text-sm text-fg-muted leading-relaxed">
-                      {movie.overview || "No description available."}
+                      {movie.overview || swipeDict.noDescription}
                     </p>
                   </div>
                   <div className="mt-4 pt-3 border-t border-border text-center">
                     <p className="text-xs text-fg-subtle">
-                      Double-tap to flip back
+                      {swipeDict.flipBackHint}
                     </p>
                   </div>
                 </div>

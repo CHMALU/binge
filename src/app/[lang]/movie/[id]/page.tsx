@@ -21,5 +21,5 @@ export default async function MoviePage({
 
   const providers = await getProvidersForLocale("movie", numericId, lang);
 
-  return <MovieDetail detail={{ ...detail, media_type: "movie" }} lang={lang} dict={dict.detail} providers={providers} />;
+  return <MovieDetail detail={{ ...detail, media_type: "movie" }} lang={lang} dict={dict.detail} commonDict={dict.common} providers={providers} />;
 }

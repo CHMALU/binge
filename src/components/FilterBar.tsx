@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 import type { Dictionary } from "@/app/[lang]/dictionaries";
 
 type FilterDict = Dictionary["filter"];
+type CommonDict = Dictionary["common"];
 
 const YEARS = Array.from({ length: 30 }, (_, i) => String(new Date().getFullYear() - i));
 
@@ -24,7 +25,7 @@ function chipClass(active: boolean): string {
   );
 }
 
-export default function FilterBar({ lang, dict }: { lang: string; dict: FilterDict }) {
+export default function FilterBar({ lang, dict, commonDict }: { lang: string; dict: FilterDict; commonDict: CommonDict }) {
   const [mediaType, setMediaType] = useState<"movie" | "tv" | null>(null);
   const [genres, setGenres] = useState<Genre[]>([]);
   const [selectedGenre, setSelectedGenre] = useState<string | null>(null);
@@ -141,7 +142,7 @@ export default function FilterBar({ lang, dict }: { lang: string; dict: FilterDi
           ) : results.length > 0 ? (
             <div className="binge-rail">
               {results.map((movie) => (
-                <MovieCard key={movie.id} movie={movie} lang={lang} />
+                <MovieCard key={movie.id} movie={movie} lang={lang} commonDict={commonDict} />
               ))}
             </div>
           ) : (

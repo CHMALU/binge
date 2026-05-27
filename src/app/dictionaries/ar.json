@@ -1,9 +1,27 @@
 {
+  "common": {
+    "back": "العودة",
+    "close": "إغلاق",
+    "noTitle": "بدون عنوان",
+    "noPoster": "بدون ملصق",
+    "notAvailable": "غير متاح"
+  },
   "nav": {
     "discover": "اكتشف",
     "movies": "الأفلام",
     "series": "المسلسلات",
-    "signIn": "تسجيل الدخول"
+    "signIn": "تسجيل الدخول",
+    "watchlist": "قائمتي",
+    "watched": "مشاهَدة",
+    "signOut": "تسجيل الخروج",
+    "comingSoon": "قريباً",
+    "changeLanguage": "تغيير اللغة",
+    "searchPlaceholder": "ابحث عن الأفلام والمسلسلات..."
+  },
+  "swipe": {
+    "label": "اسحب",
+    "noDescription": "لا يوجد وصف.",
+    "flipBackHint": "انقر مرتين للقلب"
   },
   "hero": {
     "featured": "مميز",
@@ -72,6 +90,7 @@
     "officialSite": "الموقع الرسمي",
     "season": "موسم",
     "seasons": "مواسم",
-    "episode": "حلقة"
+    "episode": "حلقة",
+    "ratingAriaLabel": "{stars} من 5"
   }
 }

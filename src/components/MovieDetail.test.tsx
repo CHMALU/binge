@@ -36,6 +36,15 @@ const mockDict = {
   season: 'season',
   seasons: 'seasons',
   episode: 'ep.',
+  ratingAriaLabel: '{stars} out of 5',
+};
+
+const mockCommonDict = {
+  back: 'Back',
+  close: 'Close',
+  noTitle: 'No title',
+  noPoster: 'No poster',
+  notAvailable: 'N/A',
 };
 
 const mockMovie = {
@@ -68,7 +77,7 @@ const mockTv = {
 describe('MovieDetail', () => {
   describe('movie', () => {
     beforeEach(() => {
-      render(<MovieDetail detail={mockMovie} lang="en" dict={mockDict} />);
+      render(<MovieDetail detail={mockMovie} lang="en" dict={mockDict} commonDict={mockCommonDict} />);
     });
 
     it('renders the title', () => {
@@ -118,7 +127,7 @@ describe('MovieDetail', () => {
         ],
       } as any;
 
-      render(<MovieDetail detail={mockMovie} lang="en" dict={mockDict} providers={providers} />);
+      render(<MovieDetail detail={mockMovie} lang="en" dict={mockDict} commonDict={mockCommonDict} providers={providers} />);
 
       // logos should be present
       expect(screen.getByAltText('Netflix')).toBeInTheDocument();
@@ -137,7 +146,7 @@ describe('MovieDetail', () => {
 
   describe('tv series', () => {
     beforeEach(() => {
-      render(<MovieDetail detail={mockTv} lang="en" dict={mockDict} />);
+      render(<MovieDetail detail={mockTv} lang="en" dict={mockDict} commonDict={mockCommonDict} />);
     });
 
     it('renders the series name', () => {

@@ -1,9 +1,27 @@
 {
+  "common": {
+    "back": "Wstecz",
+    "close": "Zamknij",
+    "noTitle": "Bez tytułu",
+    "noPoster": "Brak plakatu",
+    "notAvailable": "Brak"
+  },
   "nav": {
     "discover": "Odkryj",
     "movies": "Filmy",
     "series": "Seriale",
-    "signIn": "Zaloguj się"
+    "signIn": "Zaloguj się",
+    "watchlist": "Moja lista",
+    "watched": "Obejrzane",
+    "signOut": "Wyloguj",
+    "comingSoon": "wkrótce",
+    "changeLanguage": "Zmień język",
+    "searchPlaceholder": "Szukaj filmów i seriali..."
+  },
+  "swipe": {
+    "label": "Przesuń",
+    "noDescription": "Brak opisu.",
+    "flipBackHint": "Dwuklik aby odwrócić"
   },
   "hero": {
     "featured": "Polecane",
@@ -72,6 +90,7 @@
     "officialSite": "Oficjalna strona",
     "season": "sezon",
     "seasons": "sezony",
-    "episode": "odc."
+    "episode": "odc.",
+    "ratingAriaLabel": "{stars} na 5"
   }
 }

@@ -11,7 +11,7 @@ export default async function RegisterModal({ params }: Props) {
   const dict = await getDictionary(lang);
 
   return (
-    <AuthModal>
+    <AuthModal closeAriaLabel={dict.common.close}>
       <RegisterForm lang={lang} t={dict.auth} modal />
     </AuthModal>
   );

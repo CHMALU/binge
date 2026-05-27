@@ -8,6 +8,7 @@ import type { Movie } from "@/lib/tmdb";
 import Link from "next/link";
 import { FaThumbsUp, FaThumbsDown } from "react-icons/fa";
 import { IoArrowBack, IoArrowForward } from "react-icons/io5";
+import type { Dictionary } from "@/app/[lang]/dictionaries";
 
 interface SwipeResult {
   action: "left" | "right";
@@ -18,6 +19,9 @@ interface SwipeResult {
 
 interface Props {
   movies: Movie[];
+  lang: string;
+  commonDict: Dictionary["common"];
+  swipeDict: Dictionary["swipe"];
 }
 
 type SwipeCardRef = {
@@ -25,7 +29,7 @@ type SwipeCardRef = {
   swipeRight: () => void;
 };
 
-export default function MovieSwiper( {movies}: Props ) {
+export default function MovieSwiper( {movies, lang, commonDict, swipeDict}: Props ) {
 
   const movie_selection = movies.slice(0,5);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -57,8 +61,8 @@ export default function MovieSwiper( {movies}: Props ) {
   return (
     <div className="relative w-full h-screen">
       <div className="px-6 py-4">
-        <Link href="/" className="text-sm text-fg-muted hover:text-fg transition-colors">
-          ← Back
+        <Link href={`/${lang}`} className="text-sm text-fg-muted hover:text-fg transition-colors inline-flex items-center gap-1">
+          <IoArrowBack aria-hidden="true" /> {commonDict.back}
         </Link>
       </div>
     <div className="absolute inset-0 pointer-events-none">
@@ -95,7 +99,7 @@ export default function MovieSwiper( {movies}: Props ) {
         <div className="flex gap-8 items-center">
           <IoArrowBack className="text-2xl scale-x-[3]" aria-hidden="true" />
           <span className="text-2xl tracking-[0.4em] font-bold uppercase">
-            Swipe
+            {swipeDict.label}
           </span>
           <IoArrowForward className="text-2xl scale-x-[3]" aria-hidden="true" />
         </div>
@@ -121,6 +125,8 @@ export default function MovieSwiper( {movies}: Props ) {
                   }}
                   swipeThreshold={100}
                   velocityThreshold={0.4}
+                  commonDict={commonDict}
+                  swipeDict={swipeDict}
                   />
                 </div>
               </div>

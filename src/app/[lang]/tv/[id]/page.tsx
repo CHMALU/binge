@@ -21,5 +21,5 @@ export default async function TvPage({
 
   const providers = await getProvidersForLocale("tv", numericId, lang);
 
-  return <MovieDetail detail={{ ...detail, media_type: "tv" }} lang={lang} dict={dict.detail} providers={providers} />;
+  return <MovieDetail detail={{ ...detail, media_type: "tv" }} lang={lang} dict={dict.detail} commonDict={dict.common} providers={providers} />;
 }

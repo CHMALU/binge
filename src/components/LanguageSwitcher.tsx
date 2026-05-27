@@ -11,7 +11,7 @@ const LOCALES = [
   { code: "ar", label: "AR", name: "العربية" },
 ];
 
-export default function LanguageSwitcher({ lang }: { lang: string }) {
+export default function LanguageSwitcher({ lang, ariaLabel }: { lang: string; ariaLabel: string }) {
   const pathname = usePathname();
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -35,7 +35,7 @@ export default function LanguageSwitcher({ lang }: { lang: string }) {
   return (
     <div className="relative">
       <button
-        aria-label="Change language"
+        aria-label={ariaLabel}
         onClick={() => setOpen((v) => !v)}
         className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold border transition-colors hover:bg-surface-card border-border text-fg"
       >

@@ -1,6 +1,14 @@
 import { render, screen } from '@testing-library/react';
 import MovieCard from '@/components/MovieCard';
 
+const mockCommonDict = {
+  back: 'Back',
+  close: 'Close',
+  noTitle: 'No title',
+  noPoster: 'No poster',
+  notAvailable: 'N/A',
+};
+
 describe('Integration: MovieCard in a list', () => {
   it('renders multiple movie cards', () => {
     const movies = [
@@ -9,7 +17,7 @@ describe('Integration: MovieCard in a list', () => {
     ];
     render(
       <div>
-        {movies.map(movie => <MovieCard key={movie.id} movie={movie} />)}
+        {movies.map(movie => <MovieCard key={movie.id} movie={movie} commonDict={mockCommonDict} />)}
       </div>
     );
     expect(screen.getByText('Movie 1')).toBeInTheDocument();
