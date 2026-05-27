@@ -4,6 +4,7 @@ import { IoArrowBack, IoStar, IoStarOutline } from "react-icons/io5";
 import { getPosterUrl, type MovieDetailData, type ProvidersCountry } from "@/lib/tmdb";
 import { cn } from "@/lib/utils";
 import type { Dictionary } from "@/app/[lang]/dictionaries";
+import WatchlistButton, { type WatchlistDict } from "@/components/WatchlistButton";
 
 type DetailDict = Dictionary["detail"];
 type CommonDict = Dictionary["common"];
@@ -14,12 +15,18 @@ export default function MovieDetail({
   dict,
   commonDict,
   providers,
+  isAuthed,
+  inWatchlist,
+  watchlistDict,
 }: {
   detail: MovieDetailData;
   lang: string;
   dict: DetailDict;
   commonDict: CommonDict;
   providers?: ProvidersCountry | null;
+  isAuthed?: boolean;
+  inWatchlist?: boolean;
+  watchlistDict?: WatchlistDict;
 }) {
   const title = detail.title ?? detail.name ?? commonDict.noTitle;
   const originalTitle = detail.original_title ?? detail.original_name;
@@ -256,6 +263,16 @@ export default function MovieDetail({
             )}
 
             <div className="flex flex-col gap-3 mt-6">
+              {watchlistDict && (
+                <WatchlistButton
+                  tmdbId={detail.id}
+                  mediaType={isTv ? "tv" : "movie"}
+                  lang={lang}
+                  isAuthed={isAuthed ?? false}
+                  initiallyInWatchlist={inWatchlist ?? false}
+                  t={watchlistDict}
+                />
+              )}
               {detail.imdb_id && (
                 <a
                   href={`https://www.imdb.com/title/${detail.imdb_id}`}

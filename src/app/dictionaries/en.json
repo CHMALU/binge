@@ -74,6 +74,12 @@
     "errorPasswordMismatch": "Passwords do not match.",
     "errorPasswordShort": "Password must be at least 6 characters."
   },
+  "watchlist": {
+    "addToWatchlist": "Add to watchlist",
+    "inWatchlist": "In watchlist",
+    "signInToSave": "Sign in to save",
+    "addError": "Could not add to watchlist. Please try again."
+  },
   "detail": {
     "overview": "Overview",
     "availableOn": "Available on",
