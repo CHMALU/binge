@@ -58,7 +58,7 @@ export default async function WatchlistPage({ params }: Props) {
 
   return (
     <div className="bg-surface text-fg min-h-screen">
-      <Navbar lang={lang} dict={dict.nav} commonDict={dict.common} />
+      <Navbar lang={lang} dict={dict.nav} commonDict={dict.common} colorModeDict={dict.a11y.colorMode} />
 
       <main className="max-w-[1440px] mx-auto px-6 xl:px-12 py-10">
         <h1 className="text-3xl font-extrabold font-poppins text-fg mb-8">

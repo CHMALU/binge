@@ -18,6 +18,15 @@
     "changeLanguage": "تغيير اللغة",
     "searchPlaceholder": "ابحث عن الأفلام والمسلسلات..."
   },
+  "a11y": {
+    "colorMode": {
+      "label": "وضع رؤية الألوان",
+      "normal": "افتراضي",
+      "redGreenSafe": "أحمر-أخضر",
+      "blueYellowSafe": "أزرق-أصفر",
+      "highContrast": "تباين عالٍ"
+    }
+  },
   "swipe": {
     "label": "اسحب",
     "noDescription": "لا يوجد وصف.",

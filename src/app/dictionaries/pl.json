@@ -18,6 +18,15 @@
     "changeLanguage": "Zmień język",
     "searchPlaceholder": "Szukaj filmów i seriali..."
   },
+  "a11y": {
+    "colorMode": {
+      "label": "Tryb widzenia kolorów",
+      "normal": "Domyślny",
+      "redGreenSafe": "Czerwono-zielony",
+      "blueYellowSafe": "Niebiesko-żółty",
+      "highContrast": "Wysoki kontrast"
+    }
+  },
   "swipe": {
     "label": "Przesuń",
     "noDescription": "Brak opisu.",

@@ -22,6 +22,12 @@ export default async function LocaleLayout({
 
   return (
     <>
+      <script
+        dangerouslySetInnerHTML={{
+          __html:
+            "(function(){try{var m=localStorage.getItem('BINGE_CV_MODE');if(m&&m!=='normal'){document.documentElement.setAttribute('data-cv-mode',m);}}catch(e){}})();",
+        }}
+      />
       <HtmlAttributes lang={lang} dir={isRtl ? "rtl" : "ltr"} />
       {children}
       {modal}

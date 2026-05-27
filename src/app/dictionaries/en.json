@@ -18,6 +18,15 @@
     "changeLanguage": "Change language",
     "searchPlaceholder": "Search movies & series..."
   },
+  "a11y": {
+    "colorMode": {
+      "label": "Color vision mode",
+      "normal": "Default",
+      "redGreenSafe": "Red-green safe",
+      "blueYellowSafe": "Blue-yellow safe",
+      "highContrast": "High contrast"
+    }
+  },
   "swipe": {
     "label": "Swipe",
     "noDescription": "No description available.",
