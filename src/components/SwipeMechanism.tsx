@@ -140,7 +140,7 @@ const SwipeCard = forwardRef(function SwipeCard({
         scale: { duration: 0.5, ease: "easeOut" }
       }}
 
-      className="w-[min(88vw,calc((100svh-220px)*2/3),420px)] aspect-[2/3] max-h-[calc(100svh-220px)] cursor-grab">
+      className="w-[var(--card-size)] aspect-[2/3] max-h-[calc(100svh-220px)] cursor-grab">
         <motion.div
           animate={{ rotateY: flipped ? 180 : 0 }}
           transition={{ duration: 0.5, type: "spring", damping: 20}}

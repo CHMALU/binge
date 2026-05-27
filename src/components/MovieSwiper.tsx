@@ -108,7 +108,7 @@ export default function MovieSwiper( {movies}: Props ) {
               <div className="absolute inset-0 bg-cover bg-center blur-2xl scale-110">
                 </div>
                 <div className="relative z-10">
-                  <div className="relative w-full flex items-center justify-centercont">
+                  <div className="relative w-full flex items-center justify-center">
                     <SwipeCard
                       ref={cardRef}
                       key={currentMovie.id}
