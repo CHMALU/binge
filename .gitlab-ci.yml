@@ -1,7 +1,6 @@
 image: node:22
 
 stages:
-    - install
     - build
     - static_analysis
     - test
@@ -9,9 +8,8 @@ stages:
 
 workflow:
     rules:
-        - if: $CI_PIPELINE_SOURCE == "merge_request_event"
         - if: $CI_COMMIT_BRANCH == "main"
-        - if: $CI_COMMIT_BRANCH
+
 
 cache:
     paths:
@@ -26,8 +24,9 @@ before_script:
     - echo "[INFO] Starting pipeline..."
 
 install:
-    stage: install
+    stage: build
     script:
+        - echo "[INFO] Start generating prisma..."
         - npx prisma generate
 
 build:
