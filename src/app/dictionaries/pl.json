@@ -74,6 +74,12 @@
     "errorPasswordMismatch": "Hasła nie są zgodne.",
     "errorPasswordShort": "Hasło musi mieć co najmniej 6 znaków."
   },
+  "watchlist": {
+    "addToWatchlist": "Dodaj do listy",
+    "inWatchlist": "Na liście",
+    "signInToSave": "Zaloguj się, aby zapisać",
+    "addError": "Nie udało się dodać do listy. Spróbuj ponownie."
+  },
   "detail": {
     "overview": "Opis",
     "availableOn": "Dostępne na",
