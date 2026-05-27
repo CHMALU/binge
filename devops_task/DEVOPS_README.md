@@ -1,54 +1,68 @@
-DEVOPS_README.md
-Overview
-This project relays on a Gitlab CI/CD pipeline to ensure code quality and a faster workflow. The basic design is divided into 4 different stages:
-  - build
-  - static_analysis
-  - test
-  - deploy
-The pipeline provides quick sanity checks, which indicate that different stages are valid after they have changed. 
+# CI/CD Pipeline
 
-The CI/CD uses a "On merge to main" trigger, to preclude that newly introducted bugs can be recognized quickly. Furthermore, the 
-efficiency of the pipeline is increased because we avoid run the tests every commit. 
+This project uses GitLab CI/CD to keep branch feedback fast while still enforcing a stronger gate on `main`.
 
-1. Build Stage
-Purpose:
-Ensure the production-ready code still compiles.
+## Stages
 
-Proccess:
-  - pending dependencies are installed with npm ci
-  - npm run build builts the application
-  - in addition the required env for the tmdb database is check (use of a CI variable with masked flag)
+1. `build` - installs dependencies, generates the Prisma client, checks that `NEXT_PUBLIC_TMDB_API_KEY` is available, and runs `npm run build`.
+2. `analysis` - runs lint and TypeScript checks. Both jobs are required and fail the pipeline on errors.
+3. `dependency_scan` - runs `npm audit --audit-level=high` and fails on high or critical vulnerabilities.
+4. `test` - runs either the fast/basic test suite or the full test suite, depending on the branch.
+5. `deploy` - mock deploy, only on `main`.
 
-2. Static Analysis Stage
-Purpose:
-Ensures code quality and sets a coding standard
+## Branches
 
-Proccess:
-  - npm run lint starts the provided tool to test the code
-  - allow_failure: true -> tests the rest of the pipeline without the need of passing the job
+### Feature and normal branches
 
-3. Test Stage
-Purpose:
-Run written tests and measure how much of the code the cover.
+Feature branches run the fast feedback path:
 
-Proccess:
-  - the provided testsuits are executed
-  - with jest -> npm test -- --coverage the code coverage percentage is printed to the console
+- `build`
+- `lint`
+- `typecheck`
+- `npm_audit`
+- `fast_tests`
 
-4. Deploy
-Purpose:
-Deploy production-ready code to a infastructur but in our case it is only a mock.
+`fast_tests` runs component and library tests with coverage enabled:
 
-Additional Stuff:
+`npm run test:fast`
 
-cache:
-  path:
-    - node_modules/
+Coverage is printed in the job log. There is no minimum coverage gate on feature branches, because the goal is quick feedback while work is still in progress.
 
-This caches the installed dependencies and avoid reinstalling them on every commit, which speeds up the pipeline.
+### Main branch
 
-Docker image:
-  image:20 -> provides a consistent node.js enviroment
+`main` runs the full release gate:
 
-CI variable:
-NEXT_PUBLIC_TMDB_API_KEY -> is needed for the build, because of the database accesses.
+- `build`
+- `lint`
+- `typecheck`
+- `npm_audit`
+- `full_tests`
+- `mock_deploy`
+
+`full_tests` runs the complete Jest suite with coverage enabled and enforces the global coverage minimum:
+
+- branches: 70%
+- functions: 70%
+- lines: 80%
+- statements: 80%
+
+If lint, typecheck, npm audit, tests, or coverage thresholds fail on `main`, the pipeline fails.
+
+## Coverage
+
+Both fast and full test jobs publish:
+
+- text coverage in the job log
+
+## Local Equivalents
+
+Run the same checks locally with:
+
+```bash
+npm run build
+npm run lint
+npm run typecheck
+npm audit --audit-level=high
+npm run test:fast
+npm run test:full -- --coverageThreshold='{"global":{"branches":70,"functions":70,"lines":80,"statements":80}}'
+```
