@@ -44,6 +44,7 @@ export default function MovieSwiper( {movies, lang, commonDict, swipeDict}: Prop
   };
   const swipeInfo = currentIndex === 0;
   const cardRef = useRef<SwipeCardRef>(null);
+  const cardSize = "min(88vw, calc((100svh - 220px) * 2 / 3), 420px)";
 
 
   useEffect(() => {
@@ -59,7 +60,7 @@ export default function MovieSwiper( {movies, lang, commonDict, swipeDict}: Prop
   }
 
   return (
-    <div className="relative w-full h-screen">
+    <div className="relative w-full min-h-[calc(100svh-80px)] overflow-hidden">
       <div className="px-6 py-4">
         <Link href={`/${lang}`} className="text-sm text-fg-muted hover:text-fg transition-colors inline-flex items-center gap-1">
           <IoArrowBack aria-hidden="true" /> {commonDict.back}
@@ -94,7 +95,7 @@ export default function MovieSwiper( {movies, lang, commonDict, swipeDict}: Prop
         ease: "easeInOut"
       }} />
     </div>
-    <div className="relative flex flex-col items-center justify-center min-h-[600px] mt-10">
+    <div className="relative flex min-h-[calc(100svh-120px)] flex-col items-center justify-center gap-5 px-4 py-4">
       {swipeInfo && (
         <div className="flex gap-8 items-center">
           <IoArrowBack className="text-2xl scale-x-[3]" aria-hidden="true" />
@@ -104,55 +105,56 @@ export default function MovieSwiper( {movies, lang, commonDict, swipeDict}: Prop
           <IoArrowForward className="text-2xl scale-x-[3]" aria-hidden="true" />
         </div>
       )}
-
-      <AnimatePresence>
-        <div className="relative w-full flex items-center justify-center overflow-hidden">
-            <div className="absolute inset-0 bg-cover bg-center blur-2xl scale-110">
-              </div>
-              <div className="relative z-10">
-                <div className="relative w-full flex items-center justify-center mt-20 mb-20">
-                  <SwipeCard
-                    ref={cardRef}
-                    key={currentMovie.id}
-                    movie={currentMovie}
-                    TopCard={currentIndex === 0}
-                    onSwipe={handleSwipe}
-                    onExit={() => {
-                    setCurrentIndex((prev) => prev + 1);
-                    if (currentIndex + 1 == movie_selection.length) {
-                      console.log("Show Final Result");
-                    }
-                  }}
-                  swipeThreshold={100}
-                  velocityThreshold={0.4}
-                  commonDict={commonDict}
-                  swipeDict={swipeDict}
-                  />
+      <div className="flex flex-col items-center gap-5"
+    style={{ "--card-size": cardSize } as React.CSSProperties}>
+        <AnimatePresence>
+          <div className="relative w-full flex items-center justify-center overflow-visible py-4">
+              <div className="absolute inset-0 bg-cover bg-center blur-2xl scale-110">
+                </div>
+                <div className="relative z-10">
+                  <div className="relative w-full flex items-center justify-center">
+                    <SwipeCard
+                      ref={cardRef}
+                      key={currentMovie.id}
+                      movie={currentMovie}
+                      TopCard={currentIndex === 0}
+                      onSwipe={handleSwipe}
+                      onExit={() => {
+                      setCurrentIndex((prev) => prev + 1);
+                      if (currentIndex + 1 == movie_selection.length) {
+                        console.log("Show Final Result");
+                      }
+                    }}
+                    swipeThreshold={100}
+                    velocityThreshold={0.4}
+                    commonDict={commonDict}
+                    swipeDict={swipeDict}
+                    />
+                  </div>
                 </div>
               </div>
-            </div>
-      </AnimatePresence>
-      <div className="flex gap-20">
-        <button
-            className="px-7 py-7 rounded-full text-sm font-semibold transition-colors bg-success hover:bg-success-hover mr-30 shadow-[0_0_30px_rgba(34,192,106,0.6)]"
-            onClick={() => {
-              console.log("Positive!");
-              cardRef.current?.swipeLeft();
-            }}
-          >
-            <FaThumbsUp className="inline-block" size={20}/>
-        </button>
-        <button
-            className="px-7 py-7 rounded-full text-sm font-semibold bg-danger hover:bg-accent-hover transition-colors shadow-[0_0_30px_rgba(255,45,74,0.6)]"
-            onClick={() => {
-              console.log("Negative!");
-              cardRef.current?.swipeRight();
-            }}
-          >
-            <FaThumbsDown className="inline-block" size={20}/>
-        </button>
+        </AnimatePresence>
+        <div className="flex gap-20">
+          <button
+              className="px-7 py-7 rounded-full text-sm font-semibold transition-colors bg-success hover:bg-success-hover mr-30 shadow-[0_0_30px_rgba(34,192,106,0.6)]"
+              onClick={() => {
+                console.log("Positive!");
+                cardRef.current?.swipeLeft();
+              }}
+            >
+              <FaThumbsUp className="inline-block" size={20}/>
+          </button>
+          <button
+              className="px-7 py-7 rounded-full text-sm font-semibold bg-danger hover:bg-accent-hover transition-colors shadow-[0_0_30px_rgba(255,45,74,0.6)]"
+              onClick={() => {
+                console.log("Negative!");
+                cardRef.current?.swipeRight();
+              }}
+            >
+              <FaThumbsDown className="inline-block" size={20}/>
+          </button>
+        </div>
       </div>
-
     </div>
     </div>
   );
