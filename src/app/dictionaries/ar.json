@@ -30,7 +30,9 @@
   "swipe": {
     "label": "اسحب",
     "noDescription": "لا يوجد وصف.",
-    "flipBackHint": "انقر مرتين للقلب"
+    "flipBackHint": "انقر مرتين للقلب",
+    "like": "إعجاب",
+    "skip": "تخطي"
   },
   "hero": {
     "featured": "مميز",

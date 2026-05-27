@@ -30,7 +30,9 @@
   "swipe": {
     "label": "Przesuń",
     "noDescription": "Brak opisu.",
-    "flipBackHint": "Dwuklik aby odwrócić"
+    "flipBackHint": "Dwuklik aby odwrócić",
+    "like": "Lubię",
+    "skip": "Pomiń"
   },
   "hero": {
     "featured": "Polecane",

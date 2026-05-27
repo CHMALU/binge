@@ -30,7 +30,9 @@
   "swipe": {
     "label": "Swipe",
     "noDescription": "No description available.",
-    "flipBackHint": "Double-tap to flip back"
+    "flipBackHint": "Double-tap to flip back",
+    "like": "Like",
+    "skip": "Skip"
   },
   "hero": {
     "featured": "Featured",

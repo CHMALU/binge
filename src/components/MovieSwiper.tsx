@@ -135,24 +135,32 @@ export default function MovieSwiper( {movies, lang, commonDict, swipeDict}: Prop
               </div>
         </AnimatePresence>
         <div className="flex gap-20">
-          <button
-              className="px-7 py-7 rounded-full text-sm font-semibold transition-colors bg-success hover:bg-success-hover mr-30 shadow-[0_0_30px_rgba(34,192,106,0.6)]"
-              onClick={() => {
-                console.log("Positive!");
-                cardRef.current?.swipeLeft();
-              }}
-            >
-              <FaThumbsUp className="inline-block" size={20}/>
-          </button>
-          <button
-              className="px-7 py-7 rounded-full text-sm font-semibold bg-danger hover:bg-accent-hover transition-colors shadow-[0_0_30px_rgba(255,45,74,0.6)]"
-              onClick={() => {
-                console.log("Negative!");
-                cardRef.current?.swipeRight();
-              }}
-            >
-              <FaThumbsDown className="inline-block" size={20}/>
-          </button>
+          <div className="flex flex-col items-center gap-2">
+            <button
+                aria-label={swipeDict.like}
+                className="px-7 py-7 rounded-full text-sm font-semibold transition-colors bg-success hover:bg-success-hover shadow-[0_0_30px_rgba(34,192,106,0.6)]"
+                onClick={() => {
+                  console.log("Positive!");
+                  cardRef.current?.swipeLeft();
+                }}
+              >
+                <FaThumbsUp className="inline-block" size={20}/>
+            </button>
+            <span className="text-sm font-semibold uppercase tracking-wider text-fg">{swipeDict.like}</span>
+          </div>
+          <div className="flex flex-col items-center gap-2">
+            <button
+                aria-label={swipeDict.skip}
+                className="px-7 py-7 rounded-full text-sm font-semibold bg-danger hover:bg-accent-hover transition-colors shadow-[0_0_30px_rgba(255,45,74,0.6)]"
+                onClick={() => {
+                  console.log("Negative!");
+                  cardRef.current?.swipeRight();
+                }}
+              >
+                <FaThumbsDown className="inline-block" size={20}/>
+            </button>
+            <span className="text-sm font-semibold uppercase tracking-wider text-fg">{swipeDict.skip}</span>
+          </div>
         </div>
       </div>
     </div>
