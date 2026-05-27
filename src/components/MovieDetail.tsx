@@ -5,22 +5,31 @@ import { getPosterUrl, type MovieDetailData, type ProvidersCountry } from "@/lib
 import { cn } from "@/lib/utils";
 import type { Dictionary } from "@/app/[lang]/dictionaries";
 import RatingModal from "@/components/RatingModal";
-
+import WatchlistButton, { type WatchlistDict } from "@/components/WatchlistButton";
 
 type DetailDict = Dictionary["detail"];
+type CommonDict = Dictionary["common"];
 
 export default function MovieDetail({
   detail,
   lang,
   dict,
+  commonDict,
   providers,
+  isAuthed,
+  inWatchlist,
+  watchlistDict,
 }: {
   detail: MovieDetailData;
   lang: string;
   dict: DetailDict;
+  commonDict: CommonDict;
   providers?: ProvidersCountry | null;
+  isAuthed?: boolean;
+  inWatchlist?: boolean;
+  watchlistDict?: WatchlistDict;
 }) {
-  const title = detail.title ?? detail.name ?? "No title";
+  const title = detail.title ?? detail.name ?? commonDict.noTitle;
   const originalTitle = detail.original_title ?? detail.original_name;
   const posterUrl = getPosterUrl(detail.poster_path, "w500");
   const backdropUrl = detail.backdrop_path
@@ -51,7 +60,7 @@ export default function MovieDetail({
           className="flex items-center justify-center w-11 h-11 rounded-full border border-border text-fg transition-colors bg-surface/80 backdrop-blur-md"
         >
           <IoArrowBack size={20} aria-hidden="true" />
-          <span className="sr-only">Back</span>
+          <span className="sr-only">{commonDict.back}</span>
         </Link>
       </div>
 
@@ -89,7 +98,7 @@ export default function MovieDetail({
                 <Image src={posterUrl} alt={title} fill sizes="(max-width: 1024px) 224px, 300px" className="object-cover" />
               ) : (
                 <div className="flex h-full items-center justify-center text-sm bg-surface-card text-fg-subtle">
-                  No poster
+                  {commonDict.noPoster}
                 </div>
               )}
             </div>
@@ -188,7 +197,7 @@ export default function MovieDetail({
                 {rating}
                 <span className="text-lg font-medium text-fg-subtle">/10</span>
               </div>
-              <div className="inline-flex items-center gap-0.5 mb-2 text-gold-400" aria-label={`${stars} out of 5`}>
+              <div className="inline-flex items-center gap-0.5 mb-2 text-gold-400" aria-label={dict.ratingAriaLabel.replace("{stars}", String(stars))}>
                 {Array.from({ length: 5 }).map((_, i) =>
                   i < stars
                     ? <IoStar key={i} aria-hidden="true" />
@@ -258,6 +267,16 @@ export default function MovieDetail({
             )}
 
             <div className="flex flex-col gap-3 mt-6">
+              {watchlistDict && (
+                <WatchlistButton
+                  tmdbId={detail.id}
+                  mediaType={isTv ? "tv" : "movie"}
+                  lang={lang}
+                  isAuthed={isAuthed ?? false}
+                  initiallyInWatchlist={inWatchlist ?? false}
+                  t={watchlistDict}
+                />
+              )}
               {detail.imdb_id && (
                 <a
                   href={`https://www.imdb.com/title/${detail.imdb_id}`}

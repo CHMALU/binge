@@ -6,19 +6,28 @@ jest.mock("@/lib/tmdb", () => ({
   searchMovies: jest.fn(),
 }));
 
+const mockCommonDict = {
+  back: 'Back',
+  close: 'Close',
+  noTitle: 'No title',
+  noPoster: 'No poster',
+  notAvailable: 'N/A',
+};
+const PLACEHOLDER = "Search movies & series...";
+
 describe('Searchbar', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
   test('render input field', () => {
-    render(<SearchBar />);
-    expect(screen.getByPlaceholderText("Search movies & series...")).toBeInTheDocument();
+    render(<SearchBar placeholder={PLACEHOLDER} commonDict={mockCommonDict} />);
+    expect(screen.getByPlaceholderText(PLACEHOLDER)).toBeInTheDocument();
   });
 
   test('input field', () => {
-    render(<SearchBar />)
-    const input_field = screen.getByPlaceholderText("Search movies & series...");
+    render(<SearchBar placeholder={PLACEHOLDER} commonDict={mockCommonDict} />)
+    const input_field = screen.getByPlaceholderText(PLACEHOLDER);
     fireEvent.change(input_field, { target: { value: "Mario" }})
 
     expect(input_field).toHaveValue("Mario");
@@ -30,8 +39,8 @@ describe('Searchbar', () => {
       {id: 2, title: "Rookie"}
     ]);
 
-    render(<SearchBar />)
-    const input_field = screen.getByPlaceholderText("Search movies & series...");
+    render(<SearchBar placeholder={PLACEHOLDER} commonDict={mockCommonDict} />)
+    const input_field = screen.getByPlaceholderText(PLACEHOLDER);
     fireEvent.change(input_field, { target: { value: "Rookie" }})
 
     expect(screen.findByAltText("The Rookie"));

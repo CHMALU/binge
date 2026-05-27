@@ -12,7 +12,7 @@ import {
   IoArrowForward,
   IoEllipse,
 } from "react-icons/io5";
-import { getDictionary, hasLocale } from "./dictionaries";
+import { getDictionary, hasLocale, type Dictionary } from "./dictionaries";
 
 export default async function Home({
   params,
@@ -37,7 +37,7 @@ export default async function Home({
 
   return (
     <div className="bg-surface text-fg">
-      <Navbar lang={lang} dict={dict.nav} />
+      <Navbar lang={lang} dict={dict.nav} commonDict={dict.common} />
 
       {hero && (
         <section className="relative overflow-hidden border-b border-border h-[580px]">
@@ -100,7 +100,7 @@ export default async function Home({
         </section>
       )}
 
-      <FilterBar lang={lang} dict={dict.filter} />
+      <FilterBar lang={lang} dict={dict.filter} commonDict={dict.common} />
 
       <div className="px-6 xl:px-12 max-w-[1440px] mx-auto py-10 flex flex-col gap-14">
         <Section
@@ -109,6 +109,7 @@ export default async function Home({
           movies={popularMovies.slice(0, 14)}
           seeAll={dict.sections.seeAll}
           lang={lang}
+          commonDict={dict.common}
         />
         <Section
           title={dict.sections.nowInCinemas}
@@ -116,6 +117,7 @@ export default async function Home({
           movies={nowPlaying.slice(0, 14)}
           seeAll={dict.sections.seeAll}
           lang={lang}
+          commonDict={dict.common}
         />
         <Section
           title={dict.sections.popularSeries}
@@ -123,6 +125,7 @@ export default async function Home({
           movies={popularSeries.slice(0, 14)}
           seeAll={dict.sections.seeAll}
           lang={lang}
+          commonDict={dict.common}
         />
         <Section
           title={dict.sections.currentlyOnTV}
@@ -130,6 +133,7 @@ export default async function Home({
           movies={onAir.slice(0, 14)}
           seeAll={dict.sections.seeAll}
           lang={lang}
+          commonDict={dict.common}
         />
       </div>
     </div>
@@ -142,12 +146,14 @@ function Section({
   movies,
   seeAll,
   lang,
+  commonDict,
 }: {
   title: string;
   eyebrow?: string;
   movies: Movie[];
   seeAll: string;
   lang: string;
+  commonDict: Dictionary["common"];
 }) {
   return (
     <section>
@@ -172,7 +178,7 @@ function Section({
       </div>
       <div className="binge-rail">
         {movies.map((movie) => (
-          <MovieCard key={movie.id} movie={movie} lang={lang} />
+          <MovieCard key={movie.id} movie={movie} lang={lang} commonDict={commonDict} />
         ))}
       </div>
     </section>

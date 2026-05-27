@@ -4,8 +4,9 @@ import { LuCommand } from "react-icons/lu";
 import { searchMovies } from "@/lib/tmdb";
 import type { Movie } from "@/lib/tmdb";
 import MovieCard from "@/components/MovieCard";
+import type { Dictionary } from "@/app/[lang]/dictionaries";
 
-export default function SearchBar() {
+export default function SearchBar({ placeholder, commonDict }: { placeholder: string; commonDict: Dictionary["common"] }) {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<Movie[]>([]);
   const [isOpen, setIsOpen] = useState(false);
@@ -56,7 +57,7 @@ export default function SearchBar() {
         type="text"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        placeholder="Search movies & series..."
+        placeholder={placeholder}
         className="w-full h-11 rounded-xl pl-10 pr-14 text-sm outline-none border transition-colors bg-surface-card border-border focus:border-action text-fg"
       />
       {loading && (
@@ -73,7 +74,7 @@ export default function SearchBar() {
           <div className="grid grid-cols-3 gap-2">
             {results.map((movie) => (
               <div key={movie.id} onClick={() => { setIsOpen(false); setQuery(""); }}>
-                <MovieCard movie={movie} />
+                <MovieCard movie={movie} commonDict={commonDict} />
               </div>
             ))}
           </div>
