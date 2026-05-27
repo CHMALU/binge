@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-@theme inline {
+@theme {
   --font-sans: var(--font-inter);
   --font-poppins: var(--font-poppins);
 
@@ -81,23 +81,35 @@
      components so meaning never depends on color alone. */
 
 :root[data-cv-mode="red-green"] {
+  --color-gold-300: #6ad8e8;
+  --color-gold-400: #00bfd4;
+  --color-gold-500: #009eb0;
+  --color-gold-600: #007885;
   --color-crimson-400: #f5b04b;
   --color-crimson-500: #e69f00;
   --color-crimson-600: #b87f00;
   --color-success:       #0072b2;
   --color-success-hover: #005a8e;
   --color-danger:        #e69f00;
+  --color-action:       var(--color-gold-400);
+  --color-action-hover: var(--color-gold-500);
   --color-accent:        var(--color-crimson-500);
   --color-accent-hover:  var(--color-crimson-600);
 }
 
 :root[data-cv-mode="blue-yellow"] {
+  --color-gold-300: #ffa68c;
+  --color-gold-400: #ff7050;
+  --color-gold-500: #e85535;
+  --color-gold-600: #c4401f;
   --color-crimson-400: #e498bd;
   --color-crimson-500: #cc79a7;
   --color-crimson-600: #a35e85;
   --color-success:       #00a89b;
   --color-success-hover: #008075;
   --color-danger:        #cc79a7;
+  --color-action:       var(--color-gold-400);
+  --color-action-hover: var(--color-gold-500);
   --color-accent:        var(--color-crimson-500);
   --color-accent-hover:  var(--color-crimson-600);
 }
