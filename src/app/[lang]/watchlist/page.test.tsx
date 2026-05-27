@@ -33,11 +33,25 @@ jest.mock("next/image", () => {
   return MockImage;
 });
 
+import enDict from "../../dictionaries/en.json";
+import plDict from "../../dictionaries/pl.json";
+
+jest.mock("../dictionaries", () => ({
+  hasLocale: (l: string) => ["en", "pl", "ar"].includes(l),
+  getDictionary: (l: string) =>
+    Promise.resolve(l === "pl" ? plDict : enDict),
+}));
+
+jest.mock("@/components/Navbar", () => {
+  const MockNavbar = () => <nav data-testid="navbar" />;
+  MockNavbar.displayName = "MockNavbar";
+  return MockNavbar;
+});
+
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { getMovieDetails, getTvDetails } from "@/lib/tmdb";
 import { redirect } from "next/navigation";
-import enDict from "../../dictionaries/en.json";
 
 import WatchlistPage from "./page";
 
