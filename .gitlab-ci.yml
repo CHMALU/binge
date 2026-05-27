@@ -39,11 +39,6 @@ build:
             fi
         - npm run build
 
-typecheck:
-    stage: static_analysis
-    script:
-        - npm run typecheck
-
 static_analysis:
     stage:
         static_analysis
