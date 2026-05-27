@@ -78,7 +78,11 @@
     "addToWatchlist": "Add to watchlist",
     "inWatchlist": "In watchlist",
     "signInToSave": "Sign in to save",
-    "addError": "Could not add to watchlist. Please try again."
+    "addError": "Could not add to watchlist. Please try again.",
+    "title": "My Watchlist",
+    "empty": "Your watchlist is empty.",
+    "emptyHint": "Add titles by browsing or swiping.",
+    "addedOn": "Added on"
   },
   "detail": {
     "overview": "Overview",

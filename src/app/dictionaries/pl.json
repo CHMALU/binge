@@ -78,7 +78,11 @@
     "addToWatchlist": "Dodaj do listy",
     "inWatchlist": "Na liście",
     "signInToSave": "Zaloguj się, aby zapisać",
-    "addError": "Nie udało się dodać do listy. Spróbuj ponownie."
+    "addError": "Nie udało się dodać do listy. Spróbuj ponownie.",
+    "title": "Moja lista",
+    "empty": "Twoja lista jest pusta.",
+    "emptyHint": "Dodaj tytuły przeglądając lub przesuwając.",
+    "addedOn": "Dodano"
   },
   "detail": {
     "overview": "Opis",
