@@ -1,12 +1,10 @@
-"use client";
-
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
 import { IoArrowBack, IoStar, IoStarOutline } from "react-icons/io5";
 import { getPosterUrl, type MovieDetailData, type ProvidersCountry } from "@/lib/tmdb";
 import { cn } from "@/lib/utils";
 import type { Dictionary } from "@/app/[lang]/dictionaries";
+import RatingModal from "@/components/RatingModal";
 
 
 type DetailDict = Dictionary["detail"];
@@ -40,56 +38,6 @@ export default function MovieDetail({
 
   const isTv = detail.media_type === "tv";
   const stars = Math.round(detail.vote_average / 2);
-  const [isRatingOpen, setIsRatingOpen] = useState(false);
-  const [hoveredStar, setHoveredStar] = useState(0);
-  const [selectedRating, setSelectedRating] = useState(0);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [ratingError, setRatingError] = useState("");
-  const [ratingSuccess, setRatingSuccess] = useState("");
-
-  async function submitRating(stars: number) {
-    try {
-      setIsSubmitting(true);
-
-      setRatingError("");
-      setRatingSuccess("");
-
-      const response = await fetch("/api/auth/rating", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          tmdbId: detail.id,
-          mediaType: isTv ? "tv" : "movie",
-          stars,
-        }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        setRatingError(data.error || dict.error);
-        return;
-      }
-
-      setSelectedRating(stars);
-      setRatingSuccess(dict.success);
-
-      setTimeout(() => {
-        setIsRatingOpen(false);
-        setRatingSuccess("");
-      }, 1000);
-    }
-    catch (error) {
-      console.error(error);
-      setRatingError(error instanceof Error ? error.message : "An unexpected error occurred!");
-    }
-    finally {
-      setIsSubmitting(false);
-    }
-  }
-
   const seasonLabel = (n: number) =>
     n === 1 ? `1 ${dict.season}` : `${n} ${dict.seasons}`;
 
@@ -251,10 +199,7 @@ export default function MovieDetail({
                 <div className="text-sm text-fg-subtle">
                   {detail.vote_count.toLocaleString()} {dict.votes}
                   <div className="mt-5">
-                    <button onClick={() => setIsRatingOpen(true)}
-                    className="w-full py-3 rounded-xl text-sm font-semibold border transition-all bg-surface-card border-border text-fg hover:bg-white/10">
-                      {dict.rating} {isTv ? dict.series : dict.movie}
-                    </button>
+                    <RatingModal tmdbId={detail.id} mediaType={isTv ? "tv" : "movie"} title={title} dict={dict} />
                   </div>
                 </div>
               )}
@@ -300,6 +245,7 @@ export default function MovieDetail({
                     return unique.map((p) => (
                       <a key={p.provider_id} href={providers.link ?? undefined} target="_blank" rel="noopener noreferrer" title={p.provider_name} className="inline-flex items-center justify-center rounded-md overflow-hidden border border-border bg-surface-card">
                         {p.logo_path ? (
+                          // eslint-disable-next-line @next/next/no-img-element
                           <img src={`https://image.tmdb.org/t/p/w92${p.logo_path}`} alt={p.provider_name} width={44} height={44} />
                         ) : (
                           <span className="px-3 py-2 text-sm text-fg">{p.provider_name}</span>
@@ -338,94 +284,7 @@ export default function MovieDetail({
         </div>
       </div>
       
-      {/* Rating Modal */}
-      {isRatingOpen && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 backdrop-blur-sm px-4">
-          <div className="w-full max-w-md rounded-3xl border border-border bg-surface-raised p-8 shadow-2xl">
 
-            {/* Header */}
-            <div className="mb-6 text-center">
-              <h2 className="text-2xl font-bold mb-2">
-                {dict.rate} "{title}"
-              </h2>
-
-              <p className="text-sm text-fg-subtle">
-                {dict.selectRating}
-              </p>
-            </div>
-
-            {/* Stars */}
-            <div className="flex items-center justify-center gap-3 mb-8">
-              {[1, 2, 3, 4, 5].map((star) => {
-                const active = star <= (hoveredStar || selectedRating);
-
-                return (
-                  <button 
-                    key={star}
-                    onMouseEnter={() => setHoveredStar(star)}
-                    onMouseLeave={() => setHoveredStar(0)}
-                    onClick={() => setSelectedRating(star)}
-                    className="transition-transform hover:scale-110"
-                    aria-label={`Rate ${star} star${star > 1 ? "s" : ""}`}
-                  >
-                    {active ? (
-                      <IoStar
-                        size={42}
-                        className="text-gold-400"
-                      />
-                    ) : (
-                      <IoStarOutline
-                        size={42}
-                        className="text-fg-subtle"
-                      />
-                    )}
-                  </button>
-                );
-              })}
-            </div>
-
-            {/* Messages */}
-            <div className="min-h-[24px] mb-4 text-center">
-              {ratingError && (
-                <p className="text-sm font-medium" style={{ color: "var(--color-danger)" }}>
-                  {ratingError}
-                </p>
-              )}
-
-              {ratingSuccess && (
-                <p className="text-sm font-medium" style={{ color: "var(--color-success)" }}>
-                  {ratingSuccess}
-                </p>
-              )}
-            </div>
-
-            {/* Buttons */}
-            <div className="flex gap-3">
-              <button
-                onClick={() => {
-                  setRatingError("");
-                  setRatingSuccess("");
-                  setSelectedRating(0);
-                  setHoveredStar(0);
-                  setIsRatingOpen(false);
-                }}
-                className="flex-1 py-3 rounded-xl border border-border bg-surface-card"
-              >
-                {dict.cancel}
-              </button>
-
-              <button
-                disabled={selectedRating < 1 || isSubmitting}
-                onClick={() => submitRating(selectedRating)}
-                className="flex-1 py-3 rounded-xl font-semibold bg-action text-action-fg disabled:opacity-50"
-              >
-                {isSubmitting ? dict.saving : dict.submit}
-              </button>
-            </div>
-
-          </div>
-        </div>
-      )}
     </div>
   );
 }
