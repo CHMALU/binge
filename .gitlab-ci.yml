@@ -23,16 +23,12 @@ before_script:
     - npm ci
     - echo "[INFO] Starting pipeline..."
 
-install:
-    stage: build
-    script:
-        - echo "[INFO] Start generating prisma..."
-        - npx prisma generate
-
 build:
     stage:
         build
     script:
+        - echo "[INFO] Start generating prisma..."
+        - npx prisma generate
         - echo "[INFO] Start building project..."
         - if [ -z "$NEXT_PUBLIC_TMDB_API_KEY" ];
             then echo "[TEST] API key is not set...";
