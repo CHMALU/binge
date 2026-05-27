@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/auth";
-import { MediaType } from "@prisma/client";
+
 
 export async function POST(req: Request) {
   const session = await auth();

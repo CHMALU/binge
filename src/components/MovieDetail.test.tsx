@@ -116,7 +116,7 @@ describe('MovieDetail', () => {
         buy: [
           { provider_id: 192, provider_name: 'Apple TV+', logo_path: '/apple.png' }, // duplicate
         ],
-      } as any;
+      };
 
       render(<MovieDetail detail={mockMovie} lang="en" dict={mockDict} providers={providers} />);
 

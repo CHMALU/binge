@@ -7,7 +7,7 @@ import { IoArrowBack, IoStar, IoStarOutline } from "react-icons/io5";
 import { getPosterUrl, type MovieDetailData, type ProvidersCountry } from "@/lib/tmdb";
 import { cn } from "@/lib/utils";
 import type { Dictionary } from "@/app/[lang]/dictionaries";
-import { MediaType } from "@prisma/client";
+
 
 type DetailDict = Dictionary["detail"];
 
