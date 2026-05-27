@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { IoEye, IoCheckmark } from "react-icons/io5";
 import { cn } from "@/lib/utils";
 
@@ -33,16 +33,15 @@ function applyMode(mode: ColorMode) {
   }
 }
 
-export default function ColorVisionSwitcher({ dict }: { dict: ColorModeDict }) {
-  const [mode, setMode] = useState<ColorMode>("normal");
-  const [open, setOpen] = useState(false);
+function readStoredMode(): ColorMode {
+  if (typeof window === "undefined") return "normal";
+  const stored = localStorage.getItem(STORAGE_KEY) as ColorMode | null;
+  return stored && MODES.some((m) => m.value === stored) ? stored : "normal";
+}
 
-  useEffect(() => {
-    const stored = localStorage.getItem(STORAGE_KEY) as ColorMode | null;
-    if (stored && MODES.some((m) => m.value === stored)) {
-      setMode(stored);
-    }
-  }, []);
+export default function ColorVisionSwitcher({ dict }: { dict: ColorModeDict }) {
+  const [mode, setMode] = useState<ColorMode>(readStoredMode);
+  const [open, setOpen] = useState(false);
 
   function selectMode(next: ColorMode) {
     setMode(next);
