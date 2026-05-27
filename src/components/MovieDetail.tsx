@@ -4,6 +4,8 @@ import { IoArrowBack, IoStar, IoStarOutline } from "react-icons/io5";
 import { getPosterUrl, type MovieDetailData, type ProvidersCountry } from "@/lib/tmdb";
 import { cn } from "@/lib/utils";
 import type { Dictionary } from "@/app/[lang]/dictionaries";
+import RatingModal from "@/components/RatingModal";
+
 
 type DetailDict = Dictionary["detail"];
 type CommonDict = Dictionary["common"];
@@ -39,7 +41,6 @@ export default function MovieDetail({
 
   const isTv = detail.media_type === "tv";
   const stars = Math.round(detail.vote_average / 2);
-
   const seasonLabel = (n: number) =>
     n === 1 ? `1 ${dict.season}` : `${n} ${dict.seasons}`;
 
@@ -200,6 +201,9 @@ export default function MovieDetail({
               {detail.vote_count && (
                 <div className="text-sm text-fg-subtle">
                   {detail.vote_count.toLocaleString()} {dict.votes}
+                  <div className="mt-5">
+                    <RatingModal tmdbId={detail.id} mediaType={isTv ? "tv" : "movie"} title={title} dict={dict} />
+                  </div>
                 </div>
               )}
             </div>
@@ -244,6 +248,7 @@ export default function MovieDetail({
                     return unique.map((p) => (
                       <a key={p.provider_id} href={providers.link ?? undefined} target="_blank" rel="noopener noreferrer" title={p.provider_name} className="inline-flex items-center justify-center rounded-md overflow-hidden border border-border bg-surface-card">
                         {p.logo_path ? (
+                          // eslint-disable-next-line @next/next/no-img-element
                           <img src={`https://image.tmdb.org/t/p/w92${p.logo_path}`} alt={p.provider_name} width={44} height={44} />
                         ) : (
                           <span className="px-3 py-2 text-sm text-fg">{p.provider_name}</span>
@@ -281,6 +286,8 @@ export default function MovieDetail({
 
         </div>
       </div>
+      
+
     </div>
   );
 }

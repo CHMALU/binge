@@ -91,6 +91,16 @@
     "season": "sezon",
     "seasons": "sezony",
     "episode": "odc.",
-    "ratingAriaLabel": "{stars} na 5"
+    "ratingAriaLabel": "{stars} na 5",
+    "rating": "Oceń to",
+    "movie": "Film",
+    "series": "Serial",
+    "rate": "Oceń",
+    "selectRating": "Wybierz ocenę",
+    "cancel": "Anuluj",
+    "submit": "Zatwierdź",
+    "saving": "Zapisywanie...",
+    "error": "Coś poszło nie tak. Spróbuj ponownie.",
+    "success": "Ocena zapisana!"
   }
 }

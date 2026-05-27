@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import MovieDetail from '@/components/MovieDetail';
+import { ProvidersCountry } from '@/lib/tmdb';
 
 jest.mock('next/link', () => {
   // FIX: named const → React kann displayName ableiten
@@ -37,6 +38,16 @@ const mockDict = {
   seasons: 'seasons',
   episode: 'ep.',
   ratingAriaLabel: '{stars} out of 5',
+  rating: 'Rate this',
+  movie: 'Movie',
+  series: 'Series',
+  rate: 'Rate',
+  selectRating: 'Select a rating',
+  cancel: 'Cancel',
+  submit: 'Submit',
+  saving: 'Saving...',
+  error: 'Failed to submit rating. Please try again.',
+  success: 'Rating submitted successfully!'
 };
 
 const mockCommonDict = {
@@ -125,7 +136,7 @@ describe('MovieDetail', () => {
         buy: [
           { provider_id: 192, provider_name: 'Apple TV+', logo_path: '/apple.png' }, // duplicate
         ],
-      } as any;
+      } satisfies ProvidersCountry;
 
       render(<MovieDetail detail={mockMovie} lang="en" dict={mockDict} commonDict={mockCommonDict} providers={providers} />);
 

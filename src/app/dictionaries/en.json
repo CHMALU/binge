@@ -91,6 +91,16 @@
     "season": "season",
     "seasons": "seasons",
     "episode": "ep.",
-    "ratingAriaLabel": "{stars} out of 5"
+    "ratingAriaLabel": "{stars} out of 5",
+    "rating": "Rate this",
+    "movie": "Movie",
+    "series": "Series",
+    "rate": "Rate",
+    "selectRating": "Select a rating",
+    "cancel": "Cancel",
+    "submit": "Submit",
+    "saving": "Saving...",
+    "error": "Failed to submit rating. Please try again.",
+    "success": "Rating submitted successfully!"
   }
 }

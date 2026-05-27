@@ -91,6 +91,16 @@
     "season": "موسم",
     "seasons": "مواسم",
     "episode": "حلقة",
-    "ratingAriaLabel": "{stars} من 5"
+    "ratingAriaLabel": "{stars} من 5",
+    "rating": "قيم هذا",
+    "movie": "فيلم",
+    "series": "مسلسل",
+    "rate": "قيم",
+    "selectRating": "اختر تقييماً",
+    "cancel": "إلغاء",
+    "submit": "إرسال",
+    "saving": "جارٍ الحفظ...",
+    "error": "حدث خطأ ما. يرجى المحاولة مرة أخرى.",
+    "success": "تم تقديم تقييمك! شكراً لمشاركتك."
   }
 }
