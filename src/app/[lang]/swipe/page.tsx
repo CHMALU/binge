@@ -23,7 +23,7 @@ export default async function SwipeRouter({
   return (
     <main>
       <Navbar lang={lang} dict={dict.nav} />
-      <MovieSwiper movies={all} />
+      <MovieSwiper movies={all} dict={dict.nav} />
     </main>
   );
 }

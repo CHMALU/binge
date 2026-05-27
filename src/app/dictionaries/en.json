@@ -3,7 +3,9 @@
     "discover": "Discover",
     "movies": "Movies",
     "series": "Series",
-    "signIn": "Sign in"
+    "signIn": "Sign in",
+    "back": "Back",
+    "swipe": "Swipe"
   },
   "hero": {
     "featured": "Featured",
@@ -72,6 +74,16 @@
     "officialSite": "Official site",
     "season": "season",
     "seasons": "seasons",
-    "episode": "ep."
+    "episode": "ep.",
+    "rating": "Rate this",
+    "movie": "Movie",
+    "series": "Series",
+    "rate": "Rate",
+    "selectRating": "Select a rating",
+    "cancel": "Cancel",
+    "submit": "Submit",
+    "saving": "Saving...",
+    "error": "Failed to submit rating. Please try again.",
+    "success": "Rating submitted successfully!"
   }
 }

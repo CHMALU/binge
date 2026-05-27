@@ -69,12 +69,12 @@ export default function MovieDetail({
       const data = await response.json();
 
       if (!response.ok) {
-        setRatingError(data.error || "Failed to submit rating");
+        setRatingError(data.error || dict.error);
         return;
       }
 
       setSelectedRating(stars);
-      setRatingSuccess("Rating submitted successfully!");
+      setRatingSuccess(dict.success);
 
       setTimeout(() => {
         setIsRatingOpen(false);
@@ -253,7 +253,7 @@ export default function MovieDetail({
                   <div className="mt-5">
                     <button onClick={() => setIsRatingOpen(true)}
                     className="w-full py-3 rounded-xl text-sm font-semibold border transition-all bg-surface-card border-border text-fg hover:bg-white/10">
-                      Rate this {isTv ? "Series" : "Movie"}
+                      {dict.rating} {isTv ? dict.series : dict.movie}
                     </button>
                   </div>
                 </div>
@@ -346,11 +346,11 @@ export default function MovieDetail({
             {/* Header */}
             <div className="mb-6 text-center">
               <h2 className="text-2xl font-bold mb-2">
-                Rate "{title}"
+                {dict.rate} "{title}"
               </h2>
 
               <p className="text-sm text-fg-subtle">
-                Select your rating
+                {dict.selectRating}
               </p>
             </div>
 
@@ -360,12 +360,13 @@ export default function MovieDetail({
                 const active = star <= (hoveredStar || selectedRating);
 
                 return (
-                  <button
+                  <button 
                     key={star}
                     onMouseEnter={() => setHoveredStar(star)}
                     onMouseLeave={() => setHoveredStar(0)}
                     onClick={() => setSelectedRating(star)}
                     className="transition-transform hover:scale-110"
+                    aria-label={`Rate ${star} star${star > 1 ? "s" : ""}`}
                   >
                     {active ? (
                       <IoStar
@@ -386,13 +387,13 @@ export default function MovieDetail({
             {/* Messages */}
             <div className="min-h-[24px] mb-4 text-center">
               {ratingError && (
-                <p className="text-sm font-medium text-red-400">
+                <p className="text-sm font-medium" style={{ color: "var(--color-danger)" }}>
                   {ratingError}
                 </p>
               )}
 
               {ratingSuccess && (
-                <p className="text-sm font-medium text-green-400">
+                <p className="text-sm font-medium" style={{ color: "var(--color-success)" }}>
                   {ratingSuccess}
                 </p>
               )}
@@ -410,7 +411,7 @@ export default function MovieDetail({
                 }}
                 className="flex-1 py-3 rounded-xl border border-border bg-surface-card"
               >
-                Cancel
+                {dict.cancel}
               </button>
 
               <button
@@ -418,7 +419,7 @@ export default function MovieDetail({
                 onClick={() => submitRating(selectedRating)}
                 className="flex-1 py-3 rounded-xl font-semibold bg-action text-action-fg disabled:opacity-50"
               >
-                {isSubmitting ? "Saving..." : "Submit"}
+                {isSubmitting ? dict.saving : dict.submit}
               </button>
             </div>
 

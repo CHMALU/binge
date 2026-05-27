@@ -20,22 +20,32 @@ jest.mock('next/image', () => {
 });
 
 const mockDict = {
-  overview: 'Overview',
-  availableOn: 'Available on',
-  network: 'Network',
-  createdBy: 'Created by',
-  lastAired: 'Last aired',
-  budget: 'Budget',
-  revenue: 'Revenue',
-  languages: 'Languages',
-  status: 'Status',
-  language: 'Language',
-  votes: 'votes',
-  viewOnIMDb: 'View on IMDb',
-  officialSite: 'Official site',
-  season: 'season',
-  seasons: 'seasons',
-  episode: 'ep.',
+  "overview": "Overview",
+    "availableOn": "Available on",
+    "network": "Network",
+    "createdBy": "Created by",
+    "lastAired": "Last aired",
+    "budget": "Budget",
+    "revenue": "Revenue",
+    "languages": "Languages",
+    "status": "Status",
+    "language": "Language",
+    "votes": "votes",
+    "viewOnIMDb": "View on IMDb",
+    "officialSite": "Official site",
+    "season": "season",
+    "seasons": "seasons",
+    "episode": "ep.",
+    "rating": "Rate this",
+    "movie": "Movie",
+    "series": "Series",
+    "rate": "Rate",
+    "selectRating": "Select a rating",
+    "cancel": "Cancel",
+    "submit": "Submit",
+    "saving": "Saving...",
+    "error": "Failed to submit rating. Please try again.",
+    "success": "Rating submitted successfully!"
 };
 
 const mockMovie = {
@@ -116,7 +126,7 @@ describe('MovieDetail', () => {
         buy: [
           { provider_id: 192, provider_name: 'Apple TV+', logo_path: '/apple.png' }, // duplicate
         ],
-      };
+      } as any;
 
       render(<MovieDetail detail={mockMovie} lang="en" dict={mockDict} providers={providers} />);
 

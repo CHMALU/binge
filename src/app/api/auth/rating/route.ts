@@ -23,11 +23,9 @@ export async function POST(req: Request) {
     )
   }
 
-  const user = await prisma.user.findUnique({
-    where: { email: session.user.email, },
-  });
+  const userID = session.user.id;
 
-  if (!user) {
+  if (!userID) {
     return Response.json(
       { error: "No user found with the provided email."},
       { status: 404 }
@@ -37,7 +35,7 @@ export async function POST(req: Request) {
   await prisma.rating.upsert({
     where: {
       userId_tmdbId_mediaType: {
-        userId: user.id,
+        userId: userID,
         tmdbId,
         mediaType,
       },
@@ -46,7 +44,7 @@ export async function POST(req: Request) {
       stars,
     },
     create: {
-      userId: user.id,
+      userId: userID,
       tmdbId,
       mediaType,
       stars

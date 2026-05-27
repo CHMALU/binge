@@ -3,7 +3,9 @@
     "discover": "Odkryj",
     "movies": "Filmy",
     "series": "Seriale",
-    "signIn": "Zaloguj się"
+    "signIn": "Zaloguj się",
+    "back": "Wstecz",
+    "swipe": "Przesuń"
   },
   "hero": {
     "featured": "Polecane",
@@ -72,6 +74,16 @@
     "officialSite": "Oficjalna strona",
     "season": "sezon",
     "seasons": "sezony",
-    "episode": "odc."
+    "episode": "odc.",
+    "rating": "Oceń to",
+    "movie": "Film",
+    "series": "Serial",
+    "rate": "Oceń",
+    "selectRating": "Wybierz ocenę",
+    "cancel": "Anuluj",
+    "submit": "Zatwierdź",
+    "saving": "Zapisywanie...",
+    "error": "Coś poszło nie tak. Spróbuj ponownie.",
+    "success": "Ocena zapisana!"
   }
 }
