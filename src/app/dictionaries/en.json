@@ -74,6 +74,12 @@
     "errorPasswordMismatch": "Passwords do not match.",
     "errorPasswordShort": "Password must be at least 6 characters."
   },
+  "watchlist": {
+    "title": "My Watchlist",
+    "empty": "Your watchlist is empty.",
+    "emptyHint": "Add titles by browsing or swiping.",
+    "addedOn": "Added on"
+  },
   "detail": {
     "overview": "Overview",
     "availableOn": "Available on",

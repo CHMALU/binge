@@ -74,6 +74,12 @@
     "errorPasswordMismatch": "Hasła nie są zgodne.",
     "errorPasswordShort": "Hasło musi mieć co najmniej 6 znaków."
   },
+  "watchlist": {
+    "title": "Moja lista",
+    "empty": "Twoja lista jest pusta.",
+    "emptyHint": "Dodaj tytuły przeglądając lub przesuwając.",
+    "addedOn": "Dodano"
+  },
   "detail": {
     "overview": "Opis",
     "availableOn": "Dostępne na",

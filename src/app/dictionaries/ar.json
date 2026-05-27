@@ -74,6 +74,12 @@
     "errorPasswordMismatch": "كلمتا المرور غير متطابقتين.",
     "errorPasswordShort": "يجب أن تكون كلمة المرور 6 أحرف على الأقل."
   },
+  "watchlist": {
+    "title": "قائمتي",
+    "empty": "قائمتك فارغة.",
+    "emptyHint": "أضف العناوين من خلال التصفح أو السحب.",
+    "addedOn": "أُضيف في"
+  },
   "detail": {
     "overview": "نظرة عامة",
     "availableOn": "متاح على",
