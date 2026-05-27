@@ -129,12 +129,18 @@ const SwipeCard = forwardRef(function SwipeCard({
       dragMomentum={false}
       onDoubleClick={() => setFlipped((prev) => !prev)}
       whileTap={{cursor: "grabbing"}}
-      whileHover={!isExiting ? {scale: 1.05} : {}}
+      whileHover={!isExiting ? {scale: 1.05, transition: { duration: 0.5, ease: "easeOut" } } : {}}
       initial={{opacity: 1}}
       animate={TopCard ? {scale: 1, opacity: 1, x: [0, -100, 100, 0], rotate: [0, -5, 5, -3, 3, 0], animationDuration: 400} : controls}
       exit={{ scale: 0.8, opacity: 0}}
-      transition={TopCard ? {duration: 2.5, ease: "easeInOut"} : {duration: 0.3}}
-      className="w-[90vw] max-w-[420px] h-[55vh] cursor-grab">
+      transition={{
+        x: TopCard ? { duration: 2.5, ease: "easeInOut" } : { duration: 0.3 },
+        rotate: TopCard ? { duration: 2.5, ease: "easeInOut" } : { duration: 0.3 },
+        opacity: { duration: 0.3 },
+        scale: { duration: 0.5, ease: "easeOut" }
+      }}
+
+      className="w-[min(88vw,calc((100svh-220px)*2/3),420px)] aspect-[2/3] max-h-[calc(100svh-220px)] cursor-grab">
         <motion.div
           animate={{ rotateY: flipped ? 180 : 0 }}
           transition={{ duration: 0.5, type: "spring", damping: 20}}
