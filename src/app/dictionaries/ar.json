@@ -16,7 +16,8 @@
     "signOut": "تسجيل الخروج",
     "comingSoon": "قريباً",
     "changeLanguage": "تغيير اللغة",
-    "searchPlaceholder": "ابحث عن الأفلام والمسلسلات..."
+    "searchPlaceholder": "ابحث عن الأفلام والمسلسلات...",
+    "startSwiping": "ابدأ التصفح"
   },
   "a11y": {
     "colorMode": {
@@ -48,6 +49,7 @@
     "featured": "مميز",
     "topRated": "الأعلى تقييمًا",
     "watchTrailer": "شاهد الإعلان",
+    "trailerLabel": "الإعلان الرسمي",
     "moreInfo": "مزيد من المعلومات"
   },
   "sections": {
@@ -59,7 +61,8 @@
     "popularSeriesEyebrow": "على قائمة الجميع",
     "currentlyOnTV": "على التلفاز الآن",
     "currentlyOnTVEyebrow": "يُعرض الآن",
-    "seeAll": "عرض الكل"
+    "seeAll": "عرض الكل",
+    "titles": "عنوان"
   },
   "filter": {
     "all": "الكل",

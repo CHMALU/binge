@@ -1,10 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
 import { useEffect, useRef, useState } from "react";
-import { FiUser, FiLogOut, FiBookmark, FiCheckCircle, FiZap } from "react-icons/fi";
+import { IoLogIn } from "react-icons/io5";
+import { FiLogOut, FiBookmark, FiCheckCircle, FiZap } from "react-icons/fi";
 import SearchBar from "./SearchBar";
 import LanguageSwitcher from "./LanguageSwitcher";
 import ColorVisionSwitcher, { type ColorModeDict } from "./ColorVisionSwitcher";
@@ -24,7 +24,6 @@ export default function Navbar({
   commonDict: CommonDict;
   colorModeDict: ColorModeDict;
 }) {
-  const router = useRouter();
   const { data: session } = useSession();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -61,22 +60,6 @@ export default function Navbar({
           </span>
         </Link>
 
-        <div className="hidden lg:flex items-center gap-1">
-          {[
-            { label: dict.discover, href: `/${lang}/swipe` },
-            { label: dict.movies, href: `/${lang}` },
-            { label: dict.series, href: `/${lang}` },
-          ].map(({ label, href }) => (
-            <Link
-              key={label}
-              href={href}
-              className="px-4 py-2 rounded-lg text-sm font-medium transition-all duration-150 text-fg-muted hover:text-fg hover:bg-surface-card"
-            >
-              {label}
-            </Link>
-          ))}
-        </div>
-
         <div className="flex-1 max-w-sm">
           <SearchBar placeholder={dict.searchPlaceholder} commonDict={commonDict} />
         </div>
@@ -85,30 +68,28 @@ export default function Navbar({
           <ColorVisionSwitcher dict={colorModeDict} />
           <LanguageSwitcher lang={lang} ariaLabel={dict.changeLanguage} />
 
-          {!session && (
-            <button
-              onClick={() => router.push(`/${lang}/login`)}
-              className="px-4 py-2 rounded-lg text-sm font-semibold border transition-colors hover:bg-surface-card border-border-strong text-fg"
+          {!session ? (
+            <Link
+              href={`/${lang}/login`}
+              className="inline-flex items-center gap-2 px-4 h-9 rounded-lg text-sm font-semibold border transition-colors hover:bg-surface-hover bg-surface-card border-border-strong text-fg"
             >
+              <IoLogIn size={17} aria-hidden="true" />
               {dict.signIn}
-            </button>
-          )}
+            </Link>
+          ) : (
+            <div className="relative" ref={dropdownRef}>
+                <button
+                  onClick={() => setDropdownOpen((v) => !v)}
+                  className="w-9 h-9 rounded-full grid place-items-center text-xs font-bold cursor-pointer select-none shrink-0 transition-opacity hover:opacity-80"
+                  style={{
+                    background: "linear-gradient(135deg, var(--color-gold-400), var(--color-gold-500))",
+                    color: "var(--color-action-fg)",
+                  }}
+                >
+                  {initials}
+                </button>
 
-          <div className="relative" ref={dropdownRef}>
-            <button
-              onClick={() => session ? setDropdownOpen((v) => !v) : router.push(`/${lang}/login`)}
-              className="w-9 h-9 rounded-full grid place-items-center text-xs font-bold cursor-pointer select-none shrink-0 transition-opacity hover:opacity-80"
-              style={{
-                background: session
-                  ? "linear-gradient(135deg, var(--color-gold-400), var(--color-gold-500))"
-                  : "linear-gradient(135deg, var(--color-crimson-500), var(--color-gold-400))",
-                color: "var(--color-action-fg)",
-              }}
-            >
-              {session ? initials : <FiUser size={16} />}
-            </button>
-
-            {dropdownOpen && session && (
+                {dropdownOpen && (
               <div className="absolute right-0 top-12 w-56 rounded-xl border border-border overflow-hidden z-50 py-1 bg-surface-raised">
                 <div className="px-4 py-3 border-b border-border">
                   <p className="text-sm font-semibold text-fg truncate">
@@ -135,8 +116,9 @@ export default function Navbar({
                   {dict.signOut}
                 </button>
               </div>
-            )}
-          </div>
+                )}
+            </div>
+          )}
         </div>
       </div>
     </nav>

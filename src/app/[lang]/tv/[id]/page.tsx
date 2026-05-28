@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import MovieDetail from "@/components/MovieDetail";
+import Navbar from "@/components/Navbar";
 import { getTvDetails, getProvidersForLocale } from "@/lib/tmdb";
 import { getDictionary, hasLocale } from "../../dictionaries";
 import { auth } from "@/auth";
@@ -43,16 +44,19 @@ export default async function TvPage({
     : [false, false];
 
   return (
-    <MovieDetail
-      detail={{ ...detail, media_type: "tv" }}
-      lang={lang}
-      dict={dict.detail}
-      commonDict={dict.common}
-      providers={providers}
-      isAuthed={Boolean(userId)}
-      inWatchlist={inWatchlist}
-      isWatched={isWatched}
-      watchlistDict={dict.watchlist}
-    />
+    <>
+      <Navbar lang={lang} dict={dict.nav} commonDict={dict.common} colorModeDict={dict.a11y.colorMode} />
+      <MovieDetail
+        detail={{ ...detail, media_type: "tv" }}
+        lang={lang}
+        dict={dict.detail}
+        commonDict={dict.common}
+        providers={providers}
+        isAuthed={Boolean(userId)}
+        inWatchlist={inWatchlist}
+        isWatched={isWatched}
+        watchlistDict={dict.watchlist}
+      />
+    </>
   );
 }

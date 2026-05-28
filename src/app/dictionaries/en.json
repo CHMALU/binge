@@ -16,7 +16,8 @@
     "signOut": "Sign out",
     "comingSoon": "soon",
     "changeLanguage": "Change language",
-    "searchPlaceholder": "Search movies & series..."
+    "searchPlaceholder": "Search movies & series...",
+    "startSwiping": "Start swiping"
   },
   "a11y": {
     "colorMode": {
@@ -48,6 +49,7 @@
     "featured": "Featured",
     "topRated": "Top rated",
     "watchTrailer": "Watch Trailer",
+    "trailerLabel": "Official Trailer",
     "moreInfo": "More info"
   },
   "sections": {
@@ -59,7 +61,8 @@
     "popularSeriesEyebrow": "On everyone's list",
     "currentlyOnTV": "Currently on TV",
     "currentlyOnTVEyebrow": "Airing now",
-    "seeAll": "See all"
+    "seeAll": "See all",
+    "titles": "titles"
   },
   "filter": {
     "all": "All",

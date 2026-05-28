@@ -196,6 +196,50 @@ export async function getTvDetails(id: number, locale = "en"): Promise<MovieDeta
   return tmdbFetch<MovieDetailData>(`/tv/${id}`, { language: tmdbLang(locale) });
 }
 
+export interface Video {
+  key: string;
+  site: string;
+  type: string;
+  name: string;
+  official?: boolean;
+}
+
+interface VideosResponse {
+  results: Video[];
+}
+
+function pickTrailerKey(videos: Video[]): string | null {
+  const youtube = videos.filter((v) => v.site === "YouTube");
+  const trailer =
+    youtube.find((v) => v.type === "Trailer" && v.official) ??
+    youtube.find((v) => v.type === "Trailer") ??
+    youtube.find((v) => v.type === "Teaser") ??
+    youtube[0];
+  return trailer?.key ?? null;
+}
+
+/**
+ * Returns the YouTube key of the best trailer for a title, or null if none.
+ * Falls back to the default (en-US) catalogue when the requested locale has no
+ * videos — important for the Arabic UI, where TMDb often returns an empty list.
+ */
+export async function getTrailerKey(mediaType: "movie" | "tv", id: number, locale = "en"): Promise<string | null> {
+  try {
+    const localized = await tmdbFetch<VideosResponse>(`/${mediaType}/${id}/videos`, { language: tmdbLang(locale) });
+    const key = pickTrailerKey(localized.results ?? []);
+    if (key) return key;
+
+    if (tmdbLang(locale) !== "en-US") {
+      const fallback = await tmdbFetch<VideosResponse>(`/${mediaType}/${id}/videos`, { language: "en-US" });
+      return pickTrailerKey(fallback.results ?? []);
+    }
+    return null;
+  } catch (err) {
+    console.error("Failed to fetch trailer:", err);
+    return null;
+  }
+}
+
 export async function searchMovies(query: string, locale = "en"): Promise<Movie[]> {
   if (!query.trim()) return [];
 

@@ -5,6 +5,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import NextImage from "next/image";
 import SwipeCard from "@/components/SwipeMechanism";
+import BackButton from "@/components/BackButton";
 import { getRelatedTitles, type Movie } from "@/lib/tmdb";
 import Link from "next/link";
 import { FaThumbsUp, FaThumbsDown } from "react-icons/fa";
@@ -192,11 +193,7 @@ export default function MovieSwiper({ movies, lang, commonDict, swipeDict }: Pro
 
   return (
     <div className="relative w-full min-h-[calc(100svh-80px)] overflow-hidden">
-      <div className="px-6 py-4">
-        <Link href={`/${lang}`} className="text-sm text-fg-muted hover:text-fg transition-colors inline-flex items-center gap-1">
-          <IoArrowBack aria-hidden="true" /> {commonDict.back}
-        </Link>
-      </div>
+      <BackButton href={`/${lang}`} label={commonDict.back} />
       <div className="absolute inset-0 pointer-events-none">
         <motion.div
           className="absolute right-[20%] top-[10%] w-[30%] h-[70%] blur-[100px] rounded-full"
