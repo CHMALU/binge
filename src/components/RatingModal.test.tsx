@@ -147,15 +147,13 @@ describe('RatingModal', () => {
 
       render(
         <RatingModal
-          {...({
-            tmdbId: 7,
-            mediaType: 'movie',
-            title: 'Heat',
-            dict,
-            isAuthed: true,
-            lang: 'en',
-            onSubmit,
-          } as never)}
+          tmdbId={7}
+          mediaType="movie"
+          title="Heat"
+          dict={dict}
+          isAuthed={true}
+          lang="en"
+          onSubmit={onSubmit}
         />
       );
 
@@ -175,16 +173,14 @@ describe('RatingModal', () => {
 
       render(
         <RatingModal
-          {...({
-            tmdbId: 7,
-            mediaType: 'movie',
-            title: 'Heat',
-            dict,
-            isAuthed: true,
-            lang: 'en',
-            onSubmit,
-            onSuccess,
-          } as never)}
+          tmdbId={7}
+          mediaType="movie"
+          title="Heat"
+          dict={dict}
+          isAuthed={true}
+          lang="en"
+          onSubmit={onSubmit}
+          onSuccess={onSuccess}
         />
       );
 
@@ -202,16 +198,14 @@ describe('RatingModal', () => {
 
       render(
         <RatingModal
-          {...({
-            tmdbId: 1,
-            mediaType: 'movie',
-            title: 'Inception',
-            dict,
-            isAuthed: true,
-            lang: 'en',
-            onSubmit: jest.fn(),
-            onSkip,
-          } as never)}
+          tmdbId={1}
+          mediaType="movie"
+          title="Inception"
+          dict={dict}
+          isAuthed={true}
+          lang="en"
+          onSubmit={jest.fn()}
+          onSkip={onSkip}
         />
       );
 
@@ -243,16 +237,14 @@ describe('RatingModal', () => {
     it('renders triggerLabel + dialogTitle when provided (overrides defaults)', async () => {
       render(
         <RatingModal
-          {...({
-            tmdbId: 1,
-            mediaType: 'movie',
-            title: 'Inception',
-            dict,
-            isAuthed: true,
-            lang: 'en',
-            triggerLabel: 'Mark as watched',
-            dialogTitle: 'How would you rate it?',
-          } as never)}
+          tmdbId={1}
+          mediaType="movie"
+          title="Inception"
+          dict={dict}
+          isAuthed={true}
+          lang="en"
+          triggerLabel="Mark as watched"
+          dialogTitle="How would you rate it?"
         />
       );
 
