@@ -1,11 +1,27 @@
 {
+  "common": {
+    "back": "Wstecz",
+    "close": "Zamknij",
+    "noTitle": "Bez tytułu",
+    "noPoster": "Brak plakatu",
+    "notAvailable": "Brak"
+  },
   "nav": {
     "discover": "Odkryj",
     "movies": "Filmy",
     "series": "Seriale",
     "signIn": "Zaloguj się",
-    "back": "Wstecz",
-    "swipe": "Przesuń"
+    "watchlist": "Moja lista",
+    "watched": "Obejrzane",
+    "signOut": "Wyloguj",
+    "comingSoon": "wkrótce",
+    "changeLanguage": "Zmień język",
+    "searchPlaceholder": "Szukaj filmów i seriali..."
+  },
+  "swipe": {
+    "label": "Przesuń",
+    "noDescription": "Brak opisu.",
+    "flipBackHint": "Dwuklik aby odwrócić"
   },
   "hero": {
     "featured": "Polecane",
@@ -58,6 +74,16 @@
     "errorPasswordMismatch": "Hasła nie są zgodne.",
     "errorPasswordShort": "Hasło musi mieć co najmniej 6 znaków."
   },
+  "watchlist": {
+    "addToWatchlist": "Dodaj do listy",
+    "inWatchlist": "Na liście",
+    "signInToSave": "Zaloguj się, aby zapisać",
+    "addError": "Nie udało się dodać do listy. Spróbuj ponownie.",
+    "title": "Moja lista",
+    "empty": "Twoja lista jest pusta.",
+    "emptyHint": "Dodaj tytuły przeglądając lub przesuwając.",
+    "addedOn": "Dodano"
+  },
   "detail": {
     "overview": "Opis",
     "availableOn": "Dostępne na",
@@ -75,6 +101,7 @@
     "season": "sezon",
     "seasons": "sezony",
     "episode": "odc.",
+    "ratingAriaLabel": "{stars} na 5",
     "rating": "Oceń to",
     "movie": "Film",
     "series": "Serial",

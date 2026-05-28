@@ -22,8 +22,8 @@ export default async function SwipeRouter({
 
   return (
     <main>
-      <Navbar lang={lang} dict={dict.nav} />
-      <MovieSwiper movies={all} dict={dict.nav} />
+      <Navbar lang={lang} dict={dict.nav} commonDict={dict.common} />
+      <MovieSwiper movies={all} lang={lang} commonDict={dict.common} swipeDict={dict.swipe} />
     </main>
   );
 }

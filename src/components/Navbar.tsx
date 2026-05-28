@@ -10,8 +10,9 @@ import LanguageSwitcher from "./LanguageSwitcher";
 import type { Dictionary } from "@/app/[lang]/dictionaries";
 
 type NavDict = Dictionary["nav"];
+type CommonDict = Dictionary["common"];
 
-export default function Navbar({ lang, dict }: { lang: string; dict: NavDict }) {
+export default function Navbar({ lang, dict, commonDict }: { lang: string; dict: NavDict; commonDict: CommonDict }) {
   const router = useRouter();
   const { data: session } = useSession();
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -66,11 +67,11 @@ export default function Navbar({ lang, dict }: { lang: string; dict: NavDict }) 
         </div>
 
         <div className="flex-1 max-w-sm">
-          <SearchBar />
+          <SearchBar placeholder={dict.searchPlaceholder} commonDict={commonDict} />
         </div>
 
         <div className="ml-auto flex items-center gap-3 shrink-0">
-          <LanguageSwitcher lang={lang} />
+          <LanguageSwitcher lang={lang} ariaLabel={dict.changeLanguage} />
 
           {!session && (
             <button
@@ -107,9 +108,9 @@ export default function Navbar({ lang, dict }: { lang: string; dict: NavDict }) 
                 </div>
 
                 <div className="py-1">
-                  <DropdownItem icon={<FiBookmark size={15} />} label="Moja lista" href={`/${lang}/watchlist`} disabled />
-                  <DropdownItem icon={<FiCheckCircle size={15} />} label="Obejrzane" href={`/${lang}/watched`} disabled />
-                  <DropdownItem icon={<FiZap size={15} />} label="Odkryj filmy" href={`/${lang}/swipe`} />
+                  <DropdownItem icon={<FiBookmark size={15} />} label={dict.watchlist} href={`/${lang}/watchlist`} comingSoonLabel={dict.comingSoon} />
+                  <DropdownItem icon={<FiCheckCircle size={15} />} label={dict.watched} href={`/${lang}/watched`} comingSoonLabel={dict.comingSoon} disabled />
+                  <DropdownItem icon={<FiZap size={15} />} label={dict.discover} href={`/${lang}/swipe`} comingSoonLabel={dict.comingSoon} />
                 </div>
 
                 <div className="border-t border-border" />
@@ -119,7 +120,7 @@ export default function Navbar({ lang, dict }: { lang: string; dict: NavDict }) 
                   className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-accent hover:bg-surface-card transition-colors cursor-pointer"
                 >
                   <FiLogOut size={15} />
-                  Wyloguj
+                  {dict.signOut}
                 </button>
               </div>
             )}
@@ -130,15 +131,15 @@ export default function Navbar({ lang, dict }: { lang: string; dict: NavDict }) 
   );
 }
 
-function DropdownItem({ icon, label, href, disabled }: {
-  icon: React.ReactNode; label: string; href: string; disabled?: boolean;
+function DropdownItem({ icon, label, href, comingSoonLabel, disabled }: {
+  icon: React.ReactNode; label: string; href: string; comingSoonLabel: string; disabled?: boolean;
 }) {
   if (disabled) {
     return (
       <div className="flex items-center gap-3 px-4 py-2.5 text-sm text-fg-subtle cursor-not-allowed select-none">
         {icon}
         <span>{label}</span>
-        <span className="ml-auto text-xs opacity-40">wkrótce</span>
+        <span className="ml-auto text-xs opacity-40">{comingSoonLabel}</span>
       </div>
     );
   }

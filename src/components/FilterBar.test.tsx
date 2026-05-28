@@ -13,6 +13,14 @@ const mockDict = {
   noResults: 'No results found.',
 };
 
+const mockCommonDict = {
+  back: 'Back',
+  close: 'Close',
+  noTitle: 'No title',
+  noPoster: 'No poster',
+  notAvailable: 'N/A',
+};
+
 
 jest.mock('@/lib/tmdb', () => ({
   getGenres: jest.fn(),
@@ -30,7 +38,7 @@ describe('FilterBar', () => {
 
   test('select movie and displaying Years', async () => {
 
-    render(<FilterBar lang="en" dict={mockDict} />);
+    render(<FilterBar lang="en" dict={mockDict} commonDict={mockCommonDict} />);
 
     const btn = screen.getByRole("button", { name: /Movies/ });
 
@@ -43,7 +51,7 @@ describe('FilterBar', () => {
 
   test('select series and displaying Years', async () => {
 
-    render(<FilterBar lang="en" dict={mockDict} />);
+    render(<FilterBar lang="en" dict={mockDict} commonDict={mockCommonDict} />);
 
     const btn = screen.getByRole("button", { name: /Series/ });
 
@@ -58,7 +66,7 @@ describe('FilterBar', () => {
     (getGenres as jest.Mock).mockResolvedValue([
       {id: 1, name: "All Genres"},
     ]);
-    render(<FilterBar lang="en" dict={mockDict} />);
+    render(<FilterBar lang="en" dict={mockDict} commonDict={mockCommonDict} />);
 
     const btn = screen.getByRole("button", { name: /Series/ });
 
@@ -72,7 +80,7 @@ describe('FilterBar', () => {
     (getGenres as jest.Mock).mockResolvedValue([
       {id: 1, name: "All Genres"},
     ]);
-    render(<FilterBar lang="en" dict={mockDict} />);
+    render(<FilterBar lang="en" dict={mockDict} commonDict={mockCommonDict} />);
 
     const btn = screen.getByRole("button", { name: /Movies/ });
 
@@ -86,7 +94,7 @@ describe('FilterBar', () => {
       {id: 1, name: "Action"},
     ]);
 
-    render(<FilterBar lang="en" dict={mockDict} />);
+    render(<FilterBar lang="en" dict={mockDict} commonDict={mockCommonDict} />);
 
     fireEvent.click(screen.getByRole("button", { name: /Movies/ }));
 
@@ -102,7 +110,7 @@ describe('FilterBar', () => {
       {id: 1, name: "Action"},
     ]);
 
-    render(<FilterBar lang="en" dict={mockDict} />);
+    render(<FilterBar lang="en" dict={mockDict} commonDict={mockCommonDict} />);
 
     const btn = screen.getByRole("button", { name: /Movies/ });
     fireEvent.click(btn);

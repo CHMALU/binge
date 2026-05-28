@@ -21,32 +21,41 @@ jest.mock('next/image', () => {
 });
 
 const mockDict = {
-  "overview": "Overview",
-    "availableOn": "Available on",
-    "network": "Network",
-    "createdBy": "Created by",
-    "lastAired": "Last aired",
-    "budget": "Budget",
-    "revenue": "Revenue",
-    "languages": "Languages",
-    "status": "Status",
-    "language": "Language",
-    "votes": "votes",
-    "viewOnIMDb": "View on IMDb",
-    "officialSite": "Official site",
-    "season": "season",
-    "seasons": "seasons",
-    "episode": "ep.",
-    "rating": "Rate this",
-    "movie": "Movie",
-    "series": "Series",
-    "rate": "Rate",
-    "selectRating": "Select a rating",
-    "cancel": "Cancel",
-    "submit": "Submit",
-    "saving": "Saving...",
-    "error": "Failed to submit rating. Please try again.",
-    "success": "Rating submitted successfully!"
+  overview: 'Overview',
+  availableOn: 'Available on',
+  network: 'Network',
+  createdBy: 'Created by',
+  lastAired: 'Last aired',
+  budget: 'Budget',
+  revenue: 'Revenue',
+  languages: 'Languages',
+  status: 'Status',
+  language: 'Language',
+  votes: 'votes',
+  viewOnIMDb: 'View on IMDb',
+  officialSite: 'Official site',
+  season: 'season',
+  seasons: 'seasons',
+  episode: 'ep.',
+  ratingAriaLabel: '{stars} out of 5',
+  rating: 'Rate this',
+  movie: 'Movie',
+  series: 'Series',
+  rate: 'Rate',
+  selectRating: 'Select a rating',
+  cancel: 'Cancel',
+  submit: 'Submit',
+  saving: 'Saving...',
+  error: 'Failed to submit rating. Please try again.',
+  success: 'Rating submitted successfully!'
+};
+
+const mockCommonDict = {
+  back: 'Back',
+  close: 'Close',
+  noTitle: 'No title',
+  noPoster: 'No poster',
+  notAvailable: 'N/A',
 };
 
 const mockMovie = {
@@ -79,7 +88,7 @@ const mockTv = {
 describe('MovieDetail', () => {
   describe('movie', () => {
     beforeEach(() => {
-      render(<MovieDetail detail={mockMovie} lang="en" dict={mockDict} />);
+      render(<MovieDetail detail={mockMovie} lang="en" dict={mockDict} commonDict={mockCommonDict} />);
     });
 
     it('renders the title', () => {
@@ -129,7 +138,7 @@ describe('MovieDetail', () => {
         ],
       } satisfies ProvidersCountry;
 
-      render(<MovieDetail detail={mockMovie} lang="en" dict={mockDict} providers={providers} />);
+      render(<MovieDetail detail={mockMovie} lang="en" dict={mockDict} commonDict={mockCommonDict} providers={providers} />);
 
       // logos should be present
       expect(screen.getByAltText('Netflix')).toBeInTheDocument();
@@ -148,7 +157,7 @@ describe('MovieDetail', () => {
 
   describe('tv series', () => {
     beforeEach(() => {
-      render(<MovieDetail detail={mockTv} lang="en" dict={mockDict} />);
+      render(<MovieDetail detail={mockTv} lang="en" dict={mockDict} commonDict={mockCommonDict} />);
     });
 
     it('renders the series name', () => {

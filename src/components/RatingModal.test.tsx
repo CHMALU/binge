@@ -32,6 +32,7 @@ const dict: DetailDict = {
   saving: 'Saving...',
   error: 'Failed to submit rating. Please try again.',
   success: 'Rating submitted successfully!',
+  ratingAriaLabel: '{stars} out of 5',
 };
 
 describe('RatingModal', () => {

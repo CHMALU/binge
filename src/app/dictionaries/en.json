@@ -1,11 +1,27 @@
 {
+  "common": {
+    "back": "Back",
+    "close": "Close",
+    "noTitle": "No title",
+    "noPoster": "No poster",
+    "notAvailable": "N/A"
+  },
   "nav": {
     "discover": "Discover",
     "movies": "Movies",
     "series": "Series",
     "signIn": "Sign in",
-    "back": "Back",
-    "swipe": "Swipe"
+    "watchlist": "My list",
+    "watched": "Watched",
+    "signOut": "Sign out",
+    "comingSoon": "soon",
+    "changeLanguage": "Change language",
+    "searchPlaceholder": "Search movies & series..."
+  },
+  "swipe": {
+    "label": "Swipe",
+    "noDescription": "No description available.",
+    "flipBackHint": "Double-tap to flip back"
   },
   "hero": {
     "featured": "Featured",
@@ -58,6 +74,16 @@
     "errorPasswordMismatch": "Passwords do not match.",
     "errorPasswordShort": "Password must be at least 6 characters."
   },
+  "watchlist": {
+    "addToWatchlist": "Add to watchlist",
+    "inWatchlist": "In watchlist",
+    "signInToSave": "Sign in to save",
+    "addError": "Could not add to watchlist. Please try again.",
+    "title": "My Watchlist",
+    "empty": "Your watchlist is empty.",
+    "emptyHint": "Add titles by browsing or swiping.",
+    "addedOn": "Added on"
+  },
   "detail": {
     "overview": "Overview",
     "availableOn": "Available on",
@@ -75,6 +101,7 @@
     "season": "season",
     "seasons": "seasons",
     "episode": "ep.",
+    "ratingAriaLabel": "{stars} out of 5",
     "rating": "Rate this",
     "movie": "Movie",
     "series": "Series",
