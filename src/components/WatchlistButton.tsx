@@ -4,13 +4,16 @@ import Link from "next/link";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { IoAdd, IoBookmark, IoBookmarkOutline } from "react-icons/io5";
-import type { AddWatchlistRequest } from "@/types/watchlist";
+import type { AddWatchlistRequest, DeleteWatchlistRequest } from "@/types/watchlist";
 
 export type WatchlistDict = {
   addToWatchlist: string;
   inWatchlist: string;
   signInToSave: string;
   addError: string;
+  addedToast: string;
+  removedToast: string;
+  removeError: string;
 };
 
 type Props = {
@@ -48,19 +51,6 @@ export default function WatchlistButton({
     );
   }
 
-  if (inWatchlist) {
-    return (
-      <button
-        type="button"
-        disabled
-        className={`${baseClasses} bg-surface-card text-fg-muted border border-border cursor-not-allowed`}
-      >
-        <IoBookmark aria-hidden="true" />
-        {t.inWatchlist}
-      </button>
-    );
-  }
-
   async function handleAdd() {
     setLoading(true);
     try {
@@ -73,6 +63,7 @@ export default function WatchlistButton({
 
       if (res.ok) {
         setInWatchlist(true);
+        toast.success(t.addedToast);
       } else {
         toast.error(t.addError);
       }
@@ -81,6 +72,45 @@ export default function WatchlistButton({
     } finally {
       setLoading(false);
     }
+  }
+
+  async function handleRemove() {
+    setLoading(true);
+    setInWatchlist(false);
+    try {
+      const body: DeleteWatchlistRequest = { tmdbId, mediaType };
+      const res = await fetch("/api/watchlist", {
+        method: "DELETE",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(body),
+      });
+
+      if (res.ok) {
+        toast.success(t.removedToast);
+      } else {
+        setInWatchlist(true);
+        toast.error(t.removeError);
+      }
+    } catch {
+      setInWatchlist(true);
+      toast.error(t.removeError);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  if (inWatchlist) {
+    return (
+      <button
+        type="button"
+        onClick={handleRemove}
+        disabled={loading}
+        className={`${baseClasses} bg-surface-card text-fg border border-border hover:bg-surface-hover disabled:opacity-60`}
+      >
+        <IoBookmark aria-hidden="true" />
+        {t.inWatchlist}
+      </button>
+    );
   }
 
   return (

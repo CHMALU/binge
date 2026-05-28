@@ -93,7 +93,11 @@
     "title": "Moja lista",
     "empty": "Twoja lista jest pusta.",
     "emptyHint": "Dodaj tytuły przeglądając lub przesuwając.",
-    "addedOn": "Dodano"
+    "addedOn": "Dodano",
+    "remove": "Usuń",
+    "addedToast": "Dodano do listy",
+    "removedToast": "Usunięto z listy",
+    "removeError": "Nie udało się usunąć. Spróbuj ponownie."
   },
   "detail": {
     "overview": "Opis",

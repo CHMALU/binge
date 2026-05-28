@@ -19,3 +19,12 @@ export type AddWatchlistResponse =
 export type GetWatchlistResponse =
   | { items: WatchlistItemDTO[] }
   | { error: string };
+
+export type DeleteWatchlistRequest = {
+  tmdbId: number;
+  mediaType: "movie" | "tv";
+};
+
+export type DeleteWatchlistResponse =
+  | { success: true }
+  | { error: string };

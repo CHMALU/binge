@@ -1,6 +1,11 @@
 @AGENTS.md
+@BACKLOG.md
 
 # Binge — Project Overview
+
+> **Companion files auto-loaded above:**
+> - `AGENTS.md` — Next.js 16 + icons guardrails (read first, your training data is stale for this Next version).
+> - `BACKLOG.md` — living project state: what's done, what's pending, branch suggestions, open questions. **Treat as ground truth, but verify Status lines against `git log`** — they drift faster than the code.
 
 Movie/series discovery app — like Tinder for films. Data sourced from the **TMDb API**.
 
@@ -171,9 +176,8 @@ Hover states use `onMouseEnter`/`onMouseLeave` inline handlers when conditional;
 > Phase 2 implementation depends on Phase 1 DB being merged — don't start coding watchlist/swipe persistence before that lands.
 
 ## Implemented: Auth + Database (US8)
-<<<<<<< Updated upstream
 
-Branch: `feature/us8-auth-db` (ready for MR)
+Branch: `feature/us8-auth-db` (merged to main)
 
 ### Stack
 - **Neon PostgreSQL** (Frankfurt) — `DATABASE_URL` (pooler) + `DATABASE_URL_UNPOOLED` (direct, for migrations)
@@ -195,37 +199,11 @@ Branch: `feature/us8-auth-db` (ready for MR)
 - `WatchlistItem` and `WatchedItem` have `@@unique([userId, tmdbId, mediaType])` — no duplicates
 - `WatchedItem.rating` is nullable — rated after watching
 
-### TODO before deploy
-- Google OAuth: add `GOOGLE_CLIENT_ID` + `GOOGLE_CLIENT_SECRET` to `.env.local` and Vercel. Redirect URI: `http://localhost:3000/api/auth/callback/google`
-=======
-
-Branch: `feature/us8-auth-db` (ready for MR)
-
-### Stack
-- **Neon PostgreSQL** (Frankfurt) — `DATABASE_URL` (pooler) + `DATABASE_URL_UNPOOLED` (direct, for migrations)
-- **Prisma v6** with `@prisma/adapter-neon` — schema in `prisma/schema.prisma`, client generated to `src/generated/prisma/` (gitignored)
-- **NextAuth v5** — JWT strategy, Credentials (email+password) + Google OAuth (keys TODO)
-
-### Key files
-- `prisma/schema.prisma` — models: User, Account, Session, VerificationToken, WatchlistItem, WatchedItem
-- `prisma.config.ts` — reads from `.env.local`, uses unpooled URL for `db push`
-- `src/lib/prisma.ts` — PrismaClient singleton with Neon adapter
-- `src/auth.ts` — NextAuth config (providers, JWT callbacks that expose `session.user.id`)
-- `src/app/api/auth/[...nextauth]/route.ts` — NextAuth route handler
-- `src/app/api/auth/register/route.ts` — POST endpoint for registration (bcrypt, 409 on duplicate)
-
-### Schema notes
-- Titles (name, poster) are NOT stored in DB — always fetched from TMDb by `tmdbId`
-- `WatchlistItem` and `WatchedItem` have `@@unique([userId, tmdbId, mediaType])` — no duplicates
-- `WatchedItem.rating` is nullable — rated after watching
+### Usage pattern
+- Server Components on protected pages read session via `auth()` from `src/auth.ts` — this makes those routes dynamic (SSR), which is correct for personalized data. Already applied in `/[lang]/watchlist/page.tsx`.
 
 ### TODO before deploy
 - Google OAuth: add `GOOGLE_CLIENT_ID` + `GOOGLE_CLIENT_SECRET` to `.env.local` and Vercel. Redirect URI: `http://localhost:3000/api/auth/callback/google`
-
-## Planned (not yet started)
-
-- When auth is added: Server Components on protected pages should read session via `auth()` from `src/auth.ts` — this will make those routes dynamic (SSR), which is correct for personalized data.
->>>>>>> Stashed changes
 
 ## Implemented: Internationalization (i18n)
 

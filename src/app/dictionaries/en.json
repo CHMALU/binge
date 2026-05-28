@@ -93,7 +93,11 @@
     "title": "My Watchlist",
     "empty": "Your watchlist is empty.",
     "emptyHint": "Add titles by browsing or swiping.",
-    "addedOn": "Added on"
+    "addedOn": "Added on",
+    "remove": "Remove",
+    "addedToast": "Added to watchlist",
+    "removedToast": "Removed from watchlist",
+    "removeError": "Could not remove. Please try again."
   },
   "detail": {
     "overview": "Overview",
