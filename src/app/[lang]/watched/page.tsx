@@ -111,6 +111,7 @@ export default async function WatchedPage({ params }: Props) {
                         initiallyWatched
                         showAddToWatchlist
                         showMarkWatched={false}
+                        showUnmarkWatched
                       />
                     }
                   />

@@ -19,6 +19,7 @@ export default function MovieDetail({
   providers,
   isAuthed,
   inWatchlist,
+  isWatched,
   watchlistDict,
 }: {
   detail: MovieDetailData;
@@ -28,6 +29,7 @@ export default function MovieDetail({
   providers?: ProvidersCountry | null;
   isAuthed?: boolean;
   inWatchlist?: boolean;
+  isWatched?: boolean;
   watchlistDict?: WatchlistDict;
 }) {
   const title = detail.title ?? detail.name ?? commonDict.noTitle;
@@ -295,6 +297,7 @@ export default function MovieDetail({
                     unmarkedToast: watchlistDict.unmarkedToast,
                     unmarkError: watchlistDict.unmarkError,
                   }}
+                  initiallyWatched={isWatched ?? false}
                 />
               )}
               {detail.imdb_id && (
