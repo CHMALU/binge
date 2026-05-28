@@ -16,6 +16,7 @@ jest.mock("next/navigation", () => ({
   redirect: jest.fn((url: string) => {
     throw new Error(`NEXT_REDIRECT:${url}`);
   }),
+  useRouter: () => ({ refresh: jest.fn() }),
 }));
 jest.mock("next/link", () => {
   const MockLink = ({ children, href }: { children: React.ReactNode; href: string }) => (
