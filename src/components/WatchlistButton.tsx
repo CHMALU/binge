@@ -14,6 +14,11 @@ export type WatchlistDict = {
   addedToast: string;
   removedToast: string;
   removeError: string;
+  markedToast: string;
+  markedError: string;
+  unmarkWatched: string;
+  unmarkedToast: string;
+  unmarkError: string;
 };
 
 type Props = {

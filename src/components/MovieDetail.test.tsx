@@ -49,6 +49,10 @@ const mockDict = {
   error: 'Failed to submit rating. Please try again.',
   success: 'Rating submitted successfully!',
   signInToRate: 'Sign in to rate',
+  markWatched: 'Mark as watched',
+  howWouldYouRate: 'How would you rate it?',
+  skipRating: 'Skip rating',
+  unmarkWatched: 'Unmark as watched',
 };
 
 const mockCommonDict = {

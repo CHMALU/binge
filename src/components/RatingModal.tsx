@@ -14,9 +14,31 @@ type Props = {
   dict: DetailDict;
   isAuthed: boolean;
   lang: string;
+  // Configurable mode (used by MarkWatchedButton): override defaults below.
+  onSubmit?: (stars: number) => Promise<{ ok: boolean; error?: string }>;
+  onSkip?: () => Promise<{ ok: boolean; error?: string }>;
+  onSuccess?: () => void;
+  triggerLabel?: string;
+  triggerIcon?: React.ReactNode;
+  triggerClassName?: string;
+  dialogTitle?: string;
 };
 
-export default function RatingModal({ tmdbId, mediaType, title, dict, isAuthed, lang }: Props) {
+export default function RatingModal({
+  tmdbId,
+  mediaType,
+  title,
+  dict,
+  isAuthed,
+  lang,
+  onSubmit,
+  onSkip,
+  onSuccess,
+  triggerLabel,
+  triggerIcon,
+  triggerClassName,
+  dialogTitle,
+}: Props) {
   const [isRatingOpen, setIsRatingOpen] = useState(false);
   const [hoveredStar, setHoveredStar] = useState(0);
   const [selectedRating, setSelectedRating] = useState(0);
@@ -42,32 +64,53 @@ export default function RatingModal({ tmdbId, mediaType, title, dict, isAuthed, 
       setRatingError("");
       setRatingSuccess("");
 
-      const response = await fetch("/api/rating", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          tmdbId,
-          mediaType,
-          stars,
-        }),
-      });
+      let result: { ok: boolean; error?: string };
 
-      const data = await response.json();
+      if (onSubmit) {
+        result = await onSubmit(stars);
+      } else {
+        const response = await fetch("/api/rating", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ tmdbId, mediaType, stars }),
+        });
+        const data = await response.json();
+        result = response.ok ? { ok: true } : { ok: false, error: data.error };
+      }
 
-      if (!response.ok) {
-        setRatingError(data.error || dict.error);
+      if (!result.ok) {
+        setRatingError(result.error || dict.error);
         return;
       }
 
       setSelectedRating(stars);
       setRatingSuccess(dict.success);
+      onSuccess?.();
 
       setTimeout(() => {
         setIsRatingOpen(false);
         setRatingSuccess("");
       }, 1000);
+    } catch (error) {
+      console.error(error);
+      setRatingError(error instanceof Error ? error.message : dict.error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
+  async function handleSkip() {
+    if (!onSkip) return;
+    try {
+      setIsSubmitting(true);
+      setRatingError("");
+      const result = await onSkip();
+      if (!result.ok) {
+        setRatingError(result.error || dict.error);
+        return;
+      }
+      onSuccess?.();
+      closeModal();
     } catch (error) {
       console.error(error);
       setRatingError(error instanceof Error ? error.message : dict.error);
@@ -88,9 +131,13 @@ export default function RatingModal({ tmdbId, mediaType, title, dict, isAuthed, 
     <>
       <button
         onClick={() => setIsRatingOpen(true)}
-        className="w-full py-3 rounded-xl text-sm font-semibold border transition-all bg-surface-card border-border text-fg hover:bg-white/10"
+        className={
+          triggerClassName ??
+          "w-full py-3 rounded-xl text-sm font-semibold border transition-all bg-surface-card border-border text-fg hover:bg-white/10"
+        }
       >
-        {dict.rating} {mediaType === "tv" ? dict.series : dict.movie}
+        {triggerIcon}
+        {triggerLabel ?? `${dict.rating} ${mediaType === "tv" ? dict.series : dict.movie}`}
       </button>
 
       {isRatingOpen && (
@@ -98,7 +145,7 @@ export default function RatingModal({ tmdbId, mediaType, title, dict, isAuthed, 
           <div className="w-full max-w-md rounded-3xl border border-border bg-surface-raised p-8 shadow-2xl">
             <div className="mb-6 text-center">
               <h2 className="text-2xl font-bold mb-2">
-                {dict.rate} &quot;{title}&quot;
+                {dialogTitle ?? `${dict.rate} "${title}"`}
               </h2>
               <p className="text-sm text-fg-subtle">{dict.selectRating}</p>
             </div>
@@ -158,6 +205,16 @@ export default function RatingModal({ tmdbId, mediaType, title, dict, isAuthed, 
                 {isSubmitting ? dict.saving : dict.submit}
               </button>
             </div>
+
+            {onSkip && (
+              <button
+                onClick={handleSkip}
+                disabled={isSubmitting}
+                className="mt-4 mx-auto block text-sm text-fg-muted hover:text-fg underline disabled:opacity-50"
+              >
+                {dict.skipRating}
+              </button>
+            )}
           </div>
         </div>
       )}

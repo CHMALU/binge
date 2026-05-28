@@ -25,20 +25,22 @@ export default async function TvPage({
   const providers = await getProvidersForLocale("tv", numericId, lang);
 
   const userId = session?.user?.id;
-  const inWatchlist = userId
-    ? Boolean(
-        await prisma.watchlistItem.findUnique({
+  const [inWatchlist, isWatched] = userId
+    ? await Promise.all([
+        prisma.watchlistItem.findUnique({
           where: {
-            userId_tmdbId_mediaType: {
-              userId,
-              tmdbId: numericId,
-              mediaType: "tv",
-            },
+            userId_tmdbId_mediaType: { userId, tmdbId: numericId, mediaType: "tv" },
           },
           select: { id: true },
-        })
-      )
-    : false;
+        }).then(Boolean),
+        prisma.watchedItem.findUnique({
+          where: {
+            userId_tmdbId_mediaType: { userId, tmdbId: numericId, mediaType: "tv" },
+          },
+          select: { id: true },
+        }).then(Boolean),
+      ])
+    : [false, false];
 
   return (
     <MovieDetail
@@ -49,6 +51,7 @@ export default async function TvPage({
       providers={providers}
       isAuthed={Boolean(userId)}
       inWatchlist={inWatchlist}
+      isWatched={isWatched}
       watchlistDict={dict.watchlist}
     />
   );
