@@ -7,12 +7,23 @@ import { useEffect, useRef, useState } from "react";
 import { FiUser, FiLogOut, FiBookmark, FiCheckCircle, FiZap } from "react-icons/fi";
 import SearchBar from "./SearchBar";
 import LanguageSwitcher from "./LanguageSwitcher";
+import ColorVisionSwitcher, { type ColorModeDict } from "./ColorVisionSwitcher";
 import type { Dictionary } from "@/app/[lang]/dictionaries";
 
 type NavDict = Dictionary["nav"];
 type CommonDict = Dictionary["common"];
 
-export default function Navbar({ lang, dict, commonDict }: { lang: string; dict: NavDict; commonDict: CommonDict }) {
+export default function Navbar({
+  lang,
+  dict,
+  commonDict,
+  colorModeDict,
+}: {
+  lang: string;
+  dict: NavDict;
+  commonDict: CommonDict;
+  colorModeDict: ColorModeDict;
+}) {
   const router = useRouter();
   const { data: session } = useSession();
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -71,6 +82,7 @@ export default function Navbar({ lang, dict, commonDict }: { lang: string; dict:
         </div>
 
         <div className="ml-auto flex items-center gap-3 shrink-0">
+          <ColorVisionSwitcher dict={colorModeDict} />
           <LanguageSwitcher lang={lang} ariaLabel={dict.changeLanguage} />
 
           {!session && (

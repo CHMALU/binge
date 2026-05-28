@@ -37,7 +37,7 @@ export default async function Home({
 
   return (
     <div className="bg-surface text-fg">
-      <Navbar lang={lang} dict={dict.nav} commonDict={dict.common} />
+      <Navbar lang={lang} dict={dict.nav} commonDict={dict.common} colorModeDict={dict.a11y.colorMode} />
 
       {hero && (
         <section className="relative overflow-hidden border-b border-border h-[580px]">

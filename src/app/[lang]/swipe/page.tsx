@@ -22,7 +22,7 @@ export default async function SwipeRouter({
 
   return (
     <main>
-      <Navbar lang={lang} dict={dict.nav} commonDict={dict.common} />
+      <Navbar lang={lang} dict={dict.nav} commonDict={dict.common} colorModeDict={dict.a11y.colorMode} />
       <MovieSwiper movies={all} lang={lang} commonDict={dict.common} swipeDict={dict.swipe} />
     </main>
   );

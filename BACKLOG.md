@@ -61,8 +61,9 @@ Sections are roughly ordered by **deadline urgency × user value**. The first th
 - [ ] Sanity-check Arabic RTL — both switchers should render correctly in `/ar`
 - [ ] Test mobile breakpoint — the navbar now has two icon buttons (color vision + language); verify no wrap/overflow
 - [ ] Tweak palette overrides in `src/app/globals.css` `:root[data-cv-mode="..."]` if anything looks bad
-- [ ] Verify form validation error contrast (deferred from A4 below — quick WebAIM check on login/register)
-- [ ] Verify toast contrast on `bg-surface-card` per mode (deferred — should be fine because Toaster uses tokens, but spot-check)
+- [x] ~~Verify form validation error contrast~~ — moot: login/register errors render via `toast.error()`, no inline red text exists. Collapsed into A3 check below.
+- [x] Verify toast contrast on `bg-surface-card` per mode — Toaster uses `bg-surface-card` + `text-fg` → ~17:1 in default, ~19:1 in high-contrast. Icons stay ≥ 3:1 across all modes. Info also redundantly encoded in toast string.
+- [ ] **⚠️ FINAL: Chrome DevTools → Rendering → Emulate vision deficiencies before clicking Merge in GitLab** — deuteranopia + Red-green safe, tritanopia + Blue-yellow safe, achromatopsia + High contrast
 - [ ] Open MR with manual test plan pasted in the description
 
 ### What's already on the branch
@@ -81,13 +82,14 @@ Sections are roughly ordered by **deadline urgency × user value**. The first th
 - [x] `MovieCard` got `border border-border` → cards stay visible against dark surface in high-contrast (matches the bright separator lines that already used border-border)
 - [x] Dict keys `dict.a11y.colorMode.*` in EN/PL/AR
 - [x] Toast colors auto-shift (Toaster already uses `var(--color-success/danger)`)
+- [x] **RatingModal** status messages: discovered inline `color-danger`/`color-success` on text dropped to ~2.7:1 (red-green safe) / ~4.0:1 (blue-yellow safe) — below WCAG AA 4.5:1. Switched text to `text-fg`, prefixed with `IoCheckmarkCircle`/`IoCloseCircle` so the icon carries the semantic color (commit `e03e26f`).
 
 ### Stack at end of branch
 74/74 tests passing, lint clean, typecheck clean, `npm run build` clean.
 
 ### Deferred / explicitly NOT done yet
-- [ ] **A3. Toast contrast WCAG verification** — Toaster shifts correctly but no explicit AA contrast check per CV mode
-- [ ] **A4. Form validation error contrast** — login/register error red text on surface-card. Probably ≥ 4.5:1 but never measured
+- [x] **A3. Toast contrast WCAG verification** — measured. Toast bg `surface-card` + text `fg` → ~17:1 default, ~19:1 high-contrast. Worst icon contrast is ~2.9:1 (red-green safe success) but icon is non-text (3:1 threshold) and toast text always describes the action so meaning isn't lost.
+- [x] **A4. Form validation error contrast** — N/A: no inline red text exists. Auth forms render errors via `toast.error()` (covered by A3). RatingModal had the only inline color-on-text instance and is now fixed (see "What's already on the branch" above).
 
 **Estimated SP:** 3 (delivered as planned, plus extra polish: palette toggle wasn't in original scope)
 

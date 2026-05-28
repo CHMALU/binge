@@ -67,7 +67,8 @@ export default function MovieSwiper( {movies, lang, commonDict, swipeDict}: Prop
         </Link>
       </div>
     <div className="absolute inset-0 pointer-events-none">
-      <motion.div className="absolute right-[20%] top-[10%] w-[30%] h-[70%] bg-red-500/20 blur-[100px] rounded-full"
+      <motion.div className="absolute right-[20%] top-[10%] w-[30%] h-[70%] blur-[100px] rounded-full"
+      style={{ background: "color-mix(in srgb, var(--color-danger) 20%, transparent)" }}
       animate={{
         x: [0, 100, -60, 0],
         y: ["10%", "15%", "5%", "10%"],
@@ -81,7 +82,8 @@ export default function MovieSwiper( {movies, lang, commonDict, swipeDict}: Prop
         ease: "easeInOut"
       }}
       />
-      <motion.div className="absolute left-[20%] top-[10%] w-[30%] h-[70%] bg-green-500/20 blur-[100px] rounded-full"
+      <motion.div className="absolute left-[20%] top-[10%] w-[30%] h-[70%] blur-[100px] rounded-full"
+       style={{ background: "color-mix(in srgb, var(--color-success) 20%, transparent)" }}
        animate={{
         x: [0, 100, -60, 0],
         y: ["10%", "15%", "5%", "10%"],
@@ -135,24 +137,40 @@ export default function MovieSwiper( {movies, lang, commonDict, swipeDict}: Prop
               </div>
         </AnimatePresence>
         <div className="flex gap-20">
-          <button
-              className="px-7 py-7 rounded-full text-sm font-semibold transition-colors bg-success hover:bg-success-hover mr-30 shadow-[0_0_30px_rgba(34,192,106,0.6)]"
-              onClick={() => {
-                console.log("Positive!");
-                cardRef.current?.swipeLeft();
-              }}
-            >
-              <FaThumbsUp className="inline-block" size={20}/>
-          </button>
-          <button
-              className="px-7 py-7 rounded-full text-sm font-semibold bg-danger hover:bg-accent-hover transition-colors shadow-[0_0_30px_rgba(255,45,74,0.6)]"
-              onClick={() => {
-                console.log("Negative!");
-                cardRef.current?.swipeRight();
-              }}
-            >
-              <FaThumbsDown className="inline-block" size={20}/>
-          </button>
+          <div className="flex flex-col items-center gap-2">
+            <button
+                aria-label={swipeDict.like}
+                className="px-7 py-7 rounded-full text-sm font-semibold transition-colors bg-success hover:bg-success-hover"
+                style={{
+                  boxShadow: "0 0 30px color-mix(in srgb, var(--color-success) 60%, transparent)",
+                  color: "var(--color-success-fg)",
+                }}
+                onClick={() => {
+                  console.log("Positive!");
+                  cardRef.current?.swipeLeft();
+                }}
+              >
+                <FaThumbsUp className="inline-block" size={20}/>
+            </button>
+            <span className="text-sm font-semibold uppercase tracking-wider text-fg">{swipeDict.like}</span>
+          </div>
+          <div className="flex flex-col items-center gap-2">
+            <button
+                aria-label={swipeDict.skip}
+                className="px-7 py-7 rounded-full text-sm font-semibold bg-danger hover:bg-accent-hover transition-colors"
+                style={{
+                  boxShadow: "0 0 30px color-mix(in srgb, var(--color-danger) 60%, transparent)",
+                  color: "var(--color-danger-fg)",
+                }}
+                onClick={() => {
+                  console.log("Negative!");
+                  cardRef.current?.swipeRight();
+                }}
+              >
+                <FaThumbsDown className="inline-block" size={20}/>
+            </button>
+            <span className="text-sm font-semibold uppercase tracking-wider text-fg">{swipeDict.skip}</span>
+          </div>
         </div>
       </div>
     </div>

@@ -30,7 +30,17 @@ export default function RootLayout({
   return (
     <html lang="en" dir="ltr" suppressHydrationWarning className={`${poppins.variable} ${inter.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col">
-        {/* lang and dir are set dynamically by [lang]/layout.tsx via inline script */}
+        {/* Sync data-cv-mode on <html> from localStorage before paint
+            so the saved palette applies without flicker. Lives in the
+            root layout so it only renders into the initial HTML stream
+            once (root layouts don't re-render on client navigation). */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "(function(){try{var m=localStorage.getItem('BINGE_CV_MODE');if(m&&m!=='normal'){document.documentElement.setAttribute('data-cv-mode',m);}}catch(e){}})();",
+          }}
+        />
+        {/* lang and dir are set dynamically by [lang]/layout.tsx via HtmlAttributes */}
         <SessionProvider>
           {children}
         </SessionProvider>
