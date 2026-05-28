@@ -114,9 +114,6 @@ export default async function WatchedPage({ params }: Props) {
                         dict={dict.watchlist}
                         initiallyInWatchlist={sets.watchlistKeys.has(makeItemKey(row.tmdbId, row.mediaType))}
                         initiallyWatched
-                        showAddToWatchlist
-                        showMarkWatched={false}
-                        showUnmarkWatched
                       />
                     }
                   />

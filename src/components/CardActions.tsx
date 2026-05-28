@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
-import { IoAdd, IoBookmark, IoCheckmarkCircle, IoCloseCircle, IoTrash } from "react-icons/io5";
+import { IoAdd, IoBookmark, IoCheckmarkCircle, IoCheckmarkCircleOutline } from "react-icons/io5";
 import type { Dictionary } from "@/app/[lang]/dictionaries";
 
 type WatchlistDict = Dictionary["watchlist"];
@@ -18,15 +18,12 @@ type Props = {
   initiallyWatched?: boolean;
   showAddToWatchlist?: boolean;
   showMarkWatched?: boolean;
-  showRemoveFromWatchlist?: boolean;
-  showUnmarkWatched?: boolean;
 };
 
 const ICON_BUTTON_BASE =
   "w-8 h-8 rounded-full inline-flex items-center justify-center text-sm border backdrop-blur-sm transition-colors disabled:opacity-50";
-const ICON_DEFAULT = `${ICON_BUTTON_BASE} bg-white/15 border-white/20 text-white hover:bg-white/25`;
-const ICON_ACTIVE = `${ICON_BUTTON_BASE} bg-action text-action-fg border-transparent`;
-const ICON_DANGER = `${ICON_BUTTON_BASE} bg-red-500/80 border-red-400/30 text-white hover:bg-red-500`;
+const ICON_GREY = `${ICON_BUTTON_BASE} bg-white/15 border-white/20 text-white hover:bg-white/25`;
+const ICON_GOLD = `${ICON_BUTTON_BASE} bg-action text-action-fg border-transparent hover:bg-action-hover`;
 
 function stop(e: React.MouseEvent) {
   e.preventDefault();
@@ -43,8 +40,6 @@ export default function CardActions({
   initiallyWatched = false,
   showAddToWatchlist = true,
   showMarkWatched = true,
-  showRemoveFromWatchlist = false,
-  showUnmarkWatched = false,
 }: Props) {
   const router = useRouter();
   const [, startTransition] = useTransition();
@@ -84,77 +79,36 @@ export default function CardActions({
     }
   }
 
-  async function markWatched(e: React.MouseEvent) {
+  async function toggleWatched(e: React.MouseEvent) {
     stop(e);
-    if (busy || watched) return;
+    if (busy) return;
     if (!isAuthed) {
       router.push(`/${lang}/login`);
       return;
     }
 
+    const target = !watched;
     setBusy(true);
-    setWatched(true);
+    setWatched(target);
 
     try {
       const res = await fetch("/api/watched", {
-        method: "POST",
+        method: target ? "POST" : "DELETE",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ tmdbId, mediaType }),
       });
       if (!res.ok) throw new Error("api failure");
 
-      setInWatchlist(false);
-      toast.success(dict.markedToast);
+      if (target) {
+        // POST /api/watched also clears any matching WatchlistItem in a tx.
+        // Reflect that here so the add-to-watchlist icon hides immediately.
+        setInWatchlist(false);
+      }
+      toast.success(target ? dict.markedToast : dict.unmarkedToast);
       startTransition(() => router.refresh());
     } catch {
-      setWatched(false);
-      toast.error(dict.markedError);
-    } finally {
-      setBusy(false);
-    }
-  }
-
-  async function unmarkWatched(e: React.MouseEvent) {
-    stop(e);
-    if (busy) return;
-
-    setBusy(true);
-    setWatched(false);
-
-    try {
-      const res = await fetch("/api/watched", {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ tmdbId, mediaType }),
-      });
-      if (!res.ok) throw new Error("api failure");
-      toast.success(dict.unmarkedToast);
-      startTransition(() => router.refresh());
-    } catch {
-      setWatched(true);
-      toast.error(dict.unmarkError);
-    } finally {
-      setBusy(false);
-    }
-  }
-
-  async function removeFromWatchlist(e: React.MouseEvent) {
-    stop(e);
-    if (busy) return;
-
-    setBusy(true);
-
-    try {
-      const res = await fetch("/api/watchlist", {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ tmdbId, mediaType }),
-      });
-      if (!res.ok) throw new Error("api failure");
-      toast.success(dict.removedToast);
-      startTransition(() => router.refresh());
-    } catch {
-      toast.error(dict.removeError);
+      setWatched(!target);
+      toast.error(target ? dict.markedError : dict.unmarkError);
     } finally {
       setBusy(false);
     }
@@ -162,14 +116,14 @@ export default function CardActions({
 
   return (
     <>
-      {showAddToWatchlist && (
+      {showAddToWatchlist && !watched && (
         <button
           type="button"
           onClick={toggleWatchlist}
           disabled={busy}
           aria-label={inWatchlist ? dict.inWatchlist : dict.addToWatchlist}
           title={inWatchlist ? dict.inWatchlist : dict.addToWatchlist}
-          className={inWatchlist ? ICON_ACTIVE : ICON_DEFAULT}
+          className={inWatchlist ? ICON_GOLD : ICON_GREY}
         >
           {inWatchlist ? <IoBookmark aria-hidden="true" /> : <IoAdd aria-hidden="true" />}
         </button>
@@ -177,37 +131,17 @@ export default function CardActions({
       {showMarkWatched && (
         <button
           type="button"
-          onClick={markWatched}
-          disabled={busy || watched}
-          aria-label={dict.markWatched}
-          title={dict.markWatched}
-          className={watched ? ICON_ACTIVE : ICON_DEFAULT}
-        >
-          <IoCheckmarkCircle aria-hidden="true" />
-        </button>
-      )}
-      {showUnmarkWatched && (
-        <button
-          type="button"
-          onClick={unmarkWatched}
+          onClick={toggleWatched}
           disabled={busy}
-          aria-label={dict.unmarkWatched}
-          title={dict.unmarkWatched}
-          className={ICON_DEFAULT}
+          aria-label={watched ? dict.unmarkWatched : dict.markWatched}
+          title={watched ? dict.unmarkWatched : dict.markWatched}
+          className={watched ? ICON_GOLD : ICON_GREY}
         >
-          <IoCloseCircle aria-hidden="true" />
-        </button>
-      )}
-      {showRemoveFromWatchlist && (
-        <button
-          type="button"
-          onClick={removeFromWatchlist}
-          disabled={busy}
-          aria-label={dict.remove}
-          title={dict.remove}
-          className={ICON_DANGER}
-        >
-          <IoTrash aria-hidden="true" />
+          {watched ? (
+            <IoCheckmarkCircle aria-hidden="true" />
+          ) : (
+            <IoCheckmarkCircleOutline aria-hidden="true" />
+          )}
         </button>
       )}
     </>
