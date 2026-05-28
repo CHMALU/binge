@@ -34,9 +34,10 @@
 | CI/CD pipeline (build/lint/typecheck/audit/tests) | ✅ DONE | `CI/CD-update` | 5 stages, restored typecheck job |
 | Next.js 16.2.6 (security patches) | ✅ DONE | `CI/CD-update` | Patches 13× high-severity advisories |
 | Watchlist link enabled in Navbar dropdown | ✅ DONE | `feature/us10-watchlist-view` | `Navbar.tsx:111` (Christoph's `[chore][CN] enabling watchlist UI button`) |
-| Color-blindness a11y (toggle + default signals) | ⚠️ AWAITING VISUAL REVIEW | `feature/a11y-colorblind` (pushed, **MR not yet opened**) | 12 commits, tests/lint/typecheck/build all green. Needs manual click-through before MR. See section 1. |
+| Color-blindness a11y (toggle + default signals) | ✅ DONE | `feature/a11y-colorblind` | Merged into `main` (commit `b26e36e`) |
+| Watchlist DELETE / toggle / remove | ✅ DONE | `feature/watchlist-remove` | DELETE endpoint + WatchlistButton toggle + floating trash on `/watchlist` |
 
-**Not done yet:** US7 (recommendations), US11 (mark as watched), US-swipe-filter (watched filtering), Watchlist DELETE/toggle, polish (Navbar cleanup, hero/cards dead buttons, navigation consistency, RatingModal guest-redirect), demo video.
+**Not done yet:** US7 (recommendations), US11 (mark as watched), US-swipe-filter (watched filtering), polish (Navbar cleanup, hero/cards dead buttons, navigation consistency, RatingModal guest-redirect), demo video.
 
 ---
 
@@ -97,39 +98,42 @@ Sections are roughly ordered by **deadline urgency × user value**. The first th
 
 ## 2. Watchlist completion — DELETE / toggle / remove (pre-Friday)
 
-**Status:** ⏳ NOT STARTED
+**Status:** ✅ DONE
+**Branch:** `feature/watchlist-remove`
 **Why:** Builds on US9 + US10 (already on `main`). PO explicitly asked for the ability to remove. Without DELETE the watchlist is one-way and the "In watchlist" button has no toggle behaviour.
-**Branch suggestion:** `feature/watchlist-remove`
 
 ### Steps
-- [ ] **B1. `DELETE /api/watchlist` endpoint**
-  - Add to `src/app/api/watchlist/route.ts` (already has GET + POST from US9/US10)
+- [x] **B1. `DELETE /api/watchlist` endpoint**
+  - Added to `src/app/api/watchlist/route.ts` alongside existing GET + POST
   - Body: `{ tmdbId: number, mediaType: "movie" | "tv" }`
-  - 401 if no session, 400 on invalid body, 404 if no matching row, 200 on success
-  - Use `prisma.watchlistItem.delete({ where: { userId_tmdbId_mediaType: {...} } })` (composite unique key already in schema)
-- [ ] **B2. Extend the shared type contract**
-  - In `src/types/watchlist.ts`, add `DeleteWatchlistRequest` + `DeleteWatchlistResponse`
-- [ ] **B3. `WatchlistButton.tsx` becomes a toggle**
-  - Current: "Add to watchlist" → POST → "In watchlist" (dead-end)
-  - New: when in "In watchlist" state, click sends DELETE, flips back to "Add to watchlist"
-  - State machine: `idle` ↔ `loading` ↔ `idle` (in opposite state)
-  - Optimistic flip OK; on DELETE error roll back state and show error toast
-- [ ] **B4. Remove button on each `/watchlist` page item**
-  - In `src/app/[lang]/watchlist/page.tsx` (or whichever client component renders the list — check current structure first)
-  - Per-item `IoTrash` icon button with `aria-label={dict.watchlist.remove}`
-  - On click: DELETE then `router.refresh()` (server component refetches the list)
-- [ ] **B5. Toasts**
-  - `react-hot-toast` already wired (US9 uses it for errors)
-  - Add success toast on add AND on remove
-  - New dict keys: `dict.watchlist.addedToast`, `dict.watchlist.removedToast` — add to all three locales (EN/PL/AR)
+  - 401 / 400 / 404 (Prisma P2025) / 200 on success
+  - Uses `prisma.watchlistItem.delete({ where: { userId_tmdbId_mediaType: {...} } })`
+- [x] **B2. Extended the shared type contract**
+  - `DeleteWatchlistRequest` + `DeleteWatchlistResponse` in `src/types/watchlist.ts`
+- [x] **B3. `WatchlistButton.tsx` becomes a toggle**
+  - "In watchlist" button is now enabled; click sends DELETE, optimistic flip + rollback on error
+  - State machine: `idle ↔ loading ↔ idle` (in opposite state) — implemented
+  - On DELETE error: rollback state + `toast.error(removeError)`
+- [x] **B4. Remove button on each `/watchlist` page item**
+  - New `src/components/RemoveFromWatchlistButton.tsx` (client component)
+  - Floating `IoTrash` top-right of each poster (`absolute top-2 end-2`, RTL-friendly)
+  - DELETE → `router.refresh()` (server component re-fetches the list)
+  - Rendered inside a `relative` wrapper next to each MovieCard
+- [x] **B5. Toasts**
+  - Success toasts on add AND on remove via `react-hot-toast`
+  - New dict keys (EN/PL/AR): `remove`, `addedToast`, `removedToast`, `removeError`
 
-### Tests (TDD — write the `[red]` commit first)
-- [ ] DELETE: 401 unauthenticated / 200 success / 404 if missing / 400 on invalid body
-- [ ] Toggle: rendering `WatchlistButton` in "in watchlist" state and clicking sends DELETE + flips visual state
-- [ ] Remove button on the list page sends DELETE and the item disappears from the DOM
-- [ ] Toast appears on successful add and successful remove
+### Tests (TDD — `[red]` first, then `[green]`)
+- [x] DELETE: 401 / 400 invalid JSON / 400 invalid body / 400 missing field / 404 P2025 / 200 success + composite-key call
+- [x] Toggle: rendering `WatchlistButton` in "in watchlist" state is enabled; click → DELETE + flips visual state
+- [x] DELETE failure rolls back state + error toast (WatchlistButton)
+- [x] `RemoveFromWatchlistButton`: aria-label / DELETE body / success path (toast + router.refresh) / error path (toast, no refresh)
+- [x] Toast appears on successful add (`addedToast`) and successful remove (`removedToast`)
 
-**Estimated SP:** 3
+### Stack at end of branch
+86/86 tests passing (15 watchlist route + 7 WatchlistButton + 4 RemoveFromWatchlistButton + 5 watchlist page + the rest of the suite). Lint clean, typecheck clean, `npm run build` clean.
+
+**Estimated SP:** 3 (delivered)
 
 ---
 
