@@ -1,7 +1,9 @@
 import { notFound } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import MovieCard from "@/components/MovieCard";
+import CardActions from "@/components/CardActions";
 import FilterBar from "@/components/FilterBar";
+import { auth } from "@/auth";
 import { getPopularMovies, getPopularSeries, getNowPlaying, getOnAir } from "@/lib/tmdb";
 import type { Movie } from "@/lib/tmdb";
 import Image from "next/image";
@@ -22,13 +24,15 @@ export default async function Home({
   const { lang } = await params;
   if (!hasLocale(lang)) notFound();
 
-  const [dict, popularMovies, popularSeries, nowPlaying, onAir] = await Promise.all([
+  const [dict, popularMovies, popularSeries, nowPlaying, onAir, session] = await Promise.all([
     getDictionary(lang),
     getPopularMovies(lang),
     getPopularSeries(lang),
     getNowPlaying(lang),
     getOnAir(lang),
+    auth(),
   ]);
+  const isAuthed = !!session?.user?.id;
 
   const hero = popularMovies[0];
   const backdropUrl = hero?.backdrop_path
@@ -110,6 +114,8 @@ export default async function Home({
           seeAll={dict.sections.seeAll}
           lang={lang}
           commonDict={dict.common}
+          watchlistDict={dict.watchlist}
+          isAuthed={isAuthed}
         />
         <Section
           title={dict.sections.nowInCinemas}
@@ -118,6 +124,8 @@ export default async function Home({
           seeAll={dict.sections.seeAll}
           lang={lang}
           commonDict={dict.common}
+          watchlistDict={dict.watchlist}
+          isAuthed={isAuthed}
         />
         <Section
           title={dict.sections.popularSeries}
@@ -126,6 +134,8 @@ export default async function Home({
           seeAll={dict.sections.seeAll}
           lang={lang}
           commonDict={dict.common}
+          watchlistDict={dict.watchlist}
+          isAuthed={isAuthed}
         />
         <Section
           title={dict.sections.currentlyOnTV}
@@ -134,6 +144,8 @@ export default async function Home({
           seeAll={dict.sections.seeAll}
           lang={lang}
           commonDict={dict.common}
+          watchlistDict={dict.watchlist}
+          isAuthed={isAuthed}
         />
       </div>
     </div>
@@ -147,6 +159,8 @@ function Section({
   seeAll,
   lang,
   commonDict,
+  watchlistDict,
+  isAuthed,
 }: {
   title: string;
   eyebrow?: string;
@@ -154,6 +168,8 @@ function Section({
   seeAll: string;
   lang: string;
   commonDict: Dictionary["common"];
+  watchlistDict: Dictionary["watchlist"];
+  isAuthed: boolean;
 }) {
   return (
     <section>
@@ -178,7 +194,21 @@ function Section({
       </div>
       <div className="binge-rail">
         {movies.map((movie) => (
-          <MovieCard key={movie.id} movie={movie} lang={lang} commonDict={commonDict} />
+          <MovieCard
+            key={movie.id}
+            movie={movie}
+            lang={lang}
+            commonDict={commonDict}
+            actions={
+              <CardActions
+                tmdbId={movie.id}
+                mediaType={movie.media_type === "tv" ? "tv" : "movie"}
+                isAuthed={isAuthed}
+                lang={lang}
+                dict={watchlistDict}
+              />
+            }
+          />
         ))}
       </div>
     </section>

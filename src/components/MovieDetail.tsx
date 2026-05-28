@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import type { Dictionary } from "@/app/[lang]/dictionaries";
 import RatingModal from "@/components/RatingModal";
 import WatchlistButton, { type WatchlistDict } from "@/components/WatchlistButton";
+import MarkWatchedButton from "@/components/MarkWatchedButton";
 
 type DetailDict = Dictionary["detail"];
 type CommonDict = Dictionary["common"];
@@ -278,6 +279,20 @@ export default function MovieDetail({
                   isAuthed={isAuthed ?? false}
                   initiallyInWatchlist={inWatchlist ?? false}
                   t={watchlistDict}
+                />
+              )}
+              {watchlistDict && (
+                <MarkWatchedButton
+                  tmdbId={detail.id}
+                  mediaType={isTv ? "tv" : "movie"}
+                  title={title}
+                  isAuthed={isAuthed ?? false}
+                  lang={lang}
+                  dict={dict}
+                  watchlistDict={{
+                    markedToast: watchlistDict.markedToast,
+                    markedError: watchlistDict.markedError,
+                  }}
                 />
               )}
               {detail.imdb_id && (
