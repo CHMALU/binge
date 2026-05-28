@@ -66,3 +66,8 @@ npm audit --audit-level=high
 npm run test:fast
 npm run test:full -- --coverageThreshold='{"global":{"branches":70,"functions":70,"lines":80,"statements":80}}'
 ```
+
+## Pictures
+
+`main-branch.png` -> This is a pipeline run on the main branch. Unfortunatly, the pipeline fails on the full test stage, due to unsatisfied coverage percentages.
+`normal-branch.png` -> In this pipeline the every job finished successfully.
