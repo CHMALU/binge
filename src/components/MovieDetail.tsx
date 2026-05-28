@@ -292,6 +292,8 @@ export default function MovieDetail({
                   watchlistDict={{
                     markedToast: watchlistDict.markedToast,
                     markedError: watchlistDict.markedError,
+                    unmarkedToast: watchlistDict.unmarkedToast,
+                    unmarkError: watchlistDict.unmarkError,
                   }}
                 />
               )}

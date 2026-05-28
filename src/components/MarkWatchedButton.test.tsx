@@ -60,6 +60,8 @@ const detailDict = {
 const watchlistDict = {
   markedToast: "Marked as watched",
   markedError: "Could not mark as watched",
+  unmarkedToast: "Removed from watched",
+  unmarkError: "Could not remove from watched",
 };
 
 const originalFetch = global.fetch;
@@ -183,5 +185,75 @@ describe("MarkWatchedButton", () => {
 
     const link = screen.getByRole("link", { name: /sign in to rate/i });
     expect(link).toHaveAttribute("href", "/en/login");
+  });
+
+  describe("toggle: initiallyWatched", () => {
+    it("renders an Unmark-as-watched button (no Rate dialog) when initiallyWatched=true", async () => {
+      render(
+        <MarkWatchedButton
+          tmdbId={1}
+          mediaType="movie"
+          title="Inception"
+          isAuthed={true}
+          lang="en"
+          dict={detailDict}
+          watchlistDict={watchlistDict}
+          initiallyWatched
+        />
+      );
+
+      expect(screen.getByRole("button", { name: /unmark as watched/i })).toBeInTheDocument();
+      expect(screen.queryByRole("button", { name: /^mark as watched$/i })).not.toBeInTheDocument();
+    });
+
+    it("DELETEs /api/watched directly (no modal) on click + success toast + refresh", async () => {
+      global.fetch = jest.fn().mockResolvedValue({ ok: true, status: 200, json: async () => ({ success: true }) });
+
+      render(
+        <MarkWatchedButton
+          tmdbId={27205}
+          mediaType="movie"
+          title="Inception"
+          isAuthed={true}
+          lang="en"
+          dict={detailDict}
+          watchlistDict={watchlistDict}
+          initiallyWatched
+        />
+      );
+
+      await userEvent.click(screen.getByRole("button", { name: /unmark as watched/i }));
+
+      expect(global.fetch).toHaveBeenCalledWith(
+        "/api/watched",
+        expect.objectContaining({
+          method: "DELETE",
+          body: JSON.stringify({ tmdbId: 27205, mediaType: "movie" }),
+        }),
+      );
+      await waitFor(() => expect(toast.success).toHaveBeenCalledWith("Removed from watched"));
+      expect(mockRefresh).toHaveBeenCalled();
+    });
+
+    it("shows unmark error toast on DELETE failure", async () => {
+      global.fetch = jest.fn().mockResolvedValue({ ok: false, status: 500, json: async () => ({ error: "boom" }) });
+
+      render(
+        <MarkWatchedButton
+          tmdbId={1}
+          mediaType="movie"
+          title="Inception"
+          isAuthed={true}
+          lang="en"
+          dict={detailDict}
+          watchlistDict={watchlistDict}
+          initiallyWatched
+        />
+      );
+
+      await userEvent.click(screen.getByRole("button", { name: /unmark as watched/i }));
+
+      await waitFor(() => expect(toast.error).toHaveBeenCalledWith("Could not remove from watched"));
+    });
   });
 });

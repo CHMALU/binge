@@ -16,7 +16,13 @@ type Props = {
   isAuthed: boolean;
   lang: string;
   dict: DetailDict;
-  watchlistDict: { markedToast: string; markedError: string };
+  watchlistDict: {
+    markedToast: string;
+    markedError: string;
+    unmarkedToast: string;
+    unmarkError: string;
+  };
+  initiallyWatched?: boolean;
 };
 
 export default function MarkWatchedButton({
