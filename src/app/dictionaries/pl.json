@@ -32,7 +32,17 @@
     "noDescription": "Brak opisu.",
     "flipBackHint": "Dwuklik aby odwrócić",
     "like": "Lubię",
-    "skip": "Pomiń"
+    "dislike": "Nie lubię",
+    "resultsTitle": "Najlepsze dopasowania",
+    "resultsHeading": "Twoje trzy najsilniejsze typy",
+    "openDetails": "Otwórz szczegóły",
+    "backHome": "Wróć na stronę główną",
+    "topPick": "Najlepszy wybór",
+    "secondPick": "Drugi wybór",
+    "thirdPick": "Trzeci wybór",
+    "accuracyLabel": "Dokładność dopasowania",
+    "noMatch": "Brak silnego dopasowania.",
+    "noMatchHint": "Spróbuj przesunąć jeszcze kilka tytułów, aby uzyskać lepszy wynik."
   },
   "hero": {
     "featured": "Polecane",

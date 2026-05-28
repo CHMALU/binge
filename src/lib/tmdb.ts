@@ -133,6 +133,41 @@ interface TMDbListResponse {
   total_results: number;
 }
 
+function attachMediaType(items: Movie[], mediaType: "movie" | "tv"): Movie[] {
+  return items.map((item) => ({
+    ...item,
+    media_type: item.media_type ?? mediaType,
+  }));
+}
+
+export async function getRelatedTitles(
+  mediaType: "movie" | "tv",
+  id: number,
+  locale = "en"
+): Promise<Movie[]> {
+  const language = tmdbLang(locale);
+
+  const [recommendations, similar] = await Promise.allSettled([
+    tmdbFetch<TMDbListResponse>(`/${mediaType}/${id}/recommendations`, { language }),
+    tmdbFetch<TMDbListResponse>(`/${mediaType}/${id}/similar`, { language }),
+  ]);
+
+  const combined: Movie[] = [];
+  const seen = new Set<number>();
+
+  for (const response of [recommendations, similar]) {
+    if (response.status !== "fulfilled") continue;
+
+    for (const item of attachMediaType(response.value.results ?? [], mediaType)) {
+      if (seen.has(item.id)) continue;
+      seen.add(item.id);
+      combined.push(item);
+    }
+  }
+
+  return combined;
+}
+
 export async function getPopularMovies(locale = "en"): Promise<Movie[]> {
   const data = await tmdbFetch<TMDbListResponse>("/movie/popular", { language: tmdbLang(locale) });
   return data.results ?? [];
