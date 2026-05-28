@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
-import { IoAdd, IoBookmark, IoCheckmarkCircle, IoTrash } from "react-icons/io5";
+import { IoAdd, IoBookmark, IoCheckmarkCircle, IoCloseCircle, IoTrash } from "react-icons/io5";
 import type { Dictionary } from "@/app/[lang]/dictionaries";
 
 type WatchlistDict = Dictionary["watchlist"];
@@ -44,6 +44,7 @@ export default function CardActions({
   showAddToWatchlist = true,
   showMarkWatched = true,
   showRemoveFromWatchlist = false,
+  showUnmarkWatched = false,
 }: Props) {
   const router = useRouter();
   const [, startTransition] = useTransition();
@@ -113,6 +114,30 @@ export default function CardActions({
     }
   }
 
+  async function unmarkWatched(e: React.MouseEvent) {
+    stop(e);
+    if (busy) return;
+
+    setBusy(true);
+    setWatched(false);
+
+    try {
+      const res = await fetch("/api/watched", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ tmdbId, mediaType }),
+      });
+      if (!res.ok) throw new Error("api failure");
+      toast.success(dict.unmarkedToast);
+      startTransition(() => router.refresh());
+    } catch {
+      setWatched(true);
+      toast.error(dict.unmarkError);
+    } finally {
+      setBusy(false);
+    }
+  }
+
   async function removeFromWatchlist(e: React.MouseEvent) {
     stop(e);
     if (busy) return;
@@ -159,6 +184,18 @@ export default function CardActions({
           className={watched ? ICON_ACTIVE : ICON_DEFAULT}
         >
           <IoCheckmarkCircle aria-hidden="true" />
+        </button>
+      )}
+      {showUnmarkWatched && (
+        <button
+          type="button"
+          onClick={unmarkWatched}
+          disabled={busy}
+          aria-label={dict.unmarkWatched}
+          title={dict.unmarkWatched}
+          className={ICON_DEFAULT}
+        >
+          <IoCloseCircle aria-hidden="true" />
         </button>
       )}
       {showRemoveFromWatchlist && (
