@@ -6,7 +6,16 @@ import type { Dictionary } from "@/app/[lang]/dictionaries";
 
 type CommonDict = Dictionary["common"];
 
-export default function MovieCard({ movie, lang = "en", commonDict }: { movie: Movie; lang?: string; commonDict: CommonDict }) {
+export default function MovieCard({
+  movie,
+  lang = "en",
+  commonDict,
+}: {
+  movie: Movie;
+  lang?: string;
+  commonDict: CommonDict;
+  actions?: React.ReactNode;
+}) {
   const title = movie.title ?? movie.name ?? commonDict.noTitle;
   const posterUrl = getPosterUrl(movie.poster_path, "w300");
   const rating = movie.vote_average?.toFixed(1) ?? commonDict.notAvailable;
