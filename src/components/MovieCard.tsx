@@ -6,7 +6,17 @@ import type { Dictionary } from "@/app/[lang]/dictionaries";
 
 type CommonDict = Dictionary["common"];
 
-export default function MovieCard({ movie, lang = "en", commonDict }: { movie: Movie; lang?: string; commonDict: CommonDict }) {
+export default function MovieCard({
+  movie,
+  lang = "en",
+  commonDict,
+  actions,
+}: {
+  movie: Movie;
+  lang?: string;
+  commonDict: CommonDict;
+  actions?: React.ReactNode;
+}) {
   const title = movie.title ?? movie.name ?? commonDict.noTitle;
   const posterUrl = getPosterUrl(movie.poster_path, "w300");
   const rating = movie.vote_average?.toFixed(1) ?? commonDict.notAvailable;
@@ -39,17 +49,20 @@ export default function MovieCard({ movie, lang = "en", commonDict }: { movie: M
           </div>
         )}
         <div
-          className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-end p-3"
+          className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-end p-3 pointer-events-none"
           style={{ background: "linear-gradient(0deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.2) 50%, transparent 100%)" }}
         >
-          <div className="flex gap-1.5">
-            <div className="w-8 h-8 rounded-full inline-flex items-center justify-center text-sm font-bold bg-action text-action-fg">
-              <IoPlay aria-hidden="true" />
-            </div>
-            <div className="w-8 h-8 rounded-full inline-flex items-center justify-center text-sm border bg-white/15 border-white/20 text-white backdrop-blur-sm">
-
-              <IoAdd aria-hidden="true" />
-            </div>
+          <div className="flex gap-1.5 pointer-events-auto">
+            {actions ?? (
+              <>
+                <div className="w-8 h-8 rounded-full inline-flex items-center justify-center text-sm font-bold bg-action text-action-fg">
+                  <IoPlay aria-hidden="true" />
+                </div>
+                <div className="w-8 h-8 rounded-full inline-flex items-center justify-center text-sm border bg-white/15 border-white/20 text-white backdrop-blur-sm">
+                  <IoAdd aria-hidden="true" />
+                </div>
+              </>
+            )}
           </div>
         </div>
       </div>

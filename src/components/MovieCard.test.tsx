@@ -61,4 +61,17 @@ describe('MovieCard', () => {
     render(<MovieCard movie={mockTv} lang="en" commonDict={mockCommonDict} />);
     expect(screen.getByRole('link')).toHaveAttribute('href', '/en/tv/42');
   });
+
+  it('renders custom actions inside the hover overlay when actions prop is provided', () => {
+    render(
+      <MovieCard
+        movie={mockMovie}
+        lang="en"
+        commonDict={mockCommonDict}
+        actions={<button type="button" data-testid="custom-action">do-thing</button>}
+      />
+    );
+
+    expect(screen.getByTestId('custom-action')).toBeInTheDocument();
+  });
 });

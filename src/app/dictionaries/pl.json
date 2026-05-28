@@ -107,7 +107,20 @@
     "remove": "Usuń",
     "addedToast": "Dodano do listy",
     "removedToast": "Usunięto z listy",
-    "removeError": "Nie udało się usunąć. Spróbuj ponownie."
+    "removeError": "Nie udało się usunąć. Spróbuj ponownie.",
+    "markWatched": "Oznacz jako obejrzane",
+    "markedToast": "Oznaczono jako obejrzane",
+    "markedError": "Nie udało się oznaczyć. Spróbuj ponownie.",
+    "unmarkWatched": "Cofnij oznaczenie",
+    "unmarkedToast": "Usunięto z obejrzanych",
+    "unmarkError": "Nie udało się cofnąć. Spróbuj ponownie."
+  },
+  "watched": {
+    "title": "Obejrzane",
+    "empty": "Brak obejrzanych tytułów.",
+    "emptyHint": "Oznacz tytuły jako obejrzane z listy.",
+    "watchedOn": "Obejrzano",
+    "yourRating": "Twoja ocena"
   },
   "detail": {
     "overview": "Opis",
@@ -136,6 +149,11 @@
     "submit": "Zatwierdź",
     "saving": "Zapisywanie...",
     "error": "Coś poszło nie tak. Spróbuj ponownie.",
-    "success": "Ocena zapisana!"
+    "success": "Ocena zapisana!",
+    "signInToRate": "Zaloguj się, aby oceniać",
+    "markWatched": "Oznacz jako obejrzane",
+    "howWouldYouRate": "Jak to oceniasz?",
+    "skipRating": "Pomiń ocenę",
+    "unmarkWatched": "Cofnij oznaczenie"
   }
 }

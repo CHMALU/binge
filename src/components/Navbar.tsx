@@ -121,7 +121,7 @@ export default function Navbar({
 
                 <div className="py-1">
                   <DropdownItem icon={<FiBookmark size={15} />} label={dict.watchlist} href={`/${lang}/watchlist`} comingSoonLabel={dict.comingSoon} />
-                  <DropdownItem icon={<FiCheckCircle size={15} />} label={dict.watched} href={`/${lang}/watched`} comingSoonLabel={dict.comingSoon} disabled />
+                  <DropdownItem icon={<FiCheckCircle size={15} />} label={dict.watched} href={`/${lang}/watched`} comingSoonLabel={dict.comingSoon} />
                   <DropdownItem icon={<FiZap size={15} />} label={dict.discover} href={`/${lang}/swipe`} comingSoonLabel={dict.comingSoon} />
                 </div>
 

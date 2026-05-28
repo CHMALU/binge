@@ -107,7 +107,20 @@
     "remove": "Remove",
     "addedToast": "Added to watchlist",
     "removedToast": "Removed from watchlist",
-    "removeError": "Could not remove. Please try again."
+    "removeError": "Could not remove. Please try again.",
+    "markWatched": "Mark as watched",
+    "markedToast": "Marked as watched",
+    "markedError": "Could not mark as watched. Please try again.",
+    "unmarkWatched": "Unmark as watched",
+    "unmarkedToast": "Removed from watched",
+    "unmarkError": "Could not remove from watched. Please try again."
+  },
+  "watched": {
+    "title": "Watched",
+    "empty": "Nothing watched yet.",
+    "emptyHint": "Mark titles as watched from your watchlist.",
+    "watchedOn": "Watched on",
+    "yourRating": "Your rating"
   },
   "detail": {
     "overview": "Overview",
@@ -136,6 +149,11 @@
     "submit": "Submit",
     "saving": "Saving...",
     "error": "Failed to submit rating. Please try again.",
-    "success": "Rating submitted successfully!"
+    "success": "Rating submitted successfully!",
+    "signInToRate": "Sign in to rate",
+    "markWatched": "Mark as watched",
+    "howWouldYouRate": "How would you rate it?",
+    "skipRating": "Skip rating",
+    "unmarkWatched": "Unmark as watched"
   }
 }
