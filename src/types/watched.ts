@@ -20,3 +20,12 @@ export type MarkWatchedResponse =
 export type GetWatchedResponse =
   | { items: WatchedItemDTO[] }
   | { error: string };
+
+export type UnmarkWatchedRequest = {
+  tmdbId: number;
+  mediaType: "movie" | "tv";
+};
+
+export type DeleteWatchedResponse =
+  | { success: true }
+  | { error: string };

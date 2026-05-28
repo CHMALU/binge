@@ -2,9 +2,11 @@ import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import type {
+  DeleteWatchedResponse,
   GetWatchedResponse,
   MarkWatchedRequest,
   MarkWatchedResponse,
+  UnmarkWatchedRequest,
   WatchedItemDTO,
 } from "@/types/watched";
 
@@ -81,6 +83,53 @@ export async function POST(req: Request) {
       rating: watched.rating,
     },
   });
+}
+
+function isValidUnmarkBody(body: unknown): body is UnmarkWatchedRequest {
+  if (!body || typeof body !== "object") return false;
+  const { tmdbId, mediaType } = body as Record<string, unknown>;
+  return (
+    typeof tmdbId === "number" &&
+    Number.isInteger(tmdbId) &&
+    (mediaType === "movie" || mediaType === "tv")
+  );
+}
+
+export async function DELETE(req: Request) {
+  const session = await auth();
+  if (!session?.user?.id) {
+    return NextResponse.json<DeleteWatchedResponse>(
+      { error: "Unauthorized" },
+      { status: 401 },
+    );
+  }
+
+  let body: unknown;
+  try {
+    body = await req.json();
+  } catch {
+    return NextResponse.json<DeleteWatchedResponse>(
+      { error: "Invalid JSON" },
+      { status: 400 },
+    );
+  }
+
+  if (!isValidUnmarkBody(body)) {
+    return NextResponse.json<DeleteWatchedResponse>(
+      { error: "Invalid request body" },
+      { status: 400 },
+    );
+  }
+
+  await prisma.watchedItem.deleteMany({
+    where: {
+      userId: session.user.id,
+      tmdbId: body.tmdbId,
+      mediaType: body.mediaType,
+    },
+  });
+
+  return NextResponse.json<DeleteWatchedResponse>({ success: true });
 }
 
 export async function GET() {
