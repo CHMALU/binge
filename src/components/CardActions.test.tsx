@@ -156,7 +156,7 @@ describe("CardActions", () => {
     global.fetch = jest.fn().mockResolvedValue({ ok: true, status: 201, json: async () => ({ success: true }) });
 
     render(
-      <a href="/some/detail" onClick={parentClick}>
+      <div onClick={parentClick} data-testid="parent">
         <CardActions
           tmdbId={1}
           mediaType="movie"
@@ -164,7 +164,7 @@ describe("CardActions", () => {
           lang="en"
           dict={dict}
         />
-      </a>
+      </div>
     );
 
     await userEvent.click(screen.getByRole("button", { name: "Add to watchlist" }));
