@@ -49,6 +49,7 @@ const dict: DetailDict = {
   markWatched: 'Mark as watched',
   howWouldYouRate: 'How would you rate it?',
   skipRating: 'Skip rating',
+  unmarkWatched: 'Unmark as watched',
 };
 
 describe('RatingModal', () => {

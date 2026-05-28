@@ -100,7 +100,10 @@
     "removeError": "تعذّر الإزالة. حاول مرة أخرى.",
     "markWatched": "وضع علامة كمشاهَد",
     "markedToast": "تم وضع العلامة كمشاهَد",
-    "markedError": "تعذّر وضع العلامة. حاول مرة أخرى."
+    "markedError": "تعذّر وضع العلامة. حاول مرة أخرى.",
+    "unmarkWatched": "إلغاء علامة المشاهدة",
+    "unmarkedToast": "تمت الإزالة من المشاهَدة",
+    "unmarkError": "تعذّر الإلغاء. حاول مرة أخرى."
   },
   "watched": {
     "title": "تمت المشاهدة",
@@ -140,6 +143,7 @@
     "signInToRate": "سجّل الدخول للتقييم",
     "markWatched": "وضع علامة كمشاهَد",
     "howWouldYouRate": "كيف تقيّمه؟",
-    "skipRating": "تخطي التقييم"
+    "skipRating": "تخطي التقييم",
+    "unmarkWatched": "إلغاء علامة المشاهدة"
   }
 }

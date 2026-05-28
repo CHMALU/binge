@@ -31,6 +31,9 @@ const dict = {
   markWatched: "Mark as watched",
   markedToast: "Marked as watched",
   markedError: "Could not mark as watched. Please try again.",
+  unmarkWatched: "Unmark as watched",
+  unmarkedToast: "Removed from watched",
+  unmarkError: "Could not remove from watched. Please try again.",
 };
 
 const originalFetch = global.fetch;

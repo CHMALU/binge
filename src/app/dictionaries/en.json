@@ -100,7 +100,10 @@
     "removeError": "Could not remove. Please try again.",
     "markWatched": "Mark as watched",
     "markedToast": "Marked as watched",
-    "markedError": "Could not mark as watched. Please try again."
+    "markedError": "Could not mark as watched. Please try again.",
+    "unmarkWatched": "Unmark as watched",
+    "unmarkedToast": "Removed from watched",
+    "unmarkError": "Could not remove from watched. Please try again."
   },
   "watched": {
     "title": "Watched",
@@ -140,6 +143,7 @@
     "signInToRate": "Sign in to rate",
     "markWatched": "Mark as watched",
     "howWouldYouRate": "How would you rate it?",
-    "skipRating": "Skip rating"
+    "skipRating": "Skip rating",
+    "unmarkWatched": "Unmark as watched"
   }
 }

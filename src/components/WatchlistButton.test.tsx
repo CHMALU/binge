@@ -30,6 +30,9 @@ const t: WatchlistDict = {
   removeError: "Could not remove",
   markedToast: "Marked as watched",
   markedError: "Could not mark as watched",
+  unmarkWatched: "Unmark as watched",
+  unmarkedToast: "Removed from watched",
+  unmarkError: "Could not remove from watched",
 };
 
 const originalFetch = global.fetch;

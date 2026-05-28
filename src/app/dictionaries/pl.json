@@ -100,7 +100,10 @@
     "removeError": "Nie udało się usunąć. Spróbuj ponownie.",
     "markWatched": "Oznacz jako obejrzane",
     "markedToast": "Oznaczono jako obejrzane",
-    "markedError": "Nie udało się oznaczyć. Spróbuj ponownie."
+    "markedError": "Nie udało się oznaczyć. Spróbuj ponownie.",
+    "unmarkWatched": "Cofnij oznaczenie",
+    "unmarkedToast": "Usunięto z obejrzanych",
+    "unmarkError": "Nie udało się cofnąć. Spróbuj ponownie."
   },
   "watched": {
     "title": "Obejrzane",
@@ -140,6 +143,7 @@
     "signInToRate": "Zaloguj się, aby oceniać",
     "markWatched": "Oznacz jako obejrzane",
     "howWouldYouRate": "Jak to oceniasz?",
-    "skipRating": "Pomiń ocenę"
+    "skipRating": "Pomiń ocenę",
+    "unmarkWatched": "Cofnij oznaczenie"
   }
 }
