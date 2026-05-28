@@ -11,6 +11,9 @@ export type WatchlistDict = {
   inWatchlist: string;
   signInToSave: string;
   addError: string;
+  addedToast: string;
+  removedToast: string;
+  removeError: string;
 };
 
 type Props = {
