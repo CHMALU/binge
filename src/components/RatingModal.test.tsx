@@ -46,6 +46,9 @@ const dict: DetailDict = {
   success: 'Rating submitted successfully!',
   ratingAriaLabel: '{stars} out of 5',
   signInToRate: 'Sign in to rate',
+  markWatched: 'Mark as watched',
+  howWouldYouRate: 'How would you rate it?',
+  skipRating: 'Skip rating',
 };
 
 describe('RatingModal', () => {
