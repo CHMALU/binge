@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { IoStar, IoStarOutline } from "react-icons/io5";
+import { IoStar, IoStarOutline, IoCheckmarkCircle, IoCloseCircle } from "react-icons/io5";
 import type { Dictionary } from "@/app/[lang]/dictionaries";
 
 type DetailDict = Dictionary["detail"];
@@ -113,13 +113,15 @@ export default function RatingModal({ tmdbId, mediaType, title, dict }: Props) {
 
             <div className="min-h-[24px] mb-4 text-center">
               {ratingError && (
-                <p className="text-sm font-medium" style={{ color: "var(--color-danger)" }}>
+                <p className="text-sm font-medium text-fg inline-flex items-center gap-1.5 justify-center">
+                  <IoCloseCircle aria-hidden="true" style={{ color: "var(--color-danger)" }} />
                   {ratingError}
                 </p>
               )}
 
               {ratingSuccess && (
-                <p className="text-sm font-medium" style={{ color: "var(--color-success)" }}>
+                <p className="text-sm font-medium text-fg inline-flex items-center gap-1.5 justify-center">
+                  <IoCheckmarkCircle aria-hidden="true" style={{ color: "var(--color-success)" }} />
                   {ratingSuccess}
                 </p>
               )}
