@@ -32,7 +32,17 @@
     "noDescription": "No description available.",
     "flipBackHint": "Double-tap to flip back",
     "like": "Like",
-    "skip": "Skip"
+    "dislike": "Dislike",
+    "resultsTitle": "Top matches",
+    "resultsHeading": "Your three strongest picks",
+    "openDetails": "Open details",
+    "backHome": "Back to home",
+    "topPick": "Top pick",
+    "secondPick": "Second pick",
+    "thirdPick": "Third pick",
+    "accuracyLabel": "Match accuracy",
+    "noMatch": "No strong match found.",
+    "noMatchHint": "Try swiping again for a better result."
   },
   "hero": {
     "featured": "Featured",

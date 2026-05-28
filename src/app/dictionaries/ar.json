@@ -32,7 +32,17 @@
     "noDescription": "لا يوجد وصف.",
     "flipBackHint": "انقر مرتين للقلب",
     "like": "إعجاب",
-    "skip": "تخطي"
+    "dislike": "تخطي",
+    "resultsTitle": "أفضل التطابقات",
+    "resultsHeading": "أفضل ثلاثة اختيارات لك",
+    "openDetails": "فتح التفاصيل",
+    "backHome": "العودة إلى الصفحة الرئيسية",
+    "topPick": "الاختيار الأول",
+    "secondPick": "الاختيار الثاني",
+    "thirdPick": "الاختيار الثالث",
+    "accuracyLabel": "دقة التطابق",
+    "noMatch": "لم يتم العثور على تطابق قوي.",
+    "noMatchHint": "حاول السحب أكثر للحصول على نتيجة أفضل."
   },
   "hero": {
     "featured": "مميز",
