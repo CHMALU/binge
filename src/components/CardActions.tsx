@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
-import { IoAdd, IoBookmark, IoCheckmarkCircle, IoCheckmarkCircleOutline } from "react-icons/io5";
+import { IoBookmark, IoBookmarkOutline, IoCheckmarkCircle, IoCheckmarkCircleOutline } from "react-icons/io5";
 import type { Dictionary } from "@/app/[lang]/dictionaries";
 
 type WatchlistDict = Dictionary["watchlist"];
@@ -125,7 +125,7 @@ export default function CardActions({
           title={inWatchlist ? dict.inWatchlist : dict.addToWatchlist}
           className={inWatchlist ? ICON_GOLD : ICON_GREY}
         >
-          {inWatchlist ? <IoBookmark aria-hidden="true" /> : <IoAdd aria-hidden="true" />}
+          {inWatchlist ? <IoBookmark aria-hidden="true" /> : <IoBookmarkOutline aria-hidden="true" />}
         </button>
       )}
       {showMarkWatched && (
