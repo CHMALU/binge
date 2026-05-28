@@ -161,6 +161,11 @@ Sections are roughly ordered by **deadline urgency × user value**. The first th
 ### Schema note (no migration needed)
 `WatchedItem` model already existed in `prisma/schema.prisma` from US8. `WatchedItem.rating: Int?` and the separate `Rating` model are **both** written in the same transaction so detail page (reads `Rating`) and /watched (reads `WatchedItem`) stay consistent. See §12 for the follow-up to consolidate this duplication.
 
+### Undo paths (added after initial review)
+- [x] **`DELETE /api/watched` endpoint** — `deleteMany` on `WatchedItem` keyed by `(userId, tmdbId, mediaType)`. Idempotent (no row → still 200). **Rating model is intentionally NOT touched** by DELETE because a user might want to keep their rating across an accidental mark-watched undo.
+- [x] **`/watched` page**: each row's hover overlay now includes `IoCloseCircle` "Unmark as watched" alongside the add-to-watchlist toggle (`showUnmarkWatched={true}`).
+- [x] **Detail page** (`/movie/[id]`, `/tv/[id]`): server-side fetches whether a `WatchedItem` exists for the current user and passes `isWatched` down. When true, `MarkWatchedButton` flips to a one-click "Unmark as watched" pill (success styling, no modal, no rating prompt) that calls DELETE.
+
 ### Bonus scope landed in the same MR (§7 G4)
 - [x] **MovieCard now exposes an `actions?: ReactNode` slot** (`src/components/MovieCard.tsx`). When provided, replaces the formerly-decorative IoPlay+IoAdd overlay; gradient gets `pointer-events-none`, the actions row gets `pointer-events-auto` so children clicks don't bubble through.
 - [x] **`CardActions` client component** (`src/components/CardActions.tsx`) renders 0..3 hover icons (add/in-watchlist toggle, mark-watched, trash) with optimistic state + react-hot-toast + `e.preventDefault/stopPropagation` so the parent `<Link>` doesn't navigate.
