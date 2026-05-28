@@ -34,8 +34,9 @@
 | CI/CD pipeline (build/lint/typecheck/audit/tests) | ✅ DONE | `CI/CD-update` | 5 stages, restored typecheck job |
 | Next.js 16.2.6 (security patches) | ✅ DONE | `CI/CD-update` | Patches 13× high-severity advisories |
 | Watchlist link enabled in Navbar dropdown | ✅ DONE | `feature/us10-watchlist-view` | `Navbar.tsx:111` (Christoph's `[chore][CN] enabling watchlist UI button`) |
+| Color-blindness a11y (toggle + default signals) | ⚠️ AWAITING VISUAL REVIEW | `feature/a11y-colorblind` (pushed, **MR not yet opened**) | 12 commits, tests/lint/typecheck/build all green. Needs manual click-through before MR. See section 1. |
 
-**Not done yet:** US7 (recommendations), US11 (mark as watched), US-swipe-filter (watched filtering), Watchlist DELETE/toggle, color-blindness a11y, polish (Navbar cleanup, hero/cards dead buttons), demo video.
+**Not done yet:** US7 (recommendations), US11 (mark as watched), US-swipe-filter (watched filtering), Watchlist DELETE/toggle, polish (Navbar cleanup, hero/cards dead buttons, navigation consistency), demo video.
 
 ---
 
@@ -45,34 +46,50 @@ Sections are roughly ordered by **deadline urgency × user value**. The first th
 
 ---
 
-## 1. Color-blindness accessibility (URGENT — pre-Friday)
+## 1. Color-blindness accessibility — AWAITING REVIEW
 
-**Status:** ⏳ NOT STARTED
+**Status:** ⚠️ AWAITING VISUAL REVIEW (branch pushed, **MR not yet opened**)
+**Branch:** `feature/a11y-colorblind` (12 commits, 2026-05-27)
 **Why:** PO mail 2026-05-26 — *"could be the feature that decides the investment"*. Hard deadline Friday.
-**Branch suggestion:** `feature/a11y-colorblind`
-**Approach:** default-accessible UI, **no mode toggle** — bake non-color signals into the default. A toggle adds complexity and most users won't know to flip it.
+**Approach taken:** both a palette-swap toggle (4 modes) AND default-accessible redundant signals (text labels, status icons, borders, fg tokens for icons). The toggle is the demo-visible feature; the default signals work even for users who never toggle.
 
-### Audit pass (do first, 30–60 min)
-- [ ] Walk every screen with Chrome DevTools → Rendering → **Emulate vision deficiencies** (`deuteranopia`, `protanopia`, `tritanopia`, `achromatopsia`)
-- [ ] List every place where color *alone* conveys information — add to this checklist as findings
+### Before opening the MR (manual review required)
+- [ ] Run `npm run dev` and click through every page **in each of the 4 modes** (Default / Red-green safe / Blue-yellow safe / High contrast). Toggle lives next to the language switcher in the navbar (eye icon).
+- [ ] In Chrome DevTools → Rendering → **Emulate vision deficiencies**, set deuteranopia and verify the swipe Like/Skip buttons stay distinguishable in *Red-green safe* mode (this is the headline test)
+- [ ] Same for tritanopia + *Blue-yellow safe* mode
+- [ ] **High-contrast mode special check:** swipe Like/Skip icons must be visible (black on white / black on gray); MovieCard borders must be visible (white outline); all chrome elements should pop as plain B&W
+- [ ] Sanity-check Arabic RTL — both switchers should render correctly in `/ar`
+- [ ] Test mobile breakpoint — the navbar now has two icon buttons (color vision + language); verify no wrap/overflow
+- [ ] Tweak palette overrides in `src/app/globals.css` `:root[data-cv-mode="..."]` if anything looks bad
+- [ ] Verify form validation error contrast (deferred from A4 below — quick WebAIM check on login/register)
+- [ ] Verify toast contrast on `bg-surface-card` per mode (deferred — should be fine because Toaster uses tokens, but spot-check)
+- [ ] Open MR with manual test plan pasted in the description
 
-### Known places to fix
-- [ ] **A1. Swipe like/reject buttons** — `src/components/MovieSwiper.tsx`. Currently green vs red bg + glow. `FaThumbsUp` / `FaThumbsDown` differ in shape (good) but glow + bg are color-only. **Fix:** add "Like" / "Skip" text labels under the buttons, OR thicker border on the "destructive" action, OR slightly larger icon for one side.
-- [ ] **A2. Status badge on detail page** — `src/components/MovieDetail.tsx:135`. `Returning Series` renders with `text-success` (green); other statuses use neutral `text-fg`. Color is the only signal. **Fix:** prepend a small icon — `IoCheckmarkCircle` for ongoing, `IoPauseCircle` for ended — or wrap in a pill with distinct shape.
-- [ ] **A3. Toast notifications** — `react-hot-toast` defaults green/red. Toast content already describes the action (we always pass a string), so info isn't lost, but **verify** that default toast bg/text meets WCAG AA contrast in both light/dark themes. Override via `toastOptions` in `<Toaster />` if not.
-- [ ] **A4. Form validation errors** — login/register render text alongside red color. Probably fine but **verify** red text on `surface-card` background hits 4.5:1 contrast.
-- [ ] **A5. Swipe page decorative blurs** — `bg-red-500/20` / `bg-green-500/20` glow on left/right sides of `/swipe`. Purely decorative atmosphere, not info-bearing. Low priority. Either leave as-is or shift to `bg-fg-subtle/20` if you want strict neutrality.
+### What's already on the branch
+- [x] `ColorVisionSwitcher` component + 5 TDD tests, toggle wired into the navbar (eye icon)
+- [x] Persistence via `localStorage` under `BINGE_CV_MODE`
+- [x] Pre-paint inline `<script>` in root `app/layout.tsx` so the saved palette applies before first paint (no flicker on reload)
+- [x] Three CB-safe palette overrides in `globals.css`:
+  - **Red-green safe:** Okabe-Ito blue/orange + cyan gold (deuteranopia + protanopia)
+  - **Blue-yellow safe:** teal/magenta + coral gold (tritanopia)
+  - **High contrast:** full grayscale, pure black bg + white fg (achromatopsia)
+- [x] Switched `@theme inline` → `@theme` in `globals.css` — Tailwind utilities now compile to `var()` references instead of inlined literals, which is what makes `:root[data-cv-mode]` overrides actually work for `bg-success` / `bg-action` etc.
+- [x] **A1.** Swipe Like/Skip text labels under buttons (+ `aria-label`) — TDD'd with 1 test
+- [x] **A2.** `IoEllipse` status dot next to "Returning Series" — shape signal complements color
+- [x] **A5.** Swipe button glow + ambient blurs use `color-mix(var(...))` instead of hardcoded RGB → they shift with the palette
+- [x] New `--color-success-fg` / `--color-danger-fg` tokens (default white, black in high-contrast) → swipe icons stay visible on the now-white Like button in high-contrast
+- [x] `MovieCard` got `border border-border` → cards stay visible against dark surface in high-contrast (matches the bright separator lines that already used border-border)
+- [x] Dict keys `dict.a11y.colorMode.*` in EN/PL/AR
+- [x] Toast colors auto-shift (Toaster already uses `var(--color-success/danger)`)
 
-### Tools
-- Chrome DevTools → Rendering panel → Emulate vision deficiencies (built-in)
-- [Sim Daltonism](https://michelf.ca/projects/sim-daltonism/) (macOS) / [Color Oracle](https://colororacle.org/) (cross-platform)
-- [WebAIM Contrast Checker](https://webaim.org/resources/contrastchecker/)
+### Stack at end of branch
+74/74 tests passing, lint clean, typecheck clean, `npm run build` clean.
 
-### Tests
-Unit tests aren't useful here — it's a visual property. **Add a manual test plan to the PR description:**
-> *Open swipe in deuteranopia mode → like vs skip distinguishable without color? Open detail of "Returning" series → status badge readable without color?*
+### Deferred / explicitly NOT done yet
+- [ ] **A3. Toast contrast WCAG verification** — Toaster shifts correctly but no explicit AA contrast check per CV mode
+- [ ] **A4. Form validation error contrast** — login/register error red text on surface-card. Probably ≥ 4.5:1 but never measured
 
-**Estimated SP:** 3
+**Estimated SP:** 3 (delivered as planned, plus extra polish: palette toggle wasn't in original scope)
 
 ---
 
@@ -315,6 +332,48 @@ Unit tests aren't useful here — it's a visual property. **Add a manual test pl
 - [ ] **H5. Upload to YouTube (unlisted OK), submit link via TeachCenter**
 
 **Estimated effort:** ~2 hours, not SP
+
+---
+
+## 9. Navigation consistency (post-Friday polish)
+
+**Status:** ⏳ NOT STARTED
+**Why:** Navigation chrome differs between pages and feels inconsistent. The swipe page has a text-link "← Back" in the top-left while the movie/tv detail pages have a clean floating round button. Also `/movie/[id]` and `/tv/[id]` don't render the `Navbar` at all — once a user is on a detail page they can't switch language, color vision mode, sign in, or get to their watchlist without going back first.
+**Branch suggestion:** `chore/navigation-consistency`
+
+### Steps
+
+- [ ] **I1. Standardize the back button on `/swipe` to match the detail page style**
+  - Current — `src/components/MovieSwiper.tsx:64–67`:
+    ```tsx
+    <div className="px-6 py-4">
+      <Link href={`/${lang}`} className="text-sm text-fg-muted hover:text-fg ... inline-flex items-center gap-1">
+        <IoArrowBack aria-hidden="true" /> {commonDict.back}
+      </Link>
+    </div>
+    ```
+  - Target — copy the pattern from `src/components/MovieDetail.tsx:57–65`:
+    ```tsx
+    <div className="fixed top-4 left-4 z-50">
+      <Link href={`/${lang}`} className="flex items-center justify-center w-11 h-11 rounded-full border border-border text-fg transition-colors bg-surface/80 backdrop-blur-md">
+        <IoArrowBack size={20} aria-hidden="true" />
+        <span className="sr-only">{commonDict.back}</span>
+      </Link>
+    </div>
+    ```
+  - RTL check: in `/ar` either keep top-left or flip to top-right consistently with the detail pages — pick whichever the detail page already does and match it
+
+- [ ] **I2. Render Navbar on movie/tv detail pages**
+  - `src/components/MovieDetail.tsx` currently doesn't render `<Navbar />` — the floating back button is the only chrome
+  - Pages to update: `src/app/[lang]/movie/[id]/page.tsx` and `src/app/[lang]/tv/[id]/page.tsx`. Either inject `<Navbar />` in those pages, or have `MovieDetail` render it itself (the former is more flexible)
+  - Props needed: `lang`, `dict.nav`, `dict.common`, and once `feature/a11y-colorblind` is merged also `dict.a11y.colorMode`
+  - **Design call:** keep the floating round back button on top of the navbar OR remove it now that the navbar provides a way home? Recommendation: **keep both** — the floating button is the primary affordance (positioned over the backdrop image so it pops), and the navbar adds general navigation. Two paths to home is not a bug, it's redundancy.
+  - The navbar should sit at the very top, the backdrop pushes down below it. Verify the negative-margin layout (`-mt-[200px]` on the 3-column block) still looks good with a sticky navbar above.
+
+### Tests
+- Visual / manual — both items are layout polish, no behaviour tests
+
+**Estimated SP:** 1
 
 ---
 
