@@ -44,122 +44,9 @@ afterEach(() => {
 });
 
 describe("CardActions", () => {
-  it("renders add-to-watchlist and mark-watched icons by default for authed users", () => {
-    render(
-      <CardActions
-        tmdbId={1}
-        mediaType="movie"
-        isAuthed={true}
-        lang="en"
-        dict={dict}
-      />
-    );
-
-    expect(screen.getByRole("button", { name: "Add to watchlist" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Mark as watched" })).toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: "Remove" })).not.toBeInTheDocument();
-  });
-
-  it("shows the trash button only when showRemoveFromWatchlist is true", () => {
-    render(
-      <CardActions
-        tmdbId={1}
-        mediaType="movie"
-        isAuthed={true}
-        lang="en"
-        dict={dict}
-        showRemoveFromWatchlist
-        showAddToWatchlist={false}
-      />
-    );
-
-    expect(screen.getByRole("button", { name: "Remove" })).toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: "Add to watchlist" })).not.toBeInTheDocument();
-  });
-
-  it("POSTs /api/watchlist on add click and shows success toast", async () => {
-    global.fetch = jest.fn().mockResolvedValue({ ok: true, status: 201, json: async () => ({ success: true }) });
-
-    render(
-      <CardActions
-        tmdbId={27205}
-        mediaType="movie"
-        isAuthed={true}
-        lang="en"
-        dict={dict}
-      />
-    );
-
-    await userEvent.click(screen.getByRole("button", { name: "Add to watchlist" }));
-
-    expect(global.fetch).toHaveBeenCalledWith(
-      "/api/watchlist",
-      expect.objectContaining({
-        method: "POST",
-        body: JSON.stringify({ tmdbId: 27205, mediaType: "movie" }),
-      }),
-    );
-    await waitFor(() => expect(toast.success).toHaveBeenCalledWith("Added to watchlist"));
-  });
-
-  it("POSTs /api/watched on mark-watched click and shows success toast", async () => {
-    global.fetch = jest.fn().mockResolvedValue({ ok: true, status: 200, json: async () => ({ success: true }) });
-
-    render(
-      <CardActions
-        tmdbId={1399}
-        mediaType="tv"
-        isAuthed={true}
-        lang="en"
-        dict={dict}
-      />
-    );
-
-    await userEvent.click(screen.getByRole("button", { name: "Mark as watched" }));
-
-    expect(global.fetch).toHaveBeenCalledWith(
-      "/api/watched",
-      expect.objectContaining({
-        method: "POST",
-        body: JSON.stringify({ tmdbId: 1399, mediaType: "tv" }),
-      }),
-    );
-    await waitFor(() => expect(toast.success).toHaveBeenCalledWith("Marked as watched"));
-  });
-
-  it("DELETEs /api/watchlist on trash click and shows removed toast", async () => {
-    global.fetch = jest.fn().mockResolvedValue({ ok: true, status: 200, json: async () => ({ success: true }) });
-
-    render(
-      <CardActions
-        tmdbId={42}
-        mediaType="movie"
-        isAuthed={true}
-        lang="en"
-        dict={dict}
-        showRemoveFromWatchlist
-        showAddToWatchlist={false}
-      />
-    );
-
-    await userEvent.click(screen.getByRole("button", { name: "Remove" }));
-
-    expect(global.fetch).toHaveBeenCalledWith(
-      "/api/watchlist",
-      expect.objectContaining({
-        method: "DELETE",
-        body: JSON.stringify({ tmdbId: 42, mediaType: "movie" }),
-      }),
-    );
-    await waitFor(() => expect(toast.success).toHaveBeenCalledWith("Removed from watchlist"));
-  });
-
-  it("stops event propagation so the parent Link does NOT navigate", async () => {
-    const parentClick = jest.fn();
-    global.fetch = jest.fn().mockResolvedValue({ ok: true, status: 201, json: async () => ({ success: true }) });
-
-    render(
-      <div onClick={parentClick} data-testid="parent">
+  describe("default render (authed, neither saved nor watched)", () => {
+    it("shows ONLY the add and mark buttons — no trash, no unmark icon", () => {
+      render(
         <CardActions
           tmdbId={1}
           mediaType="movie"
@@ -167,125 +54,250 @@ describe("CardActions", () => {
           lang="en"
           dict={dict}
         />
-      </div>
-    );
+      );
 
-    await userEvent.click(screen.getByRole("button", { name: "Add to watchlist" }));
-
-    expect(parentClick).not.toHaveBeenCalled();
+      expect(screen.getByRole("button", { name: "Add to watchlist" })).toBeInTheDocument();
+      expect(screen.getByRole("button", { name: "Mark as watched" })).toBeInTheDocument();
+      expect(screen.queryByRole("button", { name: "Remove" })).not.toBeInTheDocument();
+      expect(screen.queryByRole("button", { name: dict.unmarkWatched })).not.toBeInTheDocument();
+    });
   });
 
-  it("redirects unauthenticated user to /lang/login on add click (no fetch)", async () => {
-    global.fetch = jest.fn();
+  describe("add-to-watchlist toggle (gold ↔ grey)", () => {
+    it("POSTs /api/watchlist when grey (not on list) and shows added toast", async () => {
+      global.fetch = jest.fn().mockResolvedValue({ ok: true, status: 201, json: async () => ({ success: true }) });
 
-    render(
-      <CardActions
-        tmdbId={1}
-        mediaType="movie"
-        isAuthed={false}
-        lang="ar"
-        dict={dict}
-      />
-    );
+      render(
+        <CardActions
+          tmdbId={27205}
+          mediaType="movie"
+          isAuthed={true}
+          lang="en"
+          dict={dict}
+        />
+      );
 
-    await userEvent.click(screen.getByRole("button", { name: "Add to watchlist" }));
+      await userEvent.click(screen.getByRole("button", { name: "Add to watchlist" }));
 
-    expect(mockPush).toHaveBeenCalledWith("/ar/login");
-    expect(global.fetch).not.toHaveBeenCalled();
+      expect(global.fetch).toHaveBeenCalledWith(
+        "/api/watchlist",
+        expect.objectContaining({
+          method: "POST",
+          body: JSON.stringify({ tmdbId: 27205, mediaType: "movie" }),
+        }),
+      );
+      await waitFor(() => expect(toast.success).toHaveBeenCalledWith("Added to watchlist"));
+    });
+
+    it("DELETEs /api/watchlist when gold (initiallyInWatchlist=true) and shows removed toast", async () => {
+      global.fetch = jest.fn().mockResolvedValue({ ok: true, status: 200, json: async () => ({ success: true }) });
+
+      render(
+        <CardActions
+          tmdbId={27205}
+          mediaType="movie"
+          isAuthed={true}
+          lang="en"
+          dict={dict}
+          initiallyInWatchlist
+        />
+      );
+
+      await userEvent.click(screen.getByRole("button", { name: "In watchlist" }));
+
+      expect(global.fetch).toHaveBeenCalledWith(
+        "/api/watchlist",
+        expect.objectContaining({
+          method: "DELETE",
+          body: JSON.stringify({ tmdbId: 27205, mediaType: "movie" }),
+        }),
+      );
+      await waitFor(() => expect(toast.success).toHaveBeenCalledWith("Removed from watchlist"));
+    });
   });
 
-  it("shows an Unmark-as-watched button only when showUnmarkWatched is true", () => {
-    const { rerender } = render(
-      <CardActions
-        tmdbId={1}
-        mediaType="movie"
-        isAuthed={true}
-        lang="en"
-        dict={dict}
-      />
-    );
-    expect(screen.queryByRole("button", { name: "Unmark as watched" })).not.toBeInTheDocument();
+  describe("mark-watched toggle (gold ↔ grey)", () => {
+    it("POSTs /api/watched when grey (not watched) and shows marked toast", async () => {
+      global.fetch = jest.fn().mockResolvedValue({ ok: true, status: 200, json: async () => ({ success: true }) });
 
-    rerender(
-      <CardActions
-        tmdbId={1}
-        mediaType="movie"
-        isAuthed={true}
-        lang="en"
-        dict={dict}
-        showUnmarkWatched
-      />
-    );
-    expect(screen.getByRole("button", { name: "Unmark as watched" })).toBeInTheDocument();
+      render(
+        <CardActions
+          tmdbId={1399}
+          mediaType="tv"
+          isAuthed={true}
+          lang="en"
+          dict={dict}
+        />
+      );
+
+      await userEvent.click(screen.getByRole("button", { name: "Mark as watched" }));
+
+      expect(global.fetch).toHaveBeenCalledWith(
+        "/api/watched",
+        expect.objectContaining({
+          method: "POST",
+          body: JSON.stringify({ tmdbId: 1399, mediaType: "tv" }),
+        }),
+      );
+      await waitFor(() => expect(toast.success).toHaveBeenCalledWith("Marked as watched"));
+    });
+
+    it("DELETEs /api/watched when gold (initiallyWatched=true) and shows unmarked toast", async () => {
+      global.fetch = jest.fn().mockResolvedValue({ ok: true, status: 200, json: async () => ({ success: true }) });
+
+      render(
+        <CardActions
+          tmdbId={1399}
+          mediaType="tv"
+          isAuthed={true}
+          lang="en"
+          dict={dict}
+          initiallyWatched
+        />
+      );
+
+      await userEvent.click(screen.getByRole("button", { name: dict.unmarkWatched }));
+
+      expect(global.fetch).toHaveBeenCalledWith(
+        "/api/watched",
+        expect.objectContaining({
+          method: "DELETE",
+          body: JSON.stringify({ tmdbId: 1399, mediaType: "tv" }),
+        }),
+      );
+      await waitFor(() => expect(toast.success).toHaveBeenCalledWith("Removed from watched"));
+    });
   });
 
-  it("DELETEs /api/watched on unmark click + shows unmarked toast + refreshes", async () => {
-    global.fetch = jest.fn().mockResolvedValue({ ok: true, status: 200, json: async () => ({ success: true }) });
+  describe("watched hides the add-to-watchlist icon", () => {
+    it("does NOT render the add button when initiallyWatched=true", () => {
+      render(
+        <CardActions
+          tmdbId={1}
+          mediaType="movie"
+          isAuthed={true}
+          lang="en"
+          dict={dict}
+          initiallyWatched
+        />
+      );
 
-    render(
-      <CardActions
-        tmdbId={27205}
-        mediaType="movie"
-        isAuthed={true}
-        lang="en"
-        dict={dict}
-        showAddToWatchlist={false}
-        showMarkWatched={false}
-        showUnmarkWatched
-      />
-    );
+      expect(screen.queryByRole("button", { name: "Add to watchlist" })).not.toBeInTheDocument();
+      expect(screen.queryByRole("button", { name: "In watchlist" })).not.toBeInTheDocument();
+      // mark-watched icon is still there (in its gold/Unmark state)
+      expect(screen.getByRole("button", { name: dict.unmarkWatched })).toBeInTheDocument();
+    });
 
-    await userEvent.click(screen.getByRole("button", { name: "Unmark as watched" }));
+    it("removes the add button after the user clicks Mark as watched (state-driven)", async () => {
+      global.fetch = jest.fn().mockResolvedValue({ ok: true, status: 200, json: async () => ({ success: true }) });
 
-    expect(global.fetch).toHaveBeenCalledWith(
-      "/api/watched",
-      expect.objectContaining({
-        method: "DELETE",
-        body: JSON.stringify({ tmdbId: 27205, mediaType: "movie" }),
-      }),
-    );
-    await waitFor(() => expect(toast.success).toHaveBeenCalledWith("Removed from watched"));
-    expect(mockRefresh).toHaveBeenCalled();
+      render(
+        <CardActions
+          tmdbId={27205}
+          mediaType="movie"
+          isAuthed={true}
+          lang="en"
+          dict={dict}
+        />
+      );
+
+      // Initially: grey add icon visible
+      expect(screen.getByRole("button", { name: "Add to watchlist" })).toBeInTheDocument();
+
+      await userEvent.click(screen.getByRole("button", { name: "Mark as watched" }));
+
+      // After mark: add icon gone, mark icon flipped to gold (Unmark label)
+      await waitFor(() =>
+        expect(screen.queryByRole("button", { name: "Add to watchlist" })).not.toBeInTheDocument()
+      );
+      expect(screen.getByRole("button", { name: dict.unmarkWatched })).toBeInTheDocument();
+    });
   });
 
-  it("shows unmark error toast on DELETE failure and does not refresh", async () => {
-    global.fetch = jest.fn().mockResolvedValue({ ok: false, status: 500, json: async () => ({ error: "boom" }) });
+  describe("event isolation + guest redirect", () => {
+    it("stops event propagation so the parent Link does NOT navigate", async () => {
+      const parentClick = jest.fn();
+      global.fetch = jest.fn().mockResolvedValue({ ok: true, status: 201, json: async () => ({ success: true }) });
 
-    render(
-      <CardActions
-        tmdbId={27205}
-        mediaType="movie"
-        isAuthed={true}
-        lang="en"
-        dict={dict}
-        showAddToWatchlist={false}
-        showMarkWatched={false}
-        showUnmarkWatched
-      />
-    );
+      render(
+        <div onClick={parentClick} data-testid="parent">
+          <CardActions
+            tmdbId={1}
+            mediaType="movie"
+            isAuthed={true}
+            lang="en"
+            dict={dict}
+          />
+        </div>
+      );
 
-    await userEvent.click(screen.getByRole("button", { name: "Unmark as watched" }));
+      await userEvent.click(screen.getByRole("button", { name: "Add to watchlist" }));
 
-    await waitFor(() => expect(toast.error).toHaveBeenCalledWith("Could not remove from watched. Please try again."));
-    expect(mockRefresh).not.toHaveBeenCalled();
+      expect(parentClick).not.toHaveBeenCalled();
+    });
+
+    it("redirects unauthenticated user to /lang/login on add click (no fetch)", async () => {
+      global.fetch = jest.fn();
+
+      render(
+        <CardActions
+          tmdbId={1}
+          mediaType="movie"
+          isAuthed={false}
+          lang="ar"
+          dict={dict}
+        />
+      );
+
+      await userEvent.click(screen.getByRole("button", { name: "Add to watchlist" }));
+
+      expect(mockPush).toHaveBeenCalledWith("/ar/login");
+      expect(global.fetch).not.toHaveBeenCalled();
+    });
   });
 
-  it("rolls back optimistic state + shows error toast on add failure", async () => {
-    global.fetch = jest.fn().mockResolvedValue({ ok: false, status: 500, json: async () => ({ error: "boom" }) });
+  describe("error rollback", () => {
+    it("rolls back optimistic add state + shows error toast on add failure", async () => {
+      global.fetch = jest.fn().mockResolvedValue({ ok: false, status: 500, json: async () => ({ error: "boom" }) });
 
-    render(
-      <CardActions
-        tmdbId={1}
-        mediaType="movie"
-        isAuthed={true}
-        lang="en"
-        dict={dict}
-      />
-    );
+      render(
+        <CardActions
+          tmdbId={1}
+          mediaType="movie"
+          isAuthed={true}
+          lang="en"
+          dict={dict}
+        />
+      );
 
-    await userEvent.click(screen.getByRole("button", { name: "Add to watchlist" }));
+      await userEvent.click(screen.getByRole("button", { name: "Add to watchlist" }));
 
-    await waitFor(() => expect(toast.error).toHaveBeenCalledWith("Could not add to watchlist. Please try again."));
-    expect(mockRefresh).not.toHaveBeenCalled();
+      await waitFor(() => expect(toast.error).toHaveBeenCalledWith("Could not add to watchlist. Please try again."));
+      expect(mockRefresh).not.toHaveBeenCalled();
+      // rolled back: still grey
+      expect(screen.getByRole("button", { name: "Add to watchlist" })).toBeInTheDocument();
+    });
+
+    it("rolls back optimistic mark state + shows error toast on mark failure", async () => {
+      global.fetch = jest.fn().mockResolvedValue({ ok: false, status: 500, json: async () => ({ error: "boom" }) });
+
+      render(
+        <CardActions
+          tmdbId={1}
+          mediaType="movie"
+          isAuthed={true}
+          lang="en"
+          dict={dict}
+        />
+      );
+
+      await userEvent.click(screen.getByRole("button", { name: "Mark as watched" }));
+
+      await waitFor(() => expect(toast.error).toHaveBeenCalledWith("Could not mark as watched. Please try again."));
+      expect(mockRefresh).not.toHaveBeenCalled();
+      // rolled back: still grey, add button still visible
+      expect(screen.getByRole("button", { name: "Mark as watched" })).toBeInTheDocument();
+      expect(screen.getByRole("button", { name: "Add to watchlist" })).toBeInTheDocument();
+    });
   });
 });
