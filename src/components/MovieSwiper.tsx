@@ -110,19 +110,24 @@ function getMatchAccuracyPercent(matchScore: number, bestScore: number) {
   return Math.max(30, Math.min(100, percent));
 }
 
-export default function MovieSwiper({ movies, lang, commonDict, swipeDict }: Props) {
-  const shuffledMovies = useMemo(() => {
-    if (process.env.NODE_ENV === "test") 
-      return [...movies];
+function shuffleMovies(movies: Movie[]): Movie[] {
+  if (process.env.NODE_ENV === "test") return [...movies];
+  const arr = [...movies];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    const tmp = arr[i];
+    arr[i] = arr[j];
+    arr[j] = tmp;
+  }
+  return arr;
+}
 
-    const arr = [...movies];
-    for (let i = arr.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      const tmp = arr[i];
-      arr[i] = arr[j];
-      arr[j] = tmp;
-    }
-    return arr;
+export default function MovieSwiper({ movies, lang, commonDict, swipeDict }: Props) {
+  // Shuffle once per `movies` prop change. useState lazy init keeps Math.random
+  // out of render (purity rule); the useEffect below re-shuffles when movies change.
+  const [shuffledMovies, setShuffledMovies] = useState<Movie[]>(() => shuffleMovies(movies));
+  useEffect(() => {
+    setShuffledMovies(shuffleMovies(movies));
   }, [movies]);
 
   const movieSelection = useMemo(() => shuffledMovies.slice(0, SWIPE_DECK_SIZE), [shuffledMovies]);
@@ -171,6 +176,9 @@ export default function MovieSwiper({ movies, lang, commonDict, swipeDict }: Pro
     return () => {
       active = false;
     };
+    // movieSelection is derived from shuffledMovies; using movieSelectionKey
+    // (joined ids) is intentional to avoid re-firing on identical id sets.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lang, movieSelectionKey, shuffledMovies]);
 
   const finalMatches = useMemo(

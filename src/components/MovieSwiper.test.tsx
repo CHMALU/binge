@@ -27,6 +27,7 @@ jest.mock("framer-motion", () => {
 });
 
 jest.mock("@/components/SwipeMechanism", () => {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   const React = require("react");
 
   const MockSwipeCard = React.forwardRef(function MockSwipeCard(
@@ -63,7 +64,15 @@ jest.mock("@/components/SwipeMechanism", () => {
 });
 
 jest.mock("next/image", () => {
-  const MockImage = ({ fill, ...props }: React.ImgHTMLAttributes<HTMLImageElement> & { fill?: boolean }) => <img {...props} />;
+  const MockImage = ({
+    fill,
+    alt,
+    ...props
+  }: React.ImgHTMLAttributes<HTMLImageElement> & { fill?: boolean }) => {
+    void fill; // intentionally discarded — next/image-specific prop the mock doesn't need
+    // eslint-disable-next-line @next/next/no-img-element
+    return <img alt={alt ?? ""} {...props} />;
+  };
   MockImage.displayName = "MockImage";
   return {
     __esModule: true,
