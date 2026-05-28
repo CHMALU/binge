@@ -36,7 +36,7 @@
 | Watchlist link enabled in Navbar dropdown | ✅ DONE | `feature/us10-watchlist-view` | `Navbar.tsx:111` (Christoph's `[chore][CN] enabling watchlist UI button`) |
 | Color-blindness a11y (toggle + default signals) | ⚠️ AWAITING VISUAL REVIEW | `feature/a11y-colorblind` (pushed, **MR not yet opened**) | 12 commits, tests/lint/typecheck/build all green. Needs manual click-through before MR. See section 1. |
 
-**Not done yet:** US7 (recommendations), US11 (mark as watched), US-swipe-filter (watched filtering), Watchlist DELETE/toggle, polish (Navbar cleanup, hero/cards dead buttons, navigation consistency), demo video.
+**Not done yet:** US7 (recommendations), US11 (mark as watched), US-swipe-filter (watched filtering), Watchlist DELETE/toggle, polish (Navbar cleanup, hero/cards dead buttons, navigation consistency, RatingModal guest-redirect), demo video.
 
 ---
 
@@ -374,6 +374,33 @@ Sections are roughly ordered by **deadline urgency × user value**. The first th
 
 ### Tests
 - Visual / manual — both items are layout polish, no behaviour tests
+
+**Estimated SP:** 1
+
+---
+
+## 10. RatingModal — guest users get a dead-end error instead of redirect
+
+**Status:** ⏳ NOT STARTED
+**Why:** Bug spotted 2026-05-28. Guest clicks "Rate Movie" → modal opens → picks stars → submits → `POST /api/rating` returns 401 with `"Not authenticated. Please log in to submit a rating."` (`src/app/api/rating/route.ts:24`) → RatingModal renders the message as text and stops. User has to manually navigate to `/login` afterwards. Bad UX: same shape as WatchlistButton's old behaviour before US9 fixed it.
+**Branch suggestion:** `chore/rating-guest-redirect`
+
+### Steps
+- [ ] **J1. Pass `isAuthed` prop into `RatingModal`** — mirror `WatchlistButton` pattern
+  - `src/components/RatingModal.tsx` currently has props `{ tmdbId, mediaType, title, dict }` — add `isAuthed: boolean` and `lang: string`
+  - Detail page (`src/components/MovieDetail.tsx` or whichever Server Component renders RatingModal) already calls `auth()` for other purposes — pass `!!session?.user?.id` and `lang` through
+- [ ] **J2. Render a "Sign in to rate" link when guest**
+  - When `!isAuthed`: instead of the modal-opening button, render `<Link href={\`/${lang}/login\`}>` with `IoStar` icon + `dict.signInToRate` label, styled to match the existing rating button
+  - Same UX pattern as `WatchlistButton.tsx:39-49`
+- [ ] **J3. Remove now-dead 401 handling in the modal**
+  - Since guests never reach the submit step, the `data.error` branch in `submitRating` (`RatingModal.tsx:44-47`) only fires on genuine server errors — can stay as a fallback, just no longer guarding auth
+- [ ] **J4. Dict keys**
+  - Add `dict.detail.signInToRate` to EN/PL/AR (e.g. "Sign in to rate", "Zaloguj się, aby oceniać", "سجل الدخول للتقييم")
+
+### Tests (TDD)
+- [ ] Rendering `RatingModal` with `isAuthed={false}` → shows a `<Link>` with the new dict text, no rating button visible
+- [ ] Rendering with `isAuthed={true}` → existing button + modal behaviour unchanged (regression guard against breaking authed flow)
+- [ ] Existing 2 RatingModal tests still pass (don't break the modal contract)
 
 **Estimated SP:** 1
 
