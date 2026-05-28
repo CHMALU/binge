@@ -5,7 +5,7 @@ import { getMovieDetails, getTvDetails, type Movie, type MovieDetailData } from 
 import { getDictionary, hasLocale } from "../dictionaries";
 import Navbar from "@/components/Navbar";
 import MovieCard from "@/components/MovieCard";
-import RemoveFromWatchlistButton from "@/components/RemoveFromWatchlistButton";
+import CardActions from "@/components/CardActions";
 
 type Props = { params: Promise<{ lang: string }> };
 
@@ -78,18 +78,24 @@ export default async function WatchlistPage({ params }: Props) {
               if (!movie) return null;
               return (
                 <div key={`${row.mediaType}-${row.tmdbId}`} className="flex flex-col gap-2">
-                  <div className="relative">
-                    <MovieCard movie={movie} lang={lang} commonDict={dict.common} />
-                    <RemoveFromWatchlistButton
-                      tmdbId={row.tmdbId}
-                      mediaType={row.mediaType}
-                      t={{
-                        remove: dict.watchlist.remove,
-                        removedToast: dict.watchlist.removedToast,
-                        removeError: dict.watchlist.removeError,
-                      }}
-                    />
-                  </div>
+                  <MovieCard
+                    movie={movie}
+                    lang={lang}
+                    commonDict={dict.common}
+                    actions={
+                      <CardActions
+                        tmdbId={row.tmdbId}
+                        mediaType={row.mediaType}
+                        isAuthed
+                        lang={lang}
+                        dict={dict.watchlist}
+                        initiallyInWatchlist
+                        showAddToWatchlist={false}
+                        showMarkWatched
+                        showRemoveFromWatchlist
+                      />
+                    }
+                  />
                   <p className="text-xs text-fg-subtle px-1">
                     {dict.watchlist.addedOn} {dateFormatter.format(row.addedAt)}
                   </p>
