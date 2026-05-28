@@ -2,7 +2,7 @@
  * @jest-environment node
  */
 
-import { GET, POST } from "./route";
+import { DELETE, GET, POST } from "./route";
 
 jest.mock("@/auth", () => ({ auth: jest.fn() }));
 jest.mock("@/lib/prisma", () => ({
@@ -10,6 +10,7 @@ jest.mock("@/lib/prisma", () => ({
     watchlistItem: {
       create: jest.fn(),
       findMany: jest.fn(),
+      delete: jest.fn(),
     },
   },
 }));
@@ -20,13 +21,18 @@ import { prisma } from "@/lib/prisma";
 const mockedAuth = auth as unknown as jest.Mock;
 const mockedCreate = (prisma as unknown as { watchlistItem: { create: jest.Mock } }).watchlistItem.create;
 const mockedFindMany = (prisma as unknown as { watchlistItem: { findMany: jest.Mock } }).watchlistItem.findMany;
+const mockedDelete = (prisma as unknown as { watchlistItem: { delete: jest.Mock } }).watchlistItem.delete;
 
-function makeRequest(body: unknown): Request {
+function makeRequest(body: unknown, method = "POST"): Request {
   return new Request("http://localhost/api/watchlist", {
-    method: "POST",
+    method,
     body: JSON.stringify(body),
     headers: { "content-type": "application/json" },
   });
+}
+
+function makeDeleteRequest(body: unknown): Request {
+  return makeRequest(body, "DELETE");
 }
 
 describe("POST /api/watchlist", () => {
@@ -150,6 +156,88 @@ describe("GET /api/watchlist", () => {
         { tmdbId: 1399, mediaType: "tv", addedAt: older.toISOString() },
       ],
     });
+  });
+});
+
+describe("DELETE /api/watchlist", () => {
+  beforeEach(() => jest.clearAllMocks());
+
+  it("returns 401 when no session is present", async () => {
+    mockedAuth.mockResolvedValue(null);
+
+    const res = await DELETE(makeDeleteRequest({ tmdbId: 1, mediaType: "movie" }) as never);
+
+    expect(res.status).toBe(401);
+    expect(mockedDelete).not.toHaveBeenCalled();
+  });
+
+  it("returns 400 when body is not valid JSON", async () => {
+    mockedAuth.mockResolvedValue({ user: { id: "user-1" } });
+    const req = new Request("http://localhost/api/watchlist", {
+      method: "DELETE",
+      body: "not-json",
+      headers: { "content-type": "application/json" },
+    });
+
+    const res = await DELETE(req as never);
+
+    expect(res.status).toBe(400);
+    expect(mockedDelete).not.toHaveBeenCalled();
+  });
+
+  it("returns 400 when mediaType is invalid", async () => {
+    mockedAuth.mockResolvedValue({ user: { id: "user-1" } });
+
+    const res = await DELETE(makeDeleteRequest({ tmdbId: 1, mediaType: "film" }) as never);
+
+    expect(res.status).toBe(400);
+    expect(mockedDelete).not.toHaveBeenCalled();
+  });
+
+  it("returns 400 when tmdbId is missing", async () => {
+    mockedAuth.mockResolvedValue({ user: { id: "user-1" } });
+
+    const res = await DELETE(makeDeleteRequest({ mediaType: "movie" }) as never);
+
+    expect(res.status).toBe(400);
+    expect(mockedDelete).not.toHaveBeenCalled();
+  });
+
+  it("returns 404 when the row does not exist (Prisma P2025)", async () => {
+    mockedAuth.mockResolvedValue({ user: { id: "user-1" } });
+    const notFound = Object.assign(new Error("Record to delete does not exist"), { code: "P2025" });
+    mockedDelete.mockRejectedValue(notFound);
+
+    const res = await DELETE(makeDeleteRequest({ tmdbId: 999, mediaType: "movie" }) as never);
+
+    expect(res.status).toBe(404);
+  });
+
+  it("returns 200 + success and calls prisma with the composite key on success", async () => {
+    mockedAuth.mockResolvedValue({ user: { id: "user-1" } });
+    mockedDelete.mockResolvedValue({
+      id: "row-1",
+      userId: "user-1",
+      tmdbId: 27205,
+      mediaType: "movie",
+      addedAt: new Date("2026-05-27T12:00:00.000Z"),
+    });
+
+    const res = await DELETE(makeDeleteRequest({ tmdbId: 27205, mediaType: "movie" }) as never);
+
+    expect(res.status).toBe(200);
+    expect(mockedDelete).toHaveBeenCalledWith({
+      where: {
+        userId_tmdbId_mediaType: {
+          userId: "user-1",
+          tmdbId: 27205,
+          mediaType: "movie",
+        },
+      },
+    });
+
+    const body = await res.json();
+    expect(body).toEqual({ success: true });
   });
 });
 
