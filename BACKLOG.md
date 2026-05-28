@@ -54,17 +54,17 @@ Sections are roughly ordered by **deadline urgency × user value**. The first th
 **Approach taken:** both a palette-swap toggle (4 modes) AND default-accessible redundant signals (text labels, status icons, borders, fg tokens for icons). The toggle is the demo-visible feature; the default signals work even for users who never toggle.
 
 ### Before opening the MR (manual review required)
-- [ ] Run `npm run dev` and click through every page **in each of the 4 modes** (Default / Red-green safe / Blue-yellow safe / High contrast). Toggle lives next to the language switcher in the navbar (eye icon).
-- [ ] In Chrome DevTools → Rendering → **Emulate vision deficiencies**, set deuteranopia and verify the swipe Like/Skip buttons stay distinguishable in *Red-green safe* mode (this is the headline test)
-- [ ] Same for tritanopia + *Blue-yellow safe* mode
-- [ ] **High-contrast mode special check:** swipe Like/Skip icons must be visible (black on white / black on gray); MovieCard borders must be visible (white outline); all chrome elements should pop as plain B&W
-- [ ] Sanity-check Arabic RTL — both switchers should render correctly in `/ar`
-- [ ] Test mobile breakpoint — the navbar now has two icon buttons (color vision + language); verify no wrap/overflow
-- [ ] Tweak palette overrides in `src/app/globals.css` `:root[data-cv-mode="..."]` if anything looks bad
+- [X] Run `npm run dev` and click through every page **in each of the 4 modes** (Default / Red-green safe / Blue-yellow safe / High contrast). Toggle lives next to the language switcher in the navbar (eye icon).
+- [X] In Chrome DevTools → Rendering → **Emulate vision deficiencies**, set deuteranopia and verify the swipe Like/Skip buttons stay distinguishable in *Red-green safe* mode (this is the headline test)
+- [X] Same for tritanopia + *Blue-yellow safe* mode
+- [X] **High-contrast mode special check:** swipe Like/Skip icons must be visible (black on white / black on gray); MovieCard borders must be visible (white outline); all chrome elements should pop as plain B&W
+- [X] Sanity-check Arabic RTL — both switchers should render correctly in `/ar`
+- [X] Test mobile breakpoint — the navbar now has two icon buttons (color vision + language); verify no wrap/overflow
+- [X] Tweak palette overrides in `src/app/globals.css` `:root[data-cv-mode="..."]` if anything looks bad
 - [x] ~~Verify form validation error contrast~~ — moot: login/register errors render via `toast.error()`, no inline red text exists. Collapsed into A3 check below.
 - [x] Verify toast contrast on `bg-surface-card` per mode — Toaster uses `bg-surface-card` + `text-fg` → ~17:1 in default, ~19:1 in high-contrast. Icons stay ≥ 3:1 across all modes. Info also redundantly encoded in toast string.
-- [ ] **⚠️ FINAL: Chrome DevTools → Rendering → Emulate vision deficiencies before clicking Merge in GitLab** — deuteranopia + Red-green safe, tritanopia + Blue-yellow safe, achromatopsia + High contrast
-- [ ] Open MR with manual test plan pasted in the description
+- [X] **⚠️ FINAL: Chrome DevTools → Rendering → Emulate vision deficiencies before clicking Merge in GitLab** — deuteranopia + Red-green safe, tritanopia + Blue-yellow safe, achromatopsia + High contrast
+- [X] Open MR with manual test plan pasted in the description
 
 ### What's already on the branch
 - [x] `ColorVisionSwitcher` component + 5 TDD tests, toggle wired into the navbar (eye icon)
