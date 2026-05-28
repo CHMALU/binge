@@ -25,6 +25,9 @@ const t: WatchlistDict = {
   inWatchlist: "In watchlist",
   signInToSave: "Sign in to save",
   addError: "Could not save",
+  addedToast: "Added to watchlist",
+  removedToast: "Removed from watchlist",
+  removeError: "Could not remove",
 };
 
 const originalFetch = global.fetch;
@@ -67,7 +70,7 @@ describe("WatchlistButton", () => {
     expect(btn).toBeEnabled();
   });
 
-  it("renders a disabled in-list state when the item is already saved", () => {
+  it("renders an enabled in-list toggle button when the item is already saved", () => {
     render(
       <WatchlistButton
         tmdbId={42}
@@ -80,7 +83,7 @@ describe("WatchlistButton", () => {
     );
 
     const btn = screen.getByRole("button", { name: /in watchlist/i });
-    expect(btn).toBeDisabled();
+    expect(btn).toBeEnabled();
   });
 
   it("POSTs to /api/watchlist and flips to the in-list state on success", async () => {
@@ -123,8 +126,80 @@ describe("WatchlistButton", () => {
     await waitFor(() => {
       expect(
         screen.getByRole("button", { name: /in watchlist/i })
-      ).toBeDisabled();
+      ).toBeEnabled();
     });
+
+    expect(toast.success).toHaveBeenCalledWith("Added to watchlist");
+  });
+
+  it("DELETEs and flips back to the add state when toggling off", async () => {
+    global.fetch = jest.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: async () => ({ success: true }),
+    });
+
+    render(
+      <WatchlistButton
+        tmdbId={42}
+        mediaType="movie"
+        lang="en"
+        isAuthed={true}
+        initiallyInWatchlist={true}
+        t={t}
+      />
+    );
+
+    await userEvent.click(
+      screen.getByRole("button", { name: /in watchlist/i })
+    );
+
+    expect(global.fetch).toHaveBeenCalledWith(
+      "/api/watchlist",
+      expect.objectContaining({
+        method: "DELETE",
+        body: JSON.stringify({ tmdbId: 42, mediaType: "movie" }),
+      })
+    );
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole("button", { name: /add to watchlist/i })
+      ).toBeEnabled();
+    });
+
+    expect(toast.success).toHaveBeenCalledWith("Removed from watchlist");
+  });
+
+  it("rolls back to in-list state and shows an error toast when DELETE fails", async () => {
+    global.fetch = jest.fn().mockResolvedValue({
+      ok: false,
+      status: 500,
+      json: async () => ({ error: "boom" }),
+    });
+
+    render(
+      <WatchlistButton
+        tmdbId={42}
+        mediaType="movie"
+        lang="en"
+        isAuthed={true}
+        initiallyInWatchlist={true}
+        t={t}
+      />
+    );
+
+    await userEvent.click(
+      screen.getByRole("button", { name: /in watchlist/i })
+    );
+
+    await waitFor(() => {
+      expect(toast.error).toHaveBeenCalledWith("Could not remove");
+    });
+
+    expect(
+      screen.getByRole("button", { name: /in watchlist/i })
+    ).toBeEnabled();
   });
 
   it("shows an error toast when the API call fails", async () => {

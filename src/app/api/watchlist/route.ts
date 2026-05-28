@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import type {
   AddWatchlistRequest,
   AddWatchlistResponse,
+  DeleteWatchlistResponse,
   GetWatchlistResponse,
   WatchlistItemDTO,
 } from "@/types/watchlist";
@@ -69,6 +70,55 @@ export async function POST(req: Request) {
       return NextResponse.json<AddWatchlistResponse>(
         { error: "Already in watchlist" },
         { status: 409 }
+      );
+    }
+    throw err;
+  }
+}
+
+export async function DELETE(req: Request) {
+  const session = await auth();
+  if (!session?.user?.id) {
+    return NextResponse.json<DeleteWatchlistResponse>(
+      { error: "Unauthorized" },
+      { status: 401 }
+    );
+  }
+
+  let body: unknown;
+  try {
+    body = await req.json();
+  } catch {
+    return NextResponse.json<DeleteWatchlistResponse>(
+      { error: "Invalid JSON" },
+      { status: 400 }
+    );
+  }
+
+  if (!isValidBody(body)) {
+    return NextResponse.json<DeleteWatchlistResponse>(
+      { error: "Invalid request body" },
+      { status: 400 }
+    );
+  }
+
+  try {
+    await prisma.watchlistItem.delete({
+      where: {
+        userId_tmdbId_mediaType: {
+          userId: session.user.id,
+          tmdbId: body.tmdbId,
+          mediaType: body.mediaType,
+        },
+      },
+    });
+
+    return NextResponse.json<DeleteWatchlistResponse>({ success: true });
+  } catch (err) {
+    if ((err as { code?: string }).code === "P2025") {
+      return NextResponse.json<DeleteWatchlistResponse>(
+        { error: "Not in watchlist" },
+        { status: 404 }
       );
     }
     throw err;
