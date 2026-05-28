@@ -17,6 +17,13 @@ type Props = {
 };
 
 export default function RatingModal({ tmdbId, mediaType, title, dict, isAuthed, lang }: Props) {
+  const [isRatingOpen, setIsRatingOpen] = useState(false);
+  const [hoveredStar, setHoveredStar] = useState(0);
+  const [selectedRating, setSelectedRating] = useState(0);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [ratingError, setRatingError] = useState("");
+  const [ratingSuccess, setRatingSuccess] = useState("");
+
   if (!isAuthed) {
     return (
       <Link
@@ -28,13 +35,6 @@ export default function RatingModal({ tmdbId, mediaType, title, dict, isAuthed, 
       </Link>
     );
   }
-
-  const [isRatingOpen, setIsRatingOpen] = useState(false);
-  const [hoveredStar, setHoveredStar] = useState(0);
-  const [selectedRating, setSelectedRating] = useState(0);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [ratingError, setRatingError] = useState("");
-  const [ratingSuccess, setRatingSuccess] = useState("");
 
   async function submitRating(stars: number) {
     try {

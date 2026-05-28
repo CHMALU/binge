@@ -47,7 +47,8 @@ const mockDict = {
   submit: 'Submit',
   saving: 'Saving...',
   error: 'Failed to submit rating. Please try again.',
-  success: 'Rating submitted successfully!'
+  success: 'Rating submitted successfully!',
+  signInToRate: 'Sign in to rate',
 };
 
 const mockCommonDict = {
