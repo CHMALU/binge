@@ -126,6 +126,7 @@
     "submit": "Zatwierdź",
     "saving": "Zapisywanie...",
     "error": "Coś poszło nie tak. Spróbuj ponownie.",
-    "success": "Ocena zapisana!"
+    "success": "Ocena zapisana!",
+    "signInToRate": "Zaloguj się, aby oceniać"
   }
 }

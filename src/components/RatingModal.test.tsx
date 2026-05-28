@@ -3,6 +3,18 @@ import userEvent from '@testing-library/user-event';
 import RatingModal from '@/components/RatingModal';
 import type { Dictionary } from '@/app/[lang]/dictionaries';
 
+jest.mock('next/link', () => {
+  const MockLink = ({
+    children,
+    href,
+  }: {
+    children: React.ReactNode;
+    href: string;
+  }) => <a href={href}>{children}</a>;
+  MockLink.displayName = 'MockLink';
+  return MockLink;
+});
+
 type DetailDict = Dictionary['detail'];
 
 const dict: DetailDict = {
@@ -33,6 +45,7 @@ const dict: DetailDict = {
   error: 'Failed to submit rating. Please try again.',
   success: 'Rating submitted successfully!',
   ratingAriaLabel: '{stars} out of 5',
+  signInToRate: 'Sign in to rate',
 };
 
 describe('RatingModal', () => {
@@ -42,7 +55,16 @@ describe('RatingModal', () => {
   });
 
   it('opens the rating dialog from the trigger button', async () => {
-    render(<RatingModal tmdbId={1} mediaType="movie" title="Inception" dict={dict} />);
+    render(
+      <RatingModal
+        tmdbId={1}
+        mediaType="movie"
+        title="Inception"
+        dict={dict}
+        isAuthed={true}
+        lang="en"
+      />
+    );
 
     await userEvent.click(screen.getByRole('button', { name: 'Rate this Movie' }));
 
@@ -56,7 +78,16 @@ describe('RatingModal', () => {
       json: async () => ({ success: true }),
     });
 
-    render(<RatingModal tmdbId={42} mediaType="tv" title="Breaking Bad" dict={dict} />);
+    render(
+      <RatingModal
+        tmdbId={42}
+        mediaType="tv"
+        title="Breaking Bad"
+        dict={dict}
+        isAuthed={true}
+        lang="en"
+      />
+    );
 
     await userEvent.click(screen.getByRole('button', { name: 'Rate this Series' }));
     await userEvent.click(screen.getByRole('button', { name: 'Rate 4 stars' }));
@@ -72,5 +103,38 @@ describe('RatingModal', () => {
         }),
       );
     });
+  });
+
+  it('renders a sign-in link instead of the trigger when the user is not authenticated', () => {
+    render(
+      <RatingModal
+        tmdbId={1}
+        mediaType="movie"
+        title="Inception"
+        dict={dict}
+        isAuthed={false}
+        lang="en"
+      />
+    );
+
+    const link = screen.getByRole('link', { name: /sign in to rate/i });
+    expect(link).toHaveAttribute('href', '/en/login');
+    expect(screen.queryByRole('button', { name: /rate this movie/i })).not.toBeInTheDocument();
+  });
+
+  it('respects the locale in the sign-in link', () => {
+    render(
+      <RatingModal
+        tmdbId={1}
+        mediaType="movie"
+        title="Inception"
+        dict={dict}
+        isAuthed={false}
+        lang="ar"
+      />
+    );
+
+    const link = screen.getByRole('link', { name: /sign in to rate/i });
+    expect(link).toHaveAttribute('href', '/ar/login');
   });
 });

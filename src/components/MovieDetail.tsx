@@ -211,7 +211,7 @@ export default function MovieDetail({
                 <div className="text-sm text-fg-subtle">
                   {detail.vote_count.toLocaleString()} {dict.votes}
                   <div className="mt-5">
-                    <RatingModal tmdbId={detail.id} mediaType={isTv ? "tv" : "movie"} title={title} dict={dict} />
+                    <RatingModal tmdbId={detail.id} mediaType={isTv ? "tv" : "movie"} title={title} dict={dict} isAuthed={isAuthed ?? false} lang={lang} />
                   </div>
                 </div>
               )}

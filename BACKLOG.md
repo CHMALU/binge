@@ -36,8 +36,10 @@
 | Watchlist link enabled in Navbar dropdown | ✅ DONE | `feature/us10-watchlist-view` | `Navbar.tsx:111` (Christoph's `[chore][CN] enabling watchlist UI button`) |
 | Color-blindness a11y (toggle + default signals) | ✅ DONE | `feature/a11y-colorblind` | Merged into `main` (commit `b26e36e`) |
 | Watchlist DELETE / toggle / remove | ✅ DONE | `feature/watchlist-remove` | DELETE endpoint + WatchlistButton toggle + floating trash on `/watchlist` |
+| RatingModal guest redirect (§10) | ✅ DONE | `chore/rating-guest-redirect` | Guests see "Sign in to rate" Link instead of 401 dead-end |
+| Swipe page locale forwarding (§11) | ✅ DONE | `chore/rating-guest-redirect` | `getPopular*` now receive `lang` from URL → swipe deck localized |
 
-**Not done yet:** US7 (recommendations), US11 (mark as watched), US-swipe-filter (watched filtering), polish (Navbar cleanup, hero/cards dead buttons, navigation consistency, RatingModal guest-redirect), demo video.
+**Not done yet:** US7 (recommendations), US11 (mark as watched), US-swipe-filter (watched filtering), polish (Navbar cleanup, hero/cards dead buttons, navigation consistency), demo video.
 
 ---
 
@@ -385,28 +387,66 @@ Sections are roughly ordered by **deadline urgency × user value**. The first th
 
 ## 10. RatingModal — guest users get a dead-end error instead of redirect
 
-**Status:** ⏳ NOT STARTED
+**Status:** ✅ DONE
+**Branch:** `chore/rating-guest-redirect`
 **Why:** Bug spotted 2026-05-28. Guest clicks "Rate Movie" → modal opens → picks stars → submits → `POST /api/rating` returns 401 with `"Not authenticated. Please log in to submit a rating."` (`src/app/api/rating/route.ts:24`) → RatingModal renders the message as text and stops. User has to manually navigate to `/login` afterwards. Bad UX: same shape as WatchlistButton's old behaviour before US9 fixed it.
-**Branch suggestion:** `chore/rating-guest-redirect`
 
 ### Steps
-- [ ] **J1. Pass `isAuthed` prop into `RatingModal`** — mirror `WatchlistButton` pattern
-  - `src/components/RatingModal.tsx` currently has props `{ tmdbId, mediaType, title, dict }` — add `isAuthed: boolean` and `lang: string`
-  - Detail page (`src/components/MovieDetail.tsx` or whichever Server Component renders RatingModal) already calls `auth()` for other purposes — pass `!!session?.user?.id` and `lang` through
-- [ ] **J2. Render a "Sign in to rate" link when guest**
-  - When `!isAuthed`: instead of the modal-opening button, render `<Link href={\`/${lang}/login\`}>` with `IoStar` icon + `dict.signInToRate` label, styled to match the existing rating button
+- [x] **J1. Pass `isAuthed` prop into `RatingModal`** — mirror `WatchlistButton` pattern
+  - `src/components/RatingModal.tsx` now accepts `isAuthed: boolean` and `lang: string`
+  - `src/components/MovieDetail.tsx` passes `isAuthed ?? false` and `lang` through (line ~214)
+- [x] **J2. Render a "Sign in to rate" link when guest**
+  - When `!isAuthed`: early return a `<Link href={\`/${lang}/login\`}>` with `IoStar` + `dict.signInToRate`, styled like the rating trigger
   - Same UX pattern as `WatchlistButton.tsx:39-49`
-- [ ] **J3. Remove now-dead 401 handling in the modal**
-  - Since guests never reach the submit step, the `data.error` branch in `submitRating` (`RatingModal.tsx:44-47`) only fires on genuine server errors — can stay as a fallback, just no longer guarding auth
-- [ ] **J4. Dict keys**
-  - Add `dict.detail.signInToRate` to EN/PL/AR (e.g. "Sign in to rate", "Zaloguj się, aby oceniać", "سجل الدخول للتقييم")
+- [x] **J3. 401 handling in submitRating left as a fallback**
+  - Guests no longer reach the submit step, so the `data.error` branch in `submitRating` only fires on genuine server errors — stays as a defensive fallback
+- [x] **J4. Dict key `signInToRate`** added to `detail` block in EN/PL/AR
 
 ### Tests (TDD)
-- [ ] Rendering `RatingModal` with `isAuthed={false}` → shows a `<Link>` with the new dict text, no rating button visible
-- [ ] Rendering with `isAuthed={true}` → existing button + modal behaviour unchanged (regression guard against breaking authed flow)
-- [ ] Existing 2 RatingModal tests still pass (don't break the modal contract)
+- [x] Rendering `RatingModal` with `isAuthed={false}` → shows a `<Link>` with the new dict text, no rating button visible
+- [x] Rendering with `isAuthed={false}` + `lang="ar"` → link href is `/ar/login` (locale-aware regression guard)
+- [x] Rendering with `isAuthed={true}` → existing button + modal behaviour unchanged (regression guard against breaking authed flow)
+- [x] Existing 2 RatingModal tests still pass (don't break the modal contract)
 
-**Estimated SP:** 1
+**Estimated SP:** 1 (delivered)
+
+---
+
+## 11. Swipe page ignores locale when fetching TMDb data
+
+**Status:** ✅ DONE
+**Branch:** `chore/rating-guest-redirect` (combined with §10 to land both before Friday)
+**Why:** Bug spotted 2026-05-28. On the home page (`/[lang]`), the `lang` URL segment is passed through to TMDb so posters/titles/overviews come back localized (e.g. `/pl` → Polish strings). On the swipe page, the same fetches were called **without** the locale, so the deck always showed English data even when the surrounding UI was Polish or Arabic. Inconsistent with the rest of the app and visible to anyone testing in `/pl` or `/ar` (which is the demo locale per the Wed 2026-06-03 deliverable — see hard deadlines).
+
+### Root cause
+
+`src/app/[lang]/swipe/page.tsx:17-18`:
+```ts
+const [moviesData, seriesData] = await Promise.all([
+  getPopularMovies(),
+  getPopularSeries(),
+]);
+```
+No `lang` passed. Compare with the home page (`src/app/[lang]/page.tsx:27-28`):
+```ts
+getPopularMovies(lang),
+getPopularSeries(lang),
+```
+The `tmdb.ts` helpers (`src/lib/tmdb.ts:137-142`) already accept an optional locale (`tmdbFetch<...>("/movie/popular", { language: tmdbLang(locale) })`) — they just default to `en-US` when the arg is missing.
+
+### Steps
+- [x] **K1.** Pass `lang` into `getPopularMovies` / `getPopularSeries` on `src/app/[lang]/swipe/page.tsx:17-18`. Two-line change.
+- [x] **K2.** Swept the swipe path for other TMDb calls — none exist today. `MovieSwiper.tsx` is a client component that only renders what the server page provides; no additional fetches there. (US7 must keep this convention when it lands.)
+- [x] **K3.** Tests verify locale forwarding for both `/pl/swipe` and `/ar/swipe`. Manual click-through expected as part of the demo recording.
+
+### Tests
+- [x] New `src/app/[lang]/swipe/page.test.tsx`: `/pl` → both `getPopularMovies` and `getPopularSeries` called with `"pl"`; `/ar` → same with `"ar"`; unknown locale → `notFound`, no fetch calls. Mirrors the watchlist page test pattern.
+
+### Notes
+- Independent of US7 (recommendations) — even the current 5-hardcoded-movies deck now respects locale.
+- `MovieSwiper.tsx` itself is a client component and doesn't fetch — it only renders what the server page passes in.
+
+**Estimated SP:** 1 (delivered)
 
 ---
 

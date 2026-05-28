@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { IoStar, IoStarOutline, IoCheckmarkCircle, IoCloseCircle } from "react-icons/io5";
 import type { Dictionary } from "@/app/[lang]/dictionaries";
 
@@ -11,15 +12,29 @@ type Props = {
   mediaType: "movie" | "tv";
   title: string;
   dict: DetailDict;
+  isAuthed: boolean;
+  lang: string;
 };
 
-export default function RatingModal({ tmdbId, mediaType, title, dict }: Props) {
+export default function RatingModal({ tmdbId, mediaType, title, dict, isAuthed, lang }: Props) {
   const [isRatingOpen, setIsRatingOpen] = useState(false);
   const [hoveredStar, setHoveredStar] = useState(0);
   const [selectedRating, setSelectedRating] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [ratingError, setRatingError] = useState("");
   const [ratingSuccess, setRatingSuccess] = useState("");
+
+  if (!isAuthed) {
+    return (
+      <Link
+        href={`/${lang}/login`}
+        className="w-full inline-flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-semibold border transition-all bg-surface-card border-border text-fg hover:bg-white/10"
+      >
+        <IoStar aria-hidden="true" />
+        {dict.signInToRate}
+      </Link>
+    );
+  }
 
   async function submitRating(stars: number) {
     try {

@@ -14,8 +14,8 @@ export default async function SwipeRouter({
 
   const [dict, movies, series] = await Promise.all([
     getDictionary(lang),
-    getPopularMovies(),
-    getPopularSeries(),
+    getPopularMovies(lang),
+    getPopularSeries(lang),
   ]);
 
   const all = movies.concat(series);
