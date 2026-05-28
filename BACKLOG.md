@@ -379,6 +379,44 @@ Sections are roughly ordered by **deadline urgency × user value**. The first th
 
 ---
 
+## 11. Swipe page ignores locale when fetching TMDb data
+
+**Status:** ⏳ NOT STARTED
+**Why:** Bug spotted 2026-05-28. On the home page (`/[lang]`), the `lang` URL segment is passed through to TMDb so posters/titles/overviews come back localized (e.g. `/pl` → Polish strings). On the swipe page, the same fetches are called **without** the locale, so the deck always shows English data even when the surrounding UI is Polish or Arabic. Inconsistent with the rest of the app and visible to anyone testing in `/pl` or `/ar` (which is the demo locale per the Wed 2026-06-03 deliverable — see hard deadlines).
+**Branch suggestion:** `chore/swipe-locale-fetch`
+
+### Root cause
+
+`src/app/[lang]/swipe/page.tsx:17-18`:
+```ts
+const [moviesData, seriesData] = await Promise.all([
+  getPopularMovies(),
+  getPopularSeries(),
+]);
+```
+No `lang` passed. Compare with the home page (`src/app/[lang]/page.tsx:27-28`):
+```ts
+getPopularMovies(lang),
+getPopularSeries(lang),
+```
+The `tmdb.ts` helpers (`src/lib/tmdb.ts:137-142`) already accept an optional locale (`tmdbFetch<...>("/movie/popular", { language: tmdbLang(locale) })`) — they just default to `en-US` when the arg is missing.
+
+### Steps
+- [ ] **K1.** Pass `lang` into `getPopularMovies` / `getPopularSeries` on `src/app/[lang]/swipe/page.tsx`. Two-line change.
+- [ ] **K2.** Verify whether any *other* call into `tmdb.ts` in the swipe path also drops locale — e.g. if US7 (recommendations) ships later it must do the same. Grep `getPopular`, `getNowPlaying`, `getOnAir`, `tmdbFetch` under `src/app/[lang]/swipe/` and any swipe-related lib helpers.
+- [ ] **K3.** Manually verify in `/pl/swipe` and `/ar/swipe` that overview/title strings come back in the target locale (TMDb falls back to English for titles where no localized version exists — that's expected, not a bug).
+
+### Tests
+- [ ] Server-component-style test: render the swipe page with `lang="pl"`, mock `getPopularMovies` / `getPopularSeries`, assert each was called with `"pl"`. Mirror the pattern in `src/app/[lang]/watchlist/page.test.tsx:140-141` (`toHaveBeenCalledWith(27205, "en")` etc.).
+
+### Notes
+- This is independent of US7 (recommendations) — even with the current 5-hardcoded-movies deck, the items shown should respect locale.
+- `MovieSwiper.tsx` itself is a client component and doesn't fetch — it only renders what the server page passes in, so no change needed there.
+
+**Estimated SP:** 1
+
+---
+
 # Open Questions — block coding, need product/design decision
 
 1. **Discover/Swipe CTA placement** (affects F3 + G1)
