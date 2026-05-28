@@ -2,12 +2,12 @@
  * @jest-environment node
  */
 
-import { GET, POST } from "./route";
+import { DELETE, GET, POST } from "./route";
 
 jest.mock("@/auth", () => ({ auth: jest.fn() }));
 jest.mock("@/lib/prisma", () => ({
   prisma: {
-    watchedItem: { upsert: jest.fn(), findMany: jest.fn() },
+    watchedItem: { upsert: jest.fn(), findMany: jest.fn(), deleteMany: jest.fn() },
     watchlistItem: { deleteMany: jest.fn() },
     rating: { upsert: jest.fn() },
     $transaction: jest.fn(),
@@ -20,16 +20,21 @@ import { prisma } from "@/lib/prisma";
 const mockedAuth = auth as unknown as jest.Mock;
 const mockedUpsertWatched = (prisma as unknown as { watchedItem: { upsert: jest.Mock } }).watchedItem.upsert;
 const mockedFindManyWatched = (prisma as unknown as { watchedItem: { findMany: jest.Mock } }).watchedItem.findMany;
+const mockedDeleteManyWatched = (prisma as unknown as { watchedItem: { deleteMany: jest.Mock } }).watchedItem.deleteMany;
 const mockedDeleteManyWatchlist = (prisma as unknown as { watchlistItem: { deleteMany: jest.Mock } }).watchlistItem.deleteMany;
 const mockedUpsertRating = (prisma as unknown as { rating: { upsert: jest.Mock } }).rating.upsert;
 const mockedTransaction = (prisma as unknown as { $transaction: jest.Mock }).$transaction;
 
-function makeRequest(body: unknown): Request {
+function makeRequest(body: unknown, method = "POST"): Request {
   return new Request("http://localhost/api/watched", {
-    method: "POST",
+    method,
     body: typeof body === "string" ? body : JSON.stringify(body),
     headers: { "content-type": "application/json" },
   });
+}
+
+function makeDeleteRequest(body: unknown): Request {
+  return makeRequest(body, "DELETE");
 }
 
 describe("POST /api/watched", () => {
@@ -234,5 +239,74 @@ describe("GET /api/watched", () => {
         { tmdbId: 1399, mediaType: "tv", watchedAt: older.toISOString(), rating: null },
       ],
     });
+  });
+});
+
+describe("DELETE /api/watched", () => {
+  beforeEach(() => jest.clearAllMocks());
+
+  it("returns 401 when there is no session", async () => {
+    mockedAuth.mockResolvedValue(null);
+
+    const res = await DELETE(makeDeleteRequest({ tmdbId: 1, mediaType: "movie" }) as never);
+
+    expect(res.status).toBe(401);
+    expect(mockedDeleteManyWatched).not.toHaveBeenCalled();
+  });
+
+  it("returns 400 when body is not valid JSON", async () => {
+    mockedAuth.mockResolvedValue({ user: { id: "u-1" } });
+    const req = new Request("http://localhost/api/watched", {
+      method: "DELETE",
+      body: "not-json",
+      headers: { "content-type": "application/json" },
+    });
+
+    const res = await DELETE(req as never);
+
+    expect(res.status).toBe(400);
+    expect(mockedDeleteManyWatched).not.toHaveBeenCalled();
+  });
+
+  it("returns 400 when mediaType is invalid", async () => {
+    mockedAuth.mockResolvedValue({ user: { id: "u-1" } });
+
+    const res = await DELETE(makeDeleteRequest({ tmdbId: 1, mediaType: "film" }) as never);
+
+    expect(res.status).toBe(400);
+    expect(mockedDeleteManyWatched).not.toHaveBeenCalled();
+  });
+
+  it("returns 400 when tmdbId is missing", async () => {
+    mockedAuth.mockResolvedValue({ user: { id: "u-1" } });
+
+    const res = await DELETE(makeDeleteRequest({ mediaType: "movie" }) as never);
+
+    expect(res.status).toBe(400);
+    expect(mockedDeleteManyWatched).not.toHaveBeenCalled();
+  });
+
+  it("returns 200 + success and calls deleteMany with composite where on success", async () => {
+    mockedAuth.mockResolvedValue({ user: { id: "u-1" } });
+    mockedDeleteManyWatched.mockResolvedValue({ count: 1 });
+
+    const res = await DELETE(makeDeleteRequest({ tmdbId: 27205, mediaType: "movie" }) as never);
+
+    expect(res.status).toBe(200);
+    expect(mockedDeleteManyWatched).toHaveBeenCalledWith({
+      where: { userId: "u-1", tmdbId: 27205, mediaType: "movie" },
+    });
+
+    const body = await res.json();
+    expect(body).toEqual({ success: true });
+  });
+
+  it("is idempotent: returns 200 when there was no row to delete (deleteMany count=0)", async () => {
+    mockedAuth.mockResolvedValue({ user: { id: "u-1" } });
+    mockedDeleteManyWatched.mockResolvedValue({ count: 0 });
+
+    const res = await DELETE(makeDeleteRequest({ tmdbId: 999, mediaType: "movie" }) as never);
+
+    expect(res.status).toBe(200);
   });
 });
