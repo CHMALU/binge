@@ -194,6 +194,82 @@ describe("CardActions", () => {
     expect(global.fetch).not.toHaveBeenCalled();
   });
 
+  it("shows an Unmark-as-watched button only when showUnmarkWatched is true", () => {
+    const { rerender } = render(
+      <CardActions
+        tmdbId={1}
+        mediaType="movie"
+        isAuthed={true}
+        lang="en"
+        dict={dict}
+      />
+    );
+    expect(screen.queryByRole("button", { name: "Unmark as watched" })).not.toBeInTheDocument();
+
+    rerender(
+      <CardActions
+        tmdbId={1}
+        mediaType="movie"
+        isAuthed={true}
+        lang="en"
+        dict={dict}
+        showUnmarkWatched
+      />
+    );
+    expect(screen.getByRole("button", { name: "Unmark as watched" })).toBeInTheDocument();
+  });
+
+  it("DELETEs /api/watched on unmark click + shows unmarked toast + refreshes", async () => {
+    global.fetch = jest.fn().mockResolvedValue({ ok: true, status: 200, json: async () => ({ success: true }) });
+
+    render(
+      <CardActions
+        tmdbId={27205}
+        mediaType="movie"
+        isAuthed={true}
+        lang="en"
+        dict={dict}
+        showAddToWatchlist={false}
+        showMarkWatched={false}
+        showUnmarkWatched
+      />
+    );
+
+    await userEvent.click(screen.getByRole("button", { name: "Unmark as watched" }));
+
+    expect(global.fetch).toHaveBeenCalledWith(
+      "/api/watched",
+      expect.objectContaining({
+        method: "DELETE",
+        body: JSON.stringify({ tmdbId: 27205, mediaType: "movie" }),
+      }),
+    );
+    await waitFor(() => expect(toast.success).toHaveBeenCalledWith("Removed from watched"));
+    expect(mockRefresh).toHaveBeenCalled();
+  });
+
+  it("shows unmark error toast on DELETE failure and does not refresh", async () => {
+    global.fetch = jest.fn().mockResolvedValue({ ok: false, status: 500, json: async () => ({ error: "boom" }) });
+
+    render(
+      <CardActions
+        tmdbId={27205}
+        mediaType="movie"
+        isAuthed={true}
+        lang="en"
+        dict={dict}
+        showAddToWatchlist={false}
+        showMarkWatched={false}
+        showUnmarkWatched
+      />
+    );
+
+    await userEvent.click(screen.getByRole("button", { name: "Unmark as watched" }));
+
+    await waitFor(() => expect(toast.error).toHaveBeenCalledWith("Could not remove from watched. Please try again."));
+    expect(mockRefresh).not.toHaveBeenCalled();
+  });
+
   it("rolls back optimistic state + shows error toast on add failure", async () => {
     global.fetch = jest.fn().mockResolvedValue({ ok: false, status: 500, json: async () => ({ error: "boom" }) });
 

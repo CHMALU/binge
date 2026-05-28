@@ -19,6 +19,7 @@ type Props = {
   showAddToWatchlist?: boolean;
   showMarkWatched?: boolean;
   showRemoveFromWatchlist?: boolean;
+  showUnmarkWatched?: boolean;
 };
 
 const ICON_BUTTON_BASE =
