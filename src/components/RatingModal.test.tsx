@@ -140,4 +140,125 @@ describe('RatingModal', () => {
     const link = screen.getByRole('link', { name: /sign in to rate/i });
     expect(link).toHaveAttribute('href', '/ar/login');
   });
+
+  describe('configurable mode (for MarkWatchedButton reuse)', () => {
+    it('uses onSubmit instead of POST /api/rating when provided', async () => {
+      const onSubmit = jest.fn().mockResolvedValue({ ok: true });
+
+      render(
+        <RatingModal
+          {...({
+            tmdbId: 7,
+            mediaType: 'movie',
+            title: 'Heat',
+            dict,
+            isAuthed: true,
+            lang: 'en',
+            onSubmit,
+          } as never)}
+        />
+      );
+
+      await userEvent.click(screen.getByRole('button', { name: 'Rate this Movie' }));
+      await userEvent.click(screen.getByRole('button', { name: 'Rate 3 stars' }));
+      await userEvent.click(screen.getByRole('button', { name: 'Submit' }));
+
+      await waitFor(() => {
+        expect(onSubmit).toHaveBeenCalledWith(3);
+      });
+      expect(global.fetch).not.toHaveBeenCalled();
+    });
+
+    it('calls onSuccess after a successful submit', async () => {
+      const onSubmit = jest.fn().mockResolvedValue({ ok: true });
+      const onSuccess = jest.fn();
+
+      render(
+        <RatingModal
+          {...({
+            tmdbId: 7,
+            mediaType: 'movie',
+            title: 'Heat',
+            dict,
+            isAuthed: true,
+            lang: 'en',
+            onSubmit,
+            onSuccess,
+          } as never)}
+        />
+      );
+
+      await userEvent.click(screen.getByRole('button', { name: 'Rate this Movie' }));
+      await userEvent.click(screen.getByRole('button', { name: 'Rate 5 stars' }));
+      await userEvent.click(screen.getByRole('button', { name: 'Submit' }));
+
+      await waitFor(() => {
+        expect(onSuccess).toHaveBeenCalled();
+      });
+    });
+
+    it('renders a Skip rating button that calls onSkip when provided', async () => {
+      const onSkip = jest.fn().mockResolvedValue({ ok: true });
+
+      render(
+        <RatingModal
+          {...({
+            tmdbId: 1,
+            mediaType: 'movie',
+            title: 'Inception',
+            dict,
+            isAuthed: true,
+            lang: 'en',
+            onSubmit: jest.fn(),
+            onSkip,
+          } as never)}
+        />
+      );
+
+      await userEvent.click(screen.getByRole('button', { name: 'Rate this Movie' }));
+      const skip = screen.getByRole('button', { name: 'Skip rating' });
+      await userEvent.click(skip);
+
+      await waitFor(() => {
+        expect(onSkip).toHaveBeenCalled();
+      });
+    });
+
+    it('does NOT render Skip rating when onSkip is not provided', async () => {
+      render(
+        <RatingModal
+          tmdbId={1}
+          mediaType="movie"
+          title="Inception"
+          dict={dict}
+          isAuthed={true}
+          lang="en"
+        />
+      );
+
+      await userEvent.click(screen.getByRole('button', { name: 'Rate this Movie' }));
+      expect(screen.queryByRole('button', { name: 'Skip rating' })).not.toBeInTheDocument();
+    });
+
+    it('renders triggerLabel + dialogTitle when provided (overrides defaults)', async () => {
+      render(
+        <RatingModal
+          {...({
+            tmdbId: 1,
+            mediaType: 'movie',
+            title: 'Inception',
+            dict,
+            isAuthed: true,
+            lang: 'en',
+            triggerLabel: 'Mark as watched',
+            dialogTitle: 'How would you rate it?',
+          } as never)}
+        />
+      );
+
+      await userEvent.click(screen.getByRole('button', { name: 'Mark as watched' }));
+      expect(screen.getByRole('heading', { name: 'How would you rate it?' })).toBeInTheDocument();
+      expect(screen.queryByRole('heading', { name: /Rate "Inception"/ })).not.toBeInTheDocument();
+    });
+  });
 });
