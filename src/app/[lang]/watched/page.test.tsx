@@ -2,7 +2,10 @@ import { render, screen } from "@testing-library/react";
 
 jest.mock("@/auth", () => ({ auth: jest.fn() }));
 jest.mock("@/lib/prisma", () => ({
-  prisma: { watchedItem: { findMany: jest.fn() } },
+  prisma: {
+    watchedItem: { findMany: jest.fn().mockResolvedValue([]) },
+    watchlistItem: { findMany: jest.fn().mockResolvedValue([]) },
+  },
 }));
 jest.mock("@/lib/tmdb", () => ({
   getMovieDetails: jest.fn(),

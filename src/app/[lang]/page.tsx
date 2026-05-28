@@ -6,6 +6,7 @@ import FilterBar from "@/components/FilterBar";
 import { auth } from "@/auth";
 import { getPopularMovies, getPopularSeries, getNowPlaying, getOnAir } from "@/lib/tmdb";
 import type { Movie } from "@/lib/tmdb";
+import { getUserItemSets, makeItemKey } from "@/lib/userSets";
 import Image from "next/image";
 import {
   IoStar,
@@ -32,7 +33,11 @@ export default async function Home({
     getOnAir(lang),
     auth(),
   ]);
-  const isAuthed = !!session?.user?.id;
+  const userId = session?.user?.id;
+  const isAuthed = !!userId;
+  const { watchlistKeys, watchedKeys } = userId
+    ? await getUserItemSets(userId)
+    : { watchlistKeys: new Set<string>(), watchedKeys: new Set<string>() };
 
   const hero = popularMovies[0];
   const backdropUrl = hero?.backdrop_path
@@ -116,6 +121,8 @@ export default async function Home({
           commonDict={dict.common}
           watchlistDict={dict.watchlist}
           isAuthed={isAuthed}
+          watchlistKeys={watchlistKeys}
+          watchedKeys={watchedKeys}
         />
         <Section
           title={dict.sections.nowInCinemas}
@@ -126,6 +133,8 @@ export default async function Home({
           commonDict={dict.common}
           watchlistDict={dict.watchlist}
           isAuthed={isAuthed}
+          watchlistKeys={watchlistKeys}
+          watchedKeys={watchedKeys}
         />
         <Section
           title={dict.sections.popularSeries}
@@ -136,6 +145,8 @@ export default async function Home({
           commonDict={dict.common}
           watchlistDict={dict.watchlist}
           isAuthed={isAuthed}
+          watchlistKeys={watchlistKeys}
+          watchedKeys={watchedKeys}
         />
         <Section
           title={dict.sections.currentlyOnTV}
@@ -146,6 +157,8 @@ export default async function Home({
           commonDict={dict.common}
           watchlistDict={dict.watchlist}
           isAuthed={isAuthed}
+          watchlistKeys={watchlistKeys}
+          watchedKeys={watchedKeys}
         />
       </div>
     </div>
@@ -161,6 +174,8 @@ function Section({
   commonDict,
   watchlistDict,
   isAuthed,
+  watchlistKeys,
+  watchedKeys,
 }: {
   title: string;
   eyebrow?: string;
@@ -170,6 +185,8 @@ function Section({
   commonDict: Dictionary["common"];
   watchlistDict: Dictionary["watchlist"];
   isAuthed: boolean;
+  watchlistKeys: Set<string>;
+  watchedKeys: Set<string>;
 }) {
   return (
     <section>
@@ -193,23 +210,29 @@ function Section({
         </a>
       </div>
       <div className="binge-rail">
-        {movies.map((movie) => (
-          <MovieCard
-            key={movie.id}
-            movie={movie}
-            lang={lang}
-            commonDict={commonDict}
-            actions={
-              <CardActions
-                tmdbId={movie.id}
-                mediaType={movie.media_type === "tv" ? "tv" : "movie"}
-                isAuthed={isAuthed}
-                lang={lang}
-                dict={watchlistDict}
-              />
-            }
-          />
-        ))}
+        {movies.map((movie) => {
+          const mediaType = movie.media_type === "tv" ? "tv" : "movie";
+          const key = makeItemKey(movie.id, mediaType);
+          return (
+            <MovieCard
+              key={movie.id}
+              movie={movie}
+              lang={lang}
+              commonDict={commonDict}
+              actions={
+                <CardActions
+                  tmdbId={movie.id}
+                  mediaType={mediaType}
+                  isAuthed={isAuthed}
+                  lang={lang}
+                  dict={watchlistDict}
+                  initiallyInWatchlist={watchlistKeys.has(key)}
+                  initiallyWatched={watchedKeys.has(key)}
+                />
+              }
+            />
+          );
+        })}
       </div>
     </section>
   );

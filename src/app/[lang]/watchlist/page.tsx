@@ -6,6 +6,7 @@ import { getDictionary, hasLocale } from "../dictionaries";
 import Navbar from "@/components/Navbar";
 import MovieCard from "@/components/MovieCard";
 import CardActions from "@/components/CardActions";
+import { getUserItemSets, makeItemKey } from "@/lib/userSets";
 
 type Props = { params: Promise<{ lang: string }> };
 
@@ -49,10 +50,13 @@ export default async function WatchlistPage({ params }: Props) {
   const session = await auth();
   if (!session?.user?.id) redirect(`/${lang}/login`);
 
-  const rows = await prisma.watchlistItem.findMany({
-    where: { userId: session.user.id },
-    orderBy: { addedAt: "desc" },
-  });
+  const [rows, sets] = await Promise.all([
+    prisma.watchlistItem.findMany({
+      where: { userId: session.user.id },
+      orderBy: { addedAt: "desc" },
+    }),
+    getUserItemSets(session.user.id),
+  ]);
 
   const movies = await Promise.all(rows.map((row) => fetchDetails(row, lang)));
   const dateFormatter = new Intl.DateTimeFormat(lang, { dateStyle: "medium" });
@@ -90,6 +94,7 @@ export default async function WatchlistPage({ params }: Props) {
                         lang={lang}
                         dict={dict.watchlist}
                         initiallyInWatchlist
+                        initiallyWatched={sets.watchedKeys.has(makeItemKey(row.tmdbId, row.mediaType))}
                         showAddToWatchlist={false}
                         showMarkWatched
                         showRemoveFromWatchlist
