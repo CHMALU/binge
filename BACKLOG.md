@@ -38,8 +38,10 @@
 | Watchlist DELETE / toggle / remove | ✅ DONE | `feature/watchlist-remove` | DELETE endpoint + WatchlistButton toggle + floating trash on `/watchlist` |
 | RatingModal guest redirect (§10) | ✅ DONE | `chore/rating-guest-redirect` | Guests see "Sign in to rate" Link instead of 401 dead-end |
 | Swipe page locale forwarding (§11) | ✅ DONE | `chore/rating-guest-redirect` | `getPopular*` now receive `lang` from URL → swipe deck localized |
+| US11 — Mark titles as watched (§3) | ✅ DONE | `feature/us11-mark-watched` | POST/GET `/api/watched` w/ tx-sync to Rating, `/[lang]/watched` page, MarkWatchedButton on detail + CardActions hover icons everywhere |
+| Card hover icons live + remove floating overlay (§7 G4) | ✅ DONE | `feature/us11-mark-watched` | Plus = live "Add to watchlist", new check-circle = mark watched, trash on `/watchlist`. RemoveFromWatchlistButton deleted. |
 
-**Not done yet:** US7 (recommendations), US11 (mark as watched), US-swipe-filter (watched filtering), polish (Navbar cleanup, hero/cards dead buttons, navigation consistency), demo video.
+**Not done yet:** US7 (recommendations), US-swipe-filter (watched filtering), polish (Navbar cleanup, hero/cards dead buttons remaining, navigation consistency), demo video, rating-storage consolidation (§12 tech-debt).
 
 ---
 
@@ -139,42 +141,46 @@ Sections are roughly ordered by **deadline urgency × user value**. The first th
 
 ---
 
-## 3. US11 — Mark titles as watched (pre-Friday stretch)
+## 3. US11 — Mark titles as watched + §7 G4 hover-icons refactor
 
-**Status:** ⏳ NOT STARTED
-**Why:** Committed user story. Required for "watchlist → watched" flow. Watched list is a Phase-1 deliverable that hasn't shipped yet.
-**Branch suggestion:** `feature/us11-mark-watched`
+**Status:** ✅ DONE
+**Branch:** `feature/us11-mark-watched`
+**Why:** Committed user story. Required for "watchlist → watched" flow. Bundled with §7 G4 (card hover icons go from decorative to live) because both touched MovieCard hover overlay.
 
 ### Steps
-- [ ] **C1. `POST /api/watched` endpoint**
-  - Body: `{ tmdbId, mediaType, rating?: number | null }`
-  - In ONE Prisma transaction: `create` a `WatchedItem` AND `delete` the matching `WatchlistItem` if present
-  - 401/400/200 responses
-  - Idempotent on duplicate: existing `WatchedItem` returns 200 with no-op
-- [ ] **C2. "Mark as watched" button on watchlist rows**
-  - Add to whichever component renders watchlist items
-  - `IoCheckmarkCircle` icon, `aria-label={dict.watchlist.markWatched}`
-  - On click → POST → success toast → `router.refresh()`
-- [ ] **C3. `GET /api/watched` endpoint** — mirrors `GET /api/watchlist`
-  - Returns the user's watched items sorted by `createdAt desc`
-- [ ] **C4. `/[lang]/watched` page** — visually mirrors `/[lang]/watchlist` (poster grid, link to detail)
-  - Server Component, reads session via `auth()`, fetches list, redirects to login if no session
-- [ ] **C5. Enable `watched` link in Navbar dropdown**
-  - `src/components/Navbar.tsx:112` — currently `disabled` prop set
-  - Just remove the `disabled` and the link works
-- [ ] **C6. Dict keys**
-  - `dict.watched.title`, `dict.watched.empty`, `dict.watchlist.markWatched`, `dict.watchlist.markedToast`
-  - Add to EN/PL/AR
+- [x] **C1. `POST /api/watched` endpoint** — `src/app/api/watched/route.ts`
+  - Body: `{ tmdbId, mediaType, rating?: 1..5 | null }`
+  - `prisma.$transaction([...])`: upsert WatchedItem (rating + watchedAt now) + deleteMany on WatchlistItem (no-op if absent) + (when rating !== null) upsert Rating. Either all succeed or all roll back.
+  - 401 / 400 / 200 responses; idempotent on duplicate via upsert.
+- [x] **C2. "Mark as watched" button on watchlist rows** — done as part of new `CardActions` hover-icon component (`showMarkWatched=true`). No floating overlay; the icon lives in the hover gradient over the poster together with the trash and (where relevant) the add-to-watchlist toggle.
+- [x] **C3. `GET /api/watched` endpoint** — same route file, mirrors `GET /api/watchlist`. Sorted by `watchedAt desc`.
+- [x] **C4. `/[lang]/watched` page** — `src/app/[lang]/watched/page.tsx`. Mirror of `/watchlist/page.tsx`: server component, `auth()` redirect to login, `prisma.watchedItem.findMany` + parallel TMDb fetches, poster grid + watchedAt date + read-only star row when `rating != null`.
+- [x] **C5. Enable `watched` link in Navbar dropdown** — `src/components/Navbar.tsx:124` — removed the `disabled` prop.
+- [x] **C6. Dict keys** — `dict.watched.{title,empty,emptyHint,watchedOn,yourRating}` + `dict.watchlist.{markWatched,markedToast,markedError}` + `dict.detail.{markWatched,howWouldYouRate,skipRating}` in EN/PL/AR.
 
-### Schema note
-`WatchedItem` model already exists in `prisma/schema.prisma` from US8 — no migration needed. It has `rating: Int? (nullable)` for the optional post-watch rating.
+### Schema note (no migration needed)
+`WatchedItem` model already existed in `prisma/schema.prisma` from US8. `WatchedItem.rating: Int?` and the separate `Rating` model are **both** written in the same transaction so detail page (reads `Rating`) and /watched (reads `WatchedItem`) stay consistent. See §12 for the follow-up to consolidate this duplication.
+
+### Bonus scope landed in the same MR (§7 G4)
+- [x] **MovieCard now exposes an `actions?: ReactNode` slot** (`src/components/MovieCard.tsx`). When provided, replaces the formerly-decorative IoPlay+IoAdd overlay; gradient gets `pointer-events-none`, the actions row gets `pointer-events-auto` so children clicks don't bubble through.
+- [x] **`CardActions` client component** (`src/components/CardActions.tsx`) renders 0..3 hover icons (add/in-watchlist toggle, mark-watched, trash) with optimistic state + react-hot-toast + `e.preventDefault/stopPropagation` so the parent `<Link>` doesn't navigate.
+- [x] **`RemoveFromWatchlistButton` deleted** — its trash icon now lives inside `CardActions(showRemoveFromWatchlist=true)` on /watchlist rows.
+- [x] **RatingModal refactored to configurable** (`src/components/RatingModal.tsx`) — 7 new optional props (`onSubmit`, `onSkip`, `onSuccess`, `triggerLabel`, `triggerIcon`, `triggerClassName`, `dialogTitle`) with backward-compat defaults so the existing "Rate this Movie" pill keeps working.
+- [x] **`MarkWatchedButton`** (`src/components/MarkWatchedButton.tsx`) is a thin wrapper around RatingModal: trigger says "Mark as watched", submit POSTs `/api/watched` with rating, "Skip rating" link POSTs with `rating: null`. Renders on the detail page next to WatchlistButton.
+- [x] **Home page rails** (`src/app/[lang]/page.tsx`) now pass `auth()`-derived `isAuthed` + `watchlistDict` into `<Section>` → each `MovieCard` gets a live `<CardActions>`. SearchBar/FilterBar still use the default decorative overlay — they're client components without server auth context, deferred to a follow-up MR.
 
 ### Tests
-- [ ] POST: 401 / 200 / watchlist row deleted in same transaction / idempotent on duplicate
-- [ ] GET: 401 / 200 returns sorted list
-- [ ] Watchlist row "Mark as watched" → row disappears from `/watchlist`, appears on `/watched`
+- [x] POST `/api/watched`: 401 / 400 invalid body (no JSON / bad mediaType / non-int tmdbId / rating out of 1..5 / non-int rating) / 200 without rating (transaction=2 ops, Rating untouched) / 200 with rating (transaction=3 ops, syncs to both WatchedItem.rating + Rating.stars) / idempotent on duplicate.
+- [x] GET `/api/watched`: 401 / empty / sorted DTOs desc.
+- [x] `/[lang]/watched` page: redirect when no session / empty state / items rendered with TMDb lookups in desc order / rating shown when not null + hidden when null / locale forwarded.
+- [x] `MarkWatchedButton`: trigger label / dialog opens with "How would you rate?" + Skip link / submit POSTs with rating / skip POSTs with null / guest renders sign-in Link.
+- [x] `CardActions`: default render / showRemoveFromWatchlist toggle / POST watchlist / POST watched / DELETE watchlist / stops bubbling to parent / guest pushes to `/lang/login` / rollback on failure.
+- [x] `MovieCard`: 4 regression + new actions-slot render.
+- [x] `RatingModal`: 5 §10 regression + 4 new configurable-mode tests.
 
-**Estimated SP:** 3
+Total: 147/147 green, lint + typecheck clean.
+
+**Estimated SP:** 3 (delivered as ~5 once §7 G4 was bundled)
 
 ---
 
@@ -447,6 +453,33 @@ The `tmdb.ts` helpers (`src/lib/tmdb.ts:137-142`) already accept an optional loc
 - `MovieSwiper.tsx` itself is a client component and doesn't fetch — it only renders what the server page passes in.
 
 **Estimated SP:** 1 (delivered)
+
+---
+
+## 12. Tech-debt — consolidate rating storage (`WatchedItem.rating` vs `Rating.stars`)
+
+**Status:** ⏳ NOT STARTED (post-Friday tech-debt cleanup)
+**Why:** Surfaced while delivering US11 (§3). The schema currently has TWO places where the same user-rating-for-a-title can live:
+
+- `WatchedItem.rating: Int?` — added by US8 (Dawid+Bernd) anticipating a "rate while marking as watched" flow
+- `Rating { stars: Int }` — added by US-ratings (Christoph+Lucas) as a standalone model so users can rate from the detail page without marking as watched
+
+Both have `@@unique([userId, tmdbId, mediaType])` and both can hold a non-null integer for the same row. Semantically they're the same fact ("user X gave title Z N stars") but no constraint enforces them to agree.
+
+US11's `POST /api/watched` works around it by writing to BOTH inside a single Prisma transaction (`watchedItem.upsert` + `rating.upsert`). That keeps the two surfaces consistent today but the duplication itself is the smell.
+
+### Steps (proposed)
+- [ ] **L1. Pick the source of truth.** Most likely `Rating.stars` because it's the model already wired through `/api/rating` and the detail page RatingModal — touches less code.
+- [ ] **L2. Migration.** Backfill existing `WatchedItem.rating` values into `Rating` (`UPSERT INTO Rating`), then drop `WatchedItem.rating` column.
+- [ ] **L3. Update `POST /api/watched`** so it stops writing to `WatchedItem.rating` (transaction shrinks to 2 ops, or 1 if no rating provided).
+- [ ] **L4. Update `/[lang]/watched/page.tsx`** to LEFT JOIN Rating per row when displaying the user's rating instead of reading `WatchedItem.rating`. Or fetch ratings in parallel and zip them on the server.
+- [ ] **L5. Drop the now-dead WatchedItem.rating sync in DTO + types** (`WatchedItemDTO.rating` stays as a derived field, populated server-side from `Rating`).
+
+### Risk
+- Migration on Neon — backfill needs to run before column drop; can't be one `prisma db push`. Probably `prisma migrate dev` with a custom SQL step, or do it in two deploys (write to both → migrate → stop writing to old → drop).
+- Existing rated rows on Vercel/staging need the backfill to not lose anyone's ratings.
+
+**Estimated SP:** 3 (mostly the migration; the API/UI side is small)
 
 ---
 
