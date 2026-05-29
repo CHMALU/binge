@@ -3,16 +3,16 @@ import Navbar from "@/components/Navbar";
 import MovieCard from "@/components/MovieCard";
 import CardActions from "@/components/CardActions";
 import FilterBar from "@/components/FilterBar";
+import HeroTrailer from "@/components/HeroTrailer";
+import SwipeFab from "@/components/SwipeFab";
 import { auth } from "@/auth";
-import { getPopularMovies, getPopularSeries, getNowPlaying, getOnAir } from "@/lib/tmdb";
+import { getPopularMovies, getPopularSeries, getNowPlaying, getOnAir, getTrailerKey } from "@/lib/tmdb";
 import type { Movie } from "@/lib/tmdb";
 import { getUserItemSets, makeItemKey } from "@/lib/userSets";
 import Image from "next/image";
 import {
   IoStar,
-  IoPlay,
   IoInformationCircleOutline,
-  IoArrowForward,
   IoEllipse,
 } from "react-icons/io5";
 import { getDictionary, hasLocale, type Dictionary } from "./dictionaries";
@@ -43,6 +43,7 @@ export default async function Home({
   const backdropUrl = hero?.backdrop_path
     ? `https://image.tmdb.org/t/p/w1280${hero.backdrop_path}`
     : null;
+  const heroTrailerKey = hero ? await getTrailerKey("movie", hero.id, lang) : null;
 
   return (
     <div className="bg-surface text-fg">
@@ -95,9 +96,13 @@ export default async function Home({
               </p>
             )}
             <div className="flex gap-3">
-              <button className="px-6 py-3.5 rounded-xl font-bold text-sm flex items-center gap-2 transition-all hover:-translate-y-0.5 bg-fg text-action-fg">
-                <IoPlay aria-hidden="true" /> {dict.hero.watchTrailer}
-              </button>
+              <HeroTrailer
+                trailerKey={heroTrailerKey}
+                title={hero.title ?? hero.name ?? ""}
+                watchLabel={dict.hero.watchTrailer}
+                trailerLabel={dict.hero.trailerLabel}
+                closeLabel={dict.common.close}
+              />
               <a
                 href={`/${lang}/movie/${hero.id}`}
                 className="px-6 py-3.5 rounded-xl font-semibold text-sm flex items-center gap-2 transition-all border bg-white/10 border-white/15 text-fg backdrop-blur-md"
@@ -116,7 +121,8 @@ export default async function Home({
           title={dict.sections.popularMovies}
           eyebrow={dict.sections.popularMoviesEyebrow}
           movies={popularMovies.slice(0, 14)}
-          seeAll={dict.sections.seeAll}
+          count={popularMovies.length}
+          titlesLabel={dict.sections.titles}
           lang={lang}
           commonDict={dict.common}
           watchlistDict={dict.watchlist}
@@ -128,7 +134,8 @@ export default async function Home({
           title={dict.sections.nowInCinemas}
           eyebrow={dict.sections.nowInCinemasEyebrow}
           movies={nowPlaying.slice(0, 14)}
-          seeAll={dict.sections.seeAll}
+          count={nowPlaying.length}
+          titlesLabel={dict.sections.titles}
           lang={lang}
           commonDict={dict.common}
           watchlistDict={dict.watchlist}
@@ -140,7 +147,8 @@ export default async function Home({
           title={dict.sections.popularSeries}
           eyebrow={dict.sections.popularSeriesEyebrow}
           movies={popularSeries.slice(0, 14)}
-          seeAll={dict.sections.seeAll}
+          count={popularSeries.length}
+          titlesLabel={dict.sections.titles}
           lang={lang}
           commonDict={dict.common}
           watchlistDict={dict.watchlist}
@@ -152,7 +160,8 @@ export default async function Home({
           title={dict.sections.currentlyOnTV}
           eyebrow={dict.sections.currentlyOnTVEyebrow}
           movies={onAir.slice(0, 14)}
-          seeAll={dict.sections.seeAll}
+          count={onAir.length}
+          titlesLabel={dict.sections.titles}
           lang={lang}
           commonDict={dict.common}
           watchlistDict={dict.watchlist}
@@ -161,6 +170,8 @@ export default async function Home({
           watchedKeys={watchedKeys}
         />
       </div>
+
+      <SwipeFab lang={lang} label={dict.nav.startSwiping} />
     </div>
   );
 }
@@ -169,7 +180,8 @@ function Section({
   title,
   eyebrow,
   movies,
-  seeAll,
+  count,
+  titlesLabel,
   lang,
   commonDict,
   watchlistDict,
@@ -180,7 +192,8 @@ function Section({
   title: string;
   eyebrow?: string;
   movies: Movie[];
-  seeAll: string;
+  count: number;
+  titlesLabel: string;
   lang: string;
   commonDict: Dictionary["common"];
   watchlistDict: Dictionary["watchlist"];
@@ -202,12 +215,9 @@ function Section({
             {title}
           </h2>
         </div>
-        <a
-          href="#"
-          className="flex items-center gap-1.5 text-sm font-medium px-3 py-2 rounded-lg border transition-colors text-fg-muted border-border"
-        >
-          {seeAll} <IoArrowForward aria-hidden="true" />
-        </a>
+        <span className="text-sm font-mono text-fg-subtle shrink-0">
+          {count} {titlesLabel}
+        </span>
       </div>
       <div className="binge-rail">
         {movies.map((movie) => {

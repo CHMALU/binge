@@ -1,6 +1,5 @@
 import MovieSwiper from "@/components/MovieSwiper";
 import { getPopularMovies, getPopularSeries } from "@/lib/tmdb";
-import Navbar from "@/components/Navbar";
 import { getDictionary, hasLocale } from "../dictionaries";
 import { notFound } from "next/navigation";
 
@@ -22,7 +21,6 @@ export default async function SwipeRouter({
 
   return (
     <main>
-      <Navbar lang={lang} dict={dict.nav} commonDict={dict.common} colorModeDict={dict.a11y.colorMode} />
       <MovieSwiper movies={all} lang={lang} commonDict={dict.common} swipeDict={dict.swipe} />
     </main>
   );

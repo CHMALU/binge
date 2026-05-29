@@ -16,7 +16,8 @@
     "signOut": "Wyloguj",
     "comingSoon": "wkrótce",
     "changeLanguage": "Zmień język",
-    "searchPlaceholder": "Szukaj filmów i seriali..."
+    "searchPlaceholder": "Szukaj filmów i seriali...",
+    "startSwiping": "Zacznij przeglądać"
   },
   "a11y": {
     "colorMode": {
@@ -48,6 +49,7 @@
     "featured": "Polecane",
     "topRated": "Najlepiej oceniane",
     "watchTrailer": "Obejrzyj zwiastun",
+    "trailerLabel": "Oficjalny zwiastun",
     "moreInfo": "Więcej info"
   },
   "sections": {
@@ -59,7 +61,8 @@
     "popularSeriesEyebrow": "Na liście wszystkich",
     "currentlyOnTV": "Aktualnie w TV",
     "currentlyOnTVEyebrow": "Teraz na ekranie",
-    "seeAll": "Zobacz wszystko"
+    "seeAll": "Zobacz wszystko",
+    "titles": "tytułów"
   },
   "filter": {
     "all": "Wszystkie",

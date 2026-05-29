@@ -23,6 +23,8 @@ type Props = {
     unmarkError: string;
   };
   initiallyWatched?: boolean;
+  /** Notifies a parent when the watched state flips, so sibling actions can react. */
+  onWatchedChange?: (watched: boolean) => void;
 };
 
 export default function MarkWatchedButton({
@@ -34,6 +36,7 @@ export default function MarkWatchedButton({
   dict,
   watchlistDict,
   initiallyWatched = false,
+  onWatchedChange,
 }: Props) {
   const router = useRouter();
   const [, startTransition] = useTransition();
@@ -57,6 +60,7 @@ export default function MarkWatchedButton({
 
   function onSuccess() {
     toast.success(watchlistDict.markedToast);
+    onWatchedChange?.(true);
     startTransition(() => router.refresh());
   }
 
@@ -74,6 +78,7 @@ export default function MarkWatchedButton({
         return;
       }
       toast.success(watchlistDict.unmarkedToast);
+      onWatchedChange?.(false);
       startTransition(() => router.refresh());
     } catch {
       toast.error(watchlistDict.unmarkError);
@@ -88,7 +93,7 @@ export default function MarkWatchedButton({
         type="button"
         onClick={handleUnmark}
         disabled={busy}
-        className="w-full inline-flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-semibold border transition-all bg-success text-success-fg border-transparent hover:opacity-90 disabled:opacity-50"
+        className="w-full inline-flex items-center justify-center gap-2 h-12 rounded-xl text-sm font-semibold border transition-all bg-success text-success-fg border-transparent hover:opacity-90 disabled:opacity-50"
       >
         <IoCheckmarkCircle aria-hidden="true" className="align-middle" />
         {dict.unmarkWatched}
@@ -109,7 +114,7 @@ export default function MarkWatchedButton({
       onSuccess={onSuccess}
       triggerLabel={dict.markWatched}
       triggerIcon={<IoCheckmarkCircle aria-hidden="true" className="me-2 inline-block align-middle" />}
-      triggerClassName="w-full py-3 rounded-xl text-sm font-semibold border transition-all bg-surface-card border-border text-fg hover:bg-white/10 inline-flex items-center justify-center gap-2"
+      triggerClassName="w-full h-12 rounded-xl text-sm font-semibold border transition-all bg-surface-card border-border-strong text-fg hover:bg-surface-hover inline-flex items-center justify-center gap-2"
       dialogTitle={dict.howWouldYouRate}
     />
   );

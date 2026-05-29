@@ -31,7 +31,7 @@ type Props = {
 };
 
 const baseClasses =
-  "w-full inline-flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold transition-colors";
+  "w-full inline-flex items-center justify-center gap-2 h-12 rounded-xl text-sm transition-colors";
 
 export default function WatchlistButton({
   tmdbId,
@@ -48,7 +48,7 @@ export default function WatchlistButton({
     return (
       <Link
         href={`/${lang}/login`}
-        className={`${baseClasses} border bg-surface-card border-border text-fg`}
+        className={`${baseClasses} font-semibold border bg-surface-card border-border-strong text-fg`}
       >
         <IoBookmarkOutline aria-hidden="true" />
         {t.signInToSave}
@@ -110,9 +110,9 @@ export default function WatchlistButton({
         type="button"
         onClick={handleRemove}
         disabled={loading}
-        className={`${baseClasses} bg-surface-card text-fg border border-border hover:bg-surface-hover disabled:opacity-60`}
+        className={`${baseClasses} font-semibold bg-surface-card text-fg border border-border-strong hover:bg-surface-hover disabled:opacity-60`}
       >
-        <IoBookmark aria-hidden="true" />
+        <IoBookmark aria-hidden="true" className="text-action" />
         {t.inWatchlist}
       </button>
     );
@@ -123,7 +123,7 @@ export default function WatchlistButton({
       type="button"
       onClick={handleAdd}
       disabled={loading}
-      className={`${baseClasses} bg-action text-action-fg disabled:opacity-60`}
+      className={`${baseClasses} font-bold bg-action text-action-fg disabled:opacity-60`}
     >
       <IoAdd aria-hidden="true" />
       {t.addToWatchlist}

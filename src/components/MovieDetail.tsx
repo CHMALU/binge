@@ -1,12 +1,12 @@
 import Image from "next/image";
-import Link from "next/link";
-import { IoArrowBack, IoStar, IoStarOutline, IoEllipse } from "react-icons/io5";
+import { IoStar, IoStarOutline, IoEllipse, IoOpenOutline } from "react-icons/io5";
 import { getPosterUrl, type MovieDetailData, type ProvidersCountry } from "@/lib/tmdb";
 import { cn } from "@/lib/utils";
 import type { Dictionary } from "@/app/[lang]/dictionaries";
+import BackButton from "@/components/BackButton";
 import RatingModal from "@/components/RatingModal";
-import WatchlistButton, { type WatchlistDict } from "@/components/WatchlistButton";
-import MarkWatchedButton from "@/components/MarkWatchedButton";
+import DetailActions from "@/components/DetailActions";
+import { type WatchlistDict } from "@/components/WatchlistButton";
 
 type DetailDict = Dictionary["detail"];
 type CommonDict = Dictionary["common"];
@@ -56,16 +56,8 @@ export default function MovieDetail({
 
   return (
     <div className="min-h-screen bg-surface text-fg">
-      {/* Back button */}
-      <div className="fixed top-4 left-4 z-50">
-        <Link
-          href={`/${lang}`}
-          className="flex items-center justify-center w-11 h-11 rounded-full border border-border text-fg transition-colors bg-surface/80 backdrop-blur-md"
-        >
-          <IoArrowBack size={20} aria-hidden="true" />
-          <span className="sr-only">{commonDict.back}</span>
-        </Link>
-      </div>
+      {/* Back button — sits below the sticky navbar rendered by the page */}
+      <BackButton href={`/${lang}`} label={commonDict.back} belowNav />
 
       {/* Backdrop */}
       {backdropUrl && (
@@ -196,7 +188,7 @@ export default function MovieDetail({
           </div>
 
           {/* Sidebar */}
-          <div className="w-full lg:w-[280px] shrink-0 rounded-2xl p-7 lg:sticky lg:top-24 border bg-surface-raised border-border">
+          <div className="w-full lg:w-[300px] shrink-0 rounded-2xl p-6 lg:sticky lg:top-24 border bg-surface-raised border-border">
             {/* Rating box */}
             <div className="text-center pb-6 mb-6 border-b border-border">
               <div className="font-extrabold leading-none mb-2 text-gold-400 font-poppins text-[56px]">
@@ -239,7 +231,7 @@ export default function MovieDetail({
             {providers && (
               <div className="mt-4">
                 <div className="text-xs font-semibold tracking-widest uppercase mb-3 text-gold-400">{dict.availableOn}</div>
-                <div className="flex flex-wrap gap-2">
+                <div className="grid grid-cols-4 gap-2">
                   {(() => {
                     const list = [
                       ...(providers.flatrate ?? []),
@@ -257,70 +249,75 @@ export default function MovieDetail({
                       }
                     }
 
-                    return unique.map((p) => (
-                      <a key={p.provider_id} href={providers.link ?? undefined} target="_blank" rel="noopener noreferrer" title={p.provider_name} className="inline-flex items-center justify-center rounded-md overflow-hidden border border-border bg-surface-card">
-                        {p.logo_path ? (
-                          // eslint-disable-next-line @next/next/no-img-element
-                          <img src={`https://image.tmdb.org/t/p/w92${p.logo_path}`} alt={p.provider_name} width={44} height={44} />
-                        ) : (
-                          <span className="px-3 py-2 text-sm text-fg">{p.provider_name}</span>
+                    const visible = unique.slice(0, 3);
+                    const extra = unique.length - visible.length;
+
+                    return (
+                      <>
+                        {visible.map((p) => (
+                          <a key={p.provider_id} href={providers.link ?? undefined} target="_blank" rel="noopener noreferrer" title={p.provider_name} className="aspect-square flex items-center justify-center rounded-xl border border-border bg-surface-card overflow-hidden p-2.5 transition-colors hover:bg-surface-hover">
+                            {p.logo_path ? (
+                              // eslint-disable-next-line @next/next/no-img-element
+                              <img src={`https://image.tmdb.org/t/p/w185${p.logo_path}`} alt={p.provider_name} className="max-w-full max-h-full object-contain rounded-md" />
+                            ) : (
+                              <span className="text-xs text-center text-fg">{p.provider_name}</span>
+                            )}
+                          </a>
+                        ))}
+                        {extra > 0 && (
+                          <a href={providers.link ?? undefined} target="_blank" rel="noopener noreferrer" title={dict.availableOn} className="aspect-square flex items-center justify-center rounded-xl border border-dashed border-border-strong text-sm font-semibold text-fg-muted transition-colors hover:bg-surface-hover">
+                            +{extra}
+                          </a>
                         )}
-                      </a>
-                    ));
+                      </>
+                    );
                   })()}
                 </div>
               </div>
             )}
 
-            <div className="flex flex-col gap-3 mt-6">
-              {watchlistDict && (
-                <WatchlistButton
-                  tmdbId={detail.id}
-                  mediaType={isTv ? "tv" : "movie"}
-                  lang={lang}
-                  isAuthed={isAuthed ?? false}
-                  initiallyInWatchlist={inWatchlist ?? false}
-                  t={watchlistDict}
-                />
-              )}
-              {watchlistDict && (
-                <MarkWatchedButton
-                  tmdbId={detail.id}
-                  mediaType={isTv ? "tv" : "movie"}
-                  title={title}
-                  isAuthed={isAuthed ?? false}
-                  lang={lang}
-                  dict={dict}
-                  watchlistDict={{
-                    markedToast: watchlistDict.markedToast,
-                    markedError: watchlistDict.markedError,
-                    unmarkedToast: watchlistDict.unmarkedToast,
-                    unmarkError: watchlistDict.unmarkError,
-                  }}
-                  initiallyWatched={isWatched ?? false}
-                />
-              )}
-              {detail.imdb_id && (
-                <a
-                  href={`https://www.imdb.com/title/${detail.imdb_id}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full py-3 rounded-xl text-sm font-bold text-center transition-colors bg-action text-action-fg"
-                >
-                  {dict.viewOnIMDb}
-                </a>
-              )}
-              {detail.homepage && (
-                <a
-                  href={detail.homepage}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full py-3 rounded-xl text-sm font-semibold text-center border transition-colors bg-surface-card border-border text-fg"
-                >
-                  {dict.officialSite}
-                </a>
-              )}
-            </div>
+            {/* Primary CTA + secondary action (coordinated) */}
+            {watchlistDict && (
+              <DetailActions
+                tmdbId={detail.id}
+                mediaType={isTv ? "tv" : "movie"}
+                lang={lang}
+                isAuthed={isAuthed ?? false}
+                title={title}
+                dict={dict}
+                watchlistDict={watchlistDict}
+                initiallyInWatchlist={inWatchlist ?? false}
+                initiallyWatched={isWatched ?? false}
+              />
+            )}
+
+            {/* Tertiary — external links, de-emphasized */}
+            {(detail.imdb_id || detail.homepage) && (
+              <div className="flex gap-2.5 mt-3.5">
+                {detail.imdb_id && (
+                  <a
+                    href={`https://www.imdb.com/title/${detail.imdb_id}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1 inline-flex items-center justify-center gap-1.5 h-11 rounded-xl text-xs font-semibold border border-border bg-transparent text-fg-muted transition-colors hover:bg-surface-card hover:text-fg"
+                  >
+                    <IoStar size={14} aria-hidden="true" />
+                    {dict.viewOnIMDb}
+                  </a>
+                )}
+                {detail.homepage && (
+                  <a
+                    href={detail.homepage}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1 inline-flex items-center justify-center gap-1.5 h-11 rounded-xl text-xs font-semibold border border-border bg-transparent text-fg-muted transition-colors hover:bg-surface-card hover:text-fg"
+                  >
+                    <IoOpenOutline size={14} aria-hidden="true" />
+                    {dict.officialSite}
+                  </a>
+                )}
+              </div>
+            )}
           </div>
 
         </div>

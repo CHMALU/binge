@@ -41,8 +41,12 @@
 | US11 — Mark titles as watched (§3) | ✅ DONE | `feature/us11-mark-watched` | POST/GET/DELETE `/api/watched`, `/[lang]/watched` page, MarkWatchedButton with toggle-to-Unmark, CardActions hover icons |
 | Card hover icons live + remove floating overlay (§7 G4) | ✅ DONE | `feature/us11-mark-watched` | Plus = live "Add to watchlist" toggle, IoCheckmarkCircle = mark watched, IoCloseCircle = unmark on /watched, IoTrash = remove on /watchlist. RemoveFromWatchlistButton deleted. |
 | Hover icons reflect actual DB state | ✅ DONE | `feature/us11-mark-watched` | `getUserItemSets()` helper feeds `initiallyInWatchlist` + `initiallyWatched` into every CardActions on home / watchlist / watched. Fixes the post-review bug where icons always defaulted to "not saved / not watched". |
+| §6 — Navbar cleanup | ✅ DONE (PR pending) | `feature/ui-redesign-visual` | Dead Movies/Series tabs removed; Sign-in merged into one `IoLogIn` target; logged-out avatar dropped; SwipeFab floating gold CTA (collapses to circle on scroll). |
+| §7 — Hero trailer + dead buttons | ✅ DONE (PR pending) | `feature/ui-redesign-visual` | `getTrailerKey()` from TMDb `/videos` (en-US fallback for AR); `HeroTrailer` YouTube lightbox (Esc/overlay/close, button hidden when no trailer); "See all" rails → quiet `{n} titles` counter. |
+| §9 — Navigation consistency | ✅ DONE (PR pending) | `feature/ui-redesign-visual` | Shared `BackButton` (logical `start-6`, `rtl:scale-x-[-1]`); detail pages now render `Navbar` (back button drops to `top-20`); swipe is immersive (no navbar, floating back at `top-6`). |
+| Detail action-panel redesign | ✅ DONE (PR pending) | `feature/ui-redesign-visual` | One gold CTA (Add to watchlist), Mark-watched = secondary, IMDb/Official → tertiary ghost links; provider logos w92→w185 + 4-col grid + "+N"; `DetailActions` wrapper coordinates watchlist↔watched (hides watchlist once watched, mirrors home cards). |
 
-**Not done yet:** US7 (recommendations), US-swipe-filter (watched filtering), navbar cleanup, remaining hero/cards dead buttons (G1–G3), navigation consistency, demo video, rating-storage consolidation (§12 tech-debt).
+**Not done yet:** US7 (recommendations — Christoph, in progress), US-swipe-filter (watched filtering — Lucas, §5), demo video (§8), rating-storage consolidation (§12 tech-debt), two new polish ideas (§13 rating-once, §14 card play+trailer).
 
 ---
 
@@ -147,53 +151,20 @@ Sections retain their original numbers (gaps where a section was completed and r
 
 ---
 
-## 6. Navbar cleanup (post-Friday polish)
+## 6. Navbar cleanup — ✅ DONE on `feature/ui-redesign-visual` (PR pending)
 
-**Status:** ⏳ NOT STARTED
-**Why:** PO meeting feedback — sign-in icon + text are visually disjoint, and Movies/Series tabs link to the homepage so they're confusing.
-**Branch suggestion:** `chore/navbar-cleanup`
-
-### Steps
-- [ ] **F1. Combine sign-in icon + text into one element when logged out**
-  - `src/components/Navbar.tsx:76–97` currently has two clickable elements (text button + round avatar) both going to `/login`
-  - Merge into one button: icon + label, single click target
-
-- [ ] **F2. Remove dead "Movies" / "Series" tabs**
-  - `Navbar.tsx:53–66` — both link to `/${lang}` (home), don't filter anything
-  - Just remove the array entries. If filtering is wanted later, that's a US-filter task.
-  - Keep "Discover" tab pointing to `/${lang}/swipe` until F3 is decided
-
-- [ ] **F3. Discover/Swipe CTA placement** — ⚠️ **blocked on Open Question #1**
-
-**Estimated SP:** 1
+Dead Movies/Series tabs removed (F2); logged-out "Sign in" + duplicate avatar merged into one `IoLogIn` link (F1); logged-out avatar dropped. Discover/Swipe CTA (F3) resolved as a floating gold `SwipeFab` (`src/components/SwipeFab.tsx`) that collapses to a circle on scroll. Also removed the logged-in watchlist eye-icon — it clashed with the colour-vision eye; watchlist lives in the avatar dropdown.
 
 ---
 
-## 7. Hero & cards — dead buttons (post-Friday polish)
+## 7. Hero & cards — dead buttons — ✅ DONE on `feature/ui-redesign-visual` (PR pending)
 
-**Status:** ⏳ NOT STARTED, mostly blocked on decisions (G4 already DONE — see §3 in snapshot table)
-**Why:** Multiple buttons on the homepage and hero don't do anything. Reviewers (and PO) noticed.
-**Branch suggestions:** `feature/trailer-embed` (for G2 if "embed" path) + `chore/dead-buttons` (G3)
+- **G1** (swipe CTA): delivered as the floating `SwipeFab` (see §6).
+- **G2** (Watch Trailer): chose the **embed** path. `getTrailerKey()` in `src/lib/tmdb.ts` pulls the best YouTube trailer from `/{type}/{id}/videos` (with en-US fallback so AR still gets a trailer). New `src/components/HeroTrailer.tsx` opens a 16:9 YouTube lightbox (Esc / overlay / close); the button is **hidden when the title has no trailer** (no dead-end empty state needed).
+- **G3** ("See all"): removed — rail headers now show a quiet `{n} titles` counter (`dict.sections.titles`) instead of the dead `href="#"`.
+- **G4** (card hover icons): already done earlier on `feature/us11-mark-watched`.
 
-### Steps
-- [ ] **G1. Main CTA "Start swipe session"** — blocked on Open Question #1 (where does Discover CTA live?)
-
-- [ ] **G2. "Watch Trailer" — make it work or kill it**
-  - `src/app/[lang]/page.tsx:89–91` — non-functional button
-  - Options:
-    - **A. Embed:** fetch from TMDb `/movie/{id}/videos` or `/tv/{id}/videos`, find official YouTube trailer, open in modal/lightbox. Caveat: TMDb doesn't guarantee a trailer exists for every title — need an empty state.
-    - **B. Replace:** swap with something like "More like this" → swipe with similar genre
-    - **C. Remove:** delete the button
-  - **Blocked on Open Question #2**
-
-- [ ] **G3. "See all" buttons next to category rails**
-  - `src/app/[lang]/page.tsx:166–171` — all `href="#"`
-  - Options: link to filtered view (US4's `FilterBar` already exists), or just remove
-  - **Blocked on Open Question #3**
-
-- [x] ~~**G4. MovieCard hover icons (plus, play)**~~ — DONE on `feature/us11-mark-watched`. Plus is now a live add-to-watchlist toggle, mark-watched + trash + unmark icons added where contextually relevant. Play icon left as decorative fallback for home/swipe/search until a trailer decision is made (G2).
-
-**Estimated SP:** ~4 (varies by decision; G4 already delivered)
+> Note: card play icon is still decorative — wiring it to the trailer is the new §14 idea below (now feasible since we already fetch trailers).
 
 ---
 
@@ -214,45 +185,10 @@ Sections retain their original numbers (gaps where a section was completed and r
 
 ---
 
-## 9. Navigation consistency (post-Friday polish)
+## 9. Navigation consistency — ✅ DONE on `feature/ui-redesign-visual` (PR pending)
 
-**Status:** ⏳ NOT STARTED
-**Why:** Navigation chrome differs between pages and feels inconsistent. The swipe page has a text-link "← Back" in the top-left while the movie/tv detail pages have a clean floating round button. Also `/movie/[id]` and `/tv/[id]` don't render the `Navbar` at all — once a user is on a detail page they can't switch language, color vision mode, sign in, or get to their watchlist without going back first.
-**Branch suggestion:** `chore/navigation-consistency`
-
-### Steps
-
-- [ ] **I1. Standardize the back button on `/swipe` to match the detail page style**
-  - Current — `src/components/MovieSwiper.tsx:64–67`:
-    ```tsx
-    <div className="px-6 py-4">
-      <Link href={`/${lang}`} className="text-sm text-fg-muted hover:text-fg ... inline-flex items-center gap-1">
-        <IoArrowBack aria-hidden="true" /> {commonDict.back}
-      </Link>
-    </div>
-    ```
-  - Target — copy the pattern from `src/components/MovieDetail.tsx:57–65`:
-    ```tsx
-    <div className="fixed top-4 left-4 z-50">
-      <Link href={`/${lang}`} className="flex items-center justify-center w-11 h-11 rounded-full border border-border text-fg transition-colors bg-surface/80 backdrop-blur-md">
-        <IoArrowBack size={20} aria-hidden="true" />
-        <span className="sr-only">{commonDict.back}</span>
-      </Link>
-    </div>
-    ```
-  - RTL check: in `/ar` either keep top-left or flip to top-right consistently with the detail pages — pick whichever the detail page already does and match it
-
-- [ ] **I2. Render Navbar on movie/tv detail pages**
-  - `src/components/MovieDetail.tsx` currently doesn't render `<Navbar />` — the floating back button is the only chrome
-  - Pages to update: `src/app/[lang]/movie/[id]/page.tsx` and `src/app/[lang]/tv/[id]/page.tsx`. Either inject `<Navbar />` in those pages, or have `MovieDetail` render it itself (the former is more flexible)
-  - Props needed: `lang`, `dict.nav`, `dict.common`, `dict.a11y.colorMode`
-  - **Design call:** keep the floating round back button on top of the navbar OR remove it now that the navbar provides a way home? Recommendation: **keep both** — the floating button is the primary affordance (positioned over the backdrop image so it pops), and the navbar adds general navigation. Two paths to home is not a bug, it's redundancy.
-  - The navbar should sit at the very top, the backdrop pushes down below it. Verify the negative-margin layout (`-mt-[200px]` on the 3-column block) still looks good with a sticky navbar above.
-
-### Tests
-- Visual / manual — both items are layout polish, no behaviour tests
-
-**Estimated SP:** 1
+- **I1:** swipe back button replaced by the shared `src/components/BackButton.tsx` (floating round, 44px, blur, logical `start-6`, `rtl:scale-x-[-1]` so the arrow mirrors in `/ar`). Same component now used by `MovieDetail`.
+- **I2:** `Navbar` now rendered on `/movie/[id]` and `/tv/[id]`. Because the navbar is sticky, the detail back button uses `belowNav` (`top-20`) to clear it; both paths-to-home kept by design. The swipe page is intentionally **immersive** (no navbar — the floating back at `top-6` is the only chrome), matching the focused-session feel.
 
 ---
 
@@ -285,22 +221,52 @@ US11's `POST /api/watched` works around it by writing to BOTH inside a single Pr
 
 ---
 
+## 13. Rate-once UX — collapse "Rate this Movie" after rating (quick polish, grab if bored)
+
+**Status:** ⏳ NOT STARTED — easy morning task
+**Why:** On the detail page you can hit "Rate this Movie" and submit a rating infinitely; nothing reflects that you already rated it. After rating, the button should disappear and be replaced by a read-out like "Your rating: ★★★★☆" (with an edit/change affordance optional).
+**Branch suggestion:** `feature/rate-once`
+
+### Steps
+- [ ] On the detail page (`src/components/MovieDetail.tsx` rating box + `src/components/RatingModal.tsx`), fetch the user's existing rating for this title (extend the server fetch in `movie/[id]`/`tv/[id]` pages — they already read watchlist/watched; add the `Rating` row).
+- [ ] If a rating exists: render "Your rating: N★" instead of the "Rate this Movie" trigger. Optionally a small "Change" link reopens the modal.
+- [ ] After a successful submit in `RatingModal`, flip local state to the read-out (no full reload needed) so it collapses immediately.
+- [ ] Keep guest behaviour as-is (sign-in link).
+
+### Tests (TDD)
+- [ ] Title with an existing rating → renders "Your rating" read-out, no "Rate this Movie" trigger.
+- [ ] After submitting a rating → trigger is replaced by the read-out without reload.
+
+**Estimated SP:** 2
+
+---
+
+## 14. Card play button → wire to trailer (quick polish, grab if bored)
+
+**Status:** ⏳ NOT STARTED — feasible now that trailers are fetched (see §7 G2)
+**Why:** The movie tiles still have a decorative play icon. Now that `getTrailerKey()` exists, bring the play button back, lay it out cleanly, and make it actually open the trailer.
+**Branch suggestion:** `feature/card-trailer`
+
+### Steps
+- [ ] In the card hover actions (`src/components/CardActions.tsx` / `MovieCard.tsx`), put the **play button on the left** and move the save/watched icons to the **right**.
+- [ ] Wire the play button to the trailer: reuse `getTrailerKey()` + the `HeroTrailer` lightbox pattern (`src/components/HeroTrailer.tsx`). Fetching per-card on the server rail is expensive — prefer lazy: fetch the trailer key on click (client) or hide the play button when no trailer (consistent with the hero rule).
+- [ ] If no trailer for that title → don't show the play button (same rule as the hero).
+
+### Tests (TDD)
+- [ ] Card with a trailer → play button opens the lightbox with the right YouTube key.
+- [ ] Card without a trailer → no play button rendered.
+
+**Estimated SP:** 3
+
+---
+
 # Open Questions — block coding, need product/design decision
 
-1. **Discover/Swipe CTA placement** (affects F3 + G1)
-   - a) Replace `Discover` tab in navbar with bigger CTA button (gold "Swipe" button right of search)
-   - b) Floating action button (bottom-right corner)
-   - c) Hero section gets a third button below "More info"
-   - d) Section header / banner above movie rails
+1. ~~**Discover/Swipe CTA placement**~~ — RESOLVED: option (b) floating action button (`SwipeFab`).
 
-2. **Trailer button — embed or kill?** (affects G2)
-   - TMDb `/{type}/{id}/videos` provides `key` (YouTube ID), `site`, `type` — usable but not guaranteed to exist for every title
-   - Embed path = bigger scope (modal, empty state, error handling)
-   - Decision affects whether `feature/trailer-embed` branch exists at all
+2. ~~**Trailer button — embed or kill?**~~ — RESOLVED: embed (YouTube lightbox via `HeroTrailer`); button hidden when no trailer exists.
 
-3. **"See all" buttons — filter page or remove?** (affects G3)
-   - If filter page: hook into existing `FilterBar` (US4) — cheap
-   - If remove: 30 seconds of work
+3. ~~**"See all" buttons — filter page or remove?**~~ — RESOLVED: removed, replaced by a `{n} titles` counter on rail headers.
 
 4. ~~**Card hover icons — function or remove?**~~ — RESOLVED (see G4 above). Plus = add to watchlist; check = mark watched; trash on /watchlist, unmark on /watched. Play left decorative pending trailer decision.
 
